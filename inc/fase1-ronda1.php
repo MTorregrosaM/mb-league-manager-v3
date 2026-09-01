@@ -49,7 +49,7 @@ printf(" </tbody></table>");
     date_default_timezone_set('UTC');
 
     /* método para cambiar el formato de fecha de la BD al UTC español */
-    function formatoFecha1( $utcUsa = true, $fFecha ){
+    function formatoFecha1( $utcUsa, $fFecha ){
 
         if ($fFecha != '-'){
 
