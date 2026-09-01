@@ -1,0 +1,33 @@
+  var $messages = $('#box-error');
+
+  var spanish = {
+      errorTitle : 'Error al enviar el formulario',
+      requiredFields : 'Debes responder todos los campos obligatorios',
+      badTime : 'Fecha incorrecta',
+      badEmail : 'E-mail incorrecto',
+      badTelephone : 'Teléfono incorrecto',
+      badSecurityAnswer : 'Respuesta de seguridad incorrecta',
+      badDate : 'Fecha incorrecta',
+      lengthBadStart : 'Debes introducir una respuesta entre ',
+      lengthBadEnd : ' caracteres',
+      lengthTooLongStart : 'El texto no puede tener más caracteres que: ',
+      lengthTooShortStart : 'El texto no puede tener menos caracteres que: ',
+      notConfirmed : 'No se pueden confirmar los valores',
+      badDomain : 'Dominio incorrecto',
+      badUrl : 'URL incorrecta',
+      badCustomVal : 'Respuesta incorrecta',
+      badInt : 'El valor introducido no es numérico',
+      badSecurityNumber : 'El nº de la SS no es correcto',
+      badUKVatAnswer : 'Incorrect UK VAT Number',
+      badStrength : 'La contraseña debe ser más fuerte',
+      badNumberOfSelectedOptionsStart : 'Debes elegir al menos ',
+      badNumberOfSelectedOptionsEnd : ' respuestas',
+      badAlphaNumeric : 'El valor introducido sólo puede ser alfanumérico ',
+      badAlphaNumericExtra: ' y ',
+      wrongFileSize : 'El fichero es demasiado grande',
+      wrongFileType : 'El formato del fichero no es válido',
+      groupCheckedRangeStart : 'Por favor, elige entre ',
+      groupCheckedTooFewStart : 'Por favor, elige hasta ',
+      groupCheckedTooManyStart : 'Por favor, elige como máximo ',
+      groupCheckedEnd : ' elemento(s)'
+    };

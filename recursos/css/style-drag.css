@@ -1,0 +1,49 @@
+	
+
+/* Floats */
+
+.left,.alignleft {float: left; margin-right: 6px; margin-top: 5px;}
+.right,.alignright {float: right;}
+
+.clear,.clearer {clear: both;}
+.clearer {
+	display: block;
+	font-size: 0;
+	line-height: 0;
+	height: 0;
+}
+
+
+
+.sortable-item {list-style: none; padding: 10px 0px; width: 166px; cursor: pointer; text-align: center}
+.sortable-item {background-color: #d0d5c6; border: 1px solid #a7ab9e; border-radius: 3px; margin-top: 5px;}
+.sortable-list {
+	width: 166px;
+	margin: 0;
+	padding: 10px;
+	background: #EEE;
+	border-radius: 3px;
+	min-height: 93px;
+}
+
+.placeholder {list-style: none;  background-color: #c9ec84;  width: 166px;  height: 40px; border: 1px #a8c66e dashed; border-radius: 3px;}
+
+.loader {
+	display: block;
+	background: #FFF url('img/spinner.gif') no-repeat center center;
+}
+
+#sidebar-list .loader {height: 170px;}
+#sidebar-list .placeholder {margin-bottom: 24px;}
+
+#splash-list .placeholder {float: left;}
+#splash-list .sortable-list {display: inline;}
+#splash-list .sortable-item {width: 32%; margin-left: 2%;}
+#splash-list .sortable-item:first-child {margin-left: 0;}
+#splash-list .loader, #splash-list .placeholder {height: 220px;}
+
+.titulo-columna-drag { text-align: center; background: #333; color: #eee; height: 20px; margin: 0px; padding:10px 0px;}
+.maestra{clear: both; min-height: 500px}
+.ALIADO {background-color: #c9ec84; border: 1px #a8c66e dashed; }
+.EJE {background-color: #de8c60; border: 1px #ab6640 dashed; }
+.DOBLE {background-color: #94bef1; border: 1px #7097c7 dashed; }

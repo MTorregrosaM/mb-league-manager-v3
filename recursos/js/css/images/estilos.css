@@ -1,0 +1,172 @@
+*,body, html { margin: 0px; padding: 0px; }
+body, html {width: 100%; font-family: verdana; color:#333; font-size: 13px }
+body { position:relative; height:100%; min-height:100%; }
+
+h1 { font-size: 1.5em; float: left; margin: 15px 0px 0px 20px}
+h2 { font-size: 1.2em; }
+h3 { font-size: 1.1em;  margin: 0px 0px 20px 0px}
+
+
+h1 a, h1 a:link, h1 a:visited {color: #FFF; text-decoration: none; }
+h1 a:hover { text-decoration: underline}
+
+h2 a, h2 a:link, h2 a:visited {font-family: "Century Gothic";  color:#555; text-decoration: none; }
+h2 a:hover { color: #d33d2e;}
+
+h3 a, h3 a:link, h3 a:visited{color: #d33d2e; text-decoration: none; margin-top: 10px;  font-family: Georgia; font-size: 1.3em}
+h3 a:hover{ color: #333; text-decoration: underline;}
+
+
+p {margin: 1em 0em;}
+.display-block {display:block;}
+.display-none, .mostrar-mobile {display:none;}
+.right img {display: block; float:right; padding-left: 10px;}
+
+/* errores */
+#login #box-error, #login .form-error, #contenedor-principal .form-error  { width: 280px; background: #f27a6d; border: 1px  #d33d2e; color: #FFF; padding: 15px 10px; margin: 10px 0px; display: block; border-radius: 5px;}
+#login #box-error {width: 280px;}
+#login .form-error, #contenedor-principal .form-error { text-align: left; padding-left: 10px; }
+#login .form-error ul, #contenedor-principal .form-error ul {list-style: none;}
+#contenedor-principal .form-error { width: 96% !important} 
+
+#mensaje-error,#mensaje-ok,#mensaje-aviso, #aviso-admin-simulacion-empresa   {width: 96%;  border: 1px  #d33d2e; color: #FFF; padding: 15px 10px; margin: 10px 0px; display: block; border-radius: 5px;} 
+#mensaje-error { background: #f27a6d;}
+#mensaje-ok {background: #85af49; }
+#mensaje-aviso {background: #fad850; color:#333;}
+#aviso-admin-simulacion-empresa {background: #fad850; color:#333; font-size: 1.2em; }
+#aviso-admin-simulacion-empresa p {margin-top:8px; font-size: 0.9em !important;}
+
+@media screen and (max-width:350px) {
+	#contenedor-principal .form-error { width: 93% !important} 
+	#aviso-admin-simulacion-empresa { width: 90%  !important; }
+	#mensaje-error, #mensaje-ok, #mensaje-aviso {width: 90% !important}
+}
+
+/* login */
+#login {display: block; margin: 0 auto 0 auto; width: 300px; text-align: center}
+#login fieldset {-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 20px; border: 1px solid #CCC;}
+#login input {padding: 5px; margin-top: 10px; display: block; float: left; border: 1px solid #ccc; background:#fafafa; width: 140px; border-radius: 5px;}
+#login label{width: 105px; display: block; float: left; margin-top: 15px; text-align: right; padding-right: 10px; margin-left: -10px}
+#login .button { background: #9a0000; color:#FFF;  border: 0px; padding: 10px ; cursor: pointer; width: 100%; text-decoration: none; border-radius: 5px;}
+#login .button:hover {background: #333; color:#fff;  border: 0px; padding: 10px ; cursor: pointer; width: 100%;}
+.bottom-login {font-size: 10px; color: #999; ;}
+
+
+/* cabecera */
+#cabecera-empresa {position:relative; display: block; max-width:960px; min-width:320px; margin:30px auto 0px auto; height: 50px; display: block; clear: both;}
+#cabecera-empresa img {float: left; display: block; }
+.button {  background: #9a0000; color:#FFF;  border: 0px; padding: 10px ; cursor: pointer;  text-decoration: none; display: block; margin-top: 10px; border-radius: 5px;}
+.button:hover {background: #333; color:#fff;  border: 0px; cursor: pointer; }
+.bottom-login {font-size: 10px; color: #999; ;}
+#logout { float: right;  }
+#logo-empresa img { float: left;}
+#cabecera-empresa-mobile {display: none; font-size: 0.8em; background: #9a0000 !important; height: 35px; color: white; padding-top: 10px;}
+#cabecera-empresa-mobile img {float: left; width: 25px; height: 25px; margin-right: 10px; margin-left: 10px;}
+#cabecera-empresa-mobile span {display: block; float: left; margin-top: 5px;}
+
+@media screen and (max-width:350px) {
+	#cabecera-empresa h1 {width: 100%; background: #9a0000; color:#FFF; margin-left: -10px; padding: 10px;}
+	#cabecera-empresa {margin: 0px 10px}
+	#cabecera-empresa img { margin: 0 auto; float: none; width: 80px; height: 80px;}
+	#cabecera-empresa-mobile {display: block; width: 100%;}
+	#h1 {margin: 0px}
+	#logout { margin-right: 10px;  float:none;  }
+	.button {background: none; color:#9a0000; margin-top: -110px; }
+	.button:hover {background: none; color:#333; }
+}
+
+/* menu */
+#contenedor-menu {position:relative;  max-width:960px; min-width:320px; margin: 2em auto 0em auto; display: block; clear: both;}
+#menu {  height: 5.2em; width: 98em;/*adding: 1em 0em;*/border-radius: 5px; width: 100%;}
+#menu a {display: block; margin-right: 10px; float: left; background: #f3f1f1; padding: 12px; margin-top:-8px; border-radius: 50px;}
+#menu a:hover { opacity: 0.5 }
+#submenu {height: 2.5em; background: #333; color:#FFF; }
+#submenu span {font-family: "Century Gothic"; display: block; padding: 7px 0px 0px 15px;}
+#menu a.activo {background: #f68532;}
+#cabecera-empresa-mobile .menu {float: right; margin-right: 10px; margin-left:0px;  cursor: pointer;}
+#form-simulacion-empresa {  widh: 200px !important; float: right;  padding-top: 14px;  padding-right: 10px;}
+.menu-btn-admin  {background: #d4e4af !important;}
+.menu-btn-gerente  {background: #afd2e4 !important;}
+
+@media screen and (max-width:350px) {
+	#contenedor-menu {width: 100%; }
+	#menu {margin: 10px 0px 0px 0px; padding: 10px 0px ; display: none;  height: 100% !important; border-radius: 0px; text-align: center; }
+	#menu img { width: 23px; height: 23px; }
+	#menu a {display: inline; margin-left: 7px; margin-right: 4px !important; maring-top: 10px !important; padding: 10px; margin-top:8px; border-radius: 50px; width: 23px; height: 23px;}
+	#form-simulacion-empresa-mobile { width: 100%; background: #333; height: 25px; display: block; clear: both; padding-top: 5px; text-align: right; margin-right: 30px !important; margin-top: 35px !important; } 
+	#form-simulacion-empresa-mobile select {padding: 1px; border: 1px solid #ccc; background:#fafafa;  border-radius: 5px;}
+	
+}
+
+@media screen and (max-width:960px) {
+	#menu a {display: block; margin-right: 10px; maring-top: 10px !important; padding: 12px; margin-top:8px; border-radius: 50px;}
+}
+
+/* contenido */
+#contenedor-principal {position:relative;  max-width:960px; min-width:320px; margin: 0 auto; margin-top: 20px; display: block; clear: both;}
+#contenedor-principal h2 { font-family: "Century Gothic"; font-size: 1.4em; color:#555;}
+#contenedor-principal table {width: 100%}
+#contenedor-principal table th { background: #f3f1f1; border-radius: 5px;}
+#contenedor-principal .button { min-width: 100px; max-width: 200px; text-align: center; float: right; margin-top: 0px;}
+#contenedor-principal .button img { float: left ;  width: 16px; margin-right: 10px;}
+.table-5 td, .table-5 th { width: 22.5%;  padding: 5px 0px; }
+.table-6 td, .table-6 th { width: 18.8%;  padding: 5px 0px; }
+.table-7 td, .table-7 th { width: 17%;  padding: 5px 0px; }
+.td-acciones { width: 6%; }
+.p-home { padding-top: 10px; }
+.config-logo {width: 312px;   display: table-cell;  text-align: center;}
+
+@media screen and (max-width:350px) {
+	#contenedor-principal h2 { padding-top: 30px !important; }
+	#contenedor-principal  {width: 96% !important; clear:both; margin-left: 5px; padding: 0px; background: red !important;}
+	#contenedor-principal table {font-size: 0.8em;  }
+	#contenedor-principal table th { border-radius: 0px;}
+	#contenedor-principal table td img { width: 15px; height: 15px;}
+	.p-home {margin-top: 20px !important; display: block; clear: both; height: 50px; padding-top: 20px !important; width: 98% !important;}
+}
+
+/* formularios */
+#buscador, #form { background: #f3f1f1;min-height: 30px; margin:20px 0px;  border-radius: 5px;}
+#buscador form, #form form { padding: 20px 0px 20px 20px !important;}
+#form form {  padding: 20px 0px 20px 20px !important; }
+#buscador input, #buscador select, #form input , #form select { margin-right: 10px;}
+#form  label {width: 150px; display: block; float: left; text-align: right; padding-top: 5px; margin-right: 10px; }
+#buscador input, #buscador select, #form input, #form select, #form-simulacion-empresa select {padding: 5px; border: 1px solid #ccc; background:#fafafa;  border-radius: 5px;}
+#form input {width: 300px !important;}
+#form select {width: 310px !important;}
+#buscador .submit-button, #form .submit-button { background: #333; color:#FFF;  border: 0px; padding: 7px 10px ; cursor: pointer;  text-decoration: none; border-radius: 5px;}
+#buscador .submit-button:hover, #form .submit-button:hover {background: #CCC; color: #333; }
+#form .submit-button {margin-left: 160px; width: 310px !important;}
+#buscador-mobile { display: none;}
+.form-btn-acciones {display: inline;}
+.form-btn-acciones img {cursor: pointer;}
+.form-btn-acciones img:hover, .img-link:hover {opacity: 0.5}
+#mensaje-ok a {color: #FFF; font-weight: bold; text-decoration: none}
+#mensaje-ok a:hover {color:#333;}
+#form h3 { padding:20px 0px 0px 20px !important; margin-bottom: -15px;  }
+
+/* paginador */
+#paginador { text-align: center; margin-top: 20px;}
+#paginador span {  padding: 5px 10px; color: #333; background: #CCC; margin:0px 5px; border-radius: 5px; cursor: pointer;}
+#paginador span:hover {background: #333; color: #FFF; }
+#paginador .btn-activo {background: #9a0000 !important; color: #FFF; cursor: default !important; }
+
+@media screen and (max-width:350px) {
+	.table-6 td, .table-6 th { width: 13%;  padding: 5px 0px; }
+	.td-acciones { width: 40px }
+	.ocultar-mobile {display: none !important;}
+	.mostrar-mobile {display: block !important;}	
+	#buscador label, #buscador input, #buscador select, #form input, #form label, #form select {clear:both; display: block; width: 96%}
+	#form  label {width: 96%; display: block; float: none; text-align: left; padding-top: 5px;  }
+	#form .submit-button {margin-left: 0px; width: 96% !important;}
+	#buscador input, #form input,  #form select { padding: 5px 0px; width: 96% !important}
+	#buscador .submit-button {margin-top: 10px;}
+	#buscador {display: none; width: 96% !important;}
+	#buscador-mobile {display: block;}
+	#mensaje-error,#mensaje-ok {width: 92% !important;}
+}
+
+@media screen and (max-width:960px) {
+	#buscador label, #buscador input  {clear:both; display: block; }
+	#buscador .submit-button {margin-top: 10px;}
+}
