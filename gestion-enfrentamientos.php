@@ -201,21 +201,6 @@
             return columns.join('#');
         }
     }
-    function getNumItems()
-    {
-        
-        var aux = 0;
-        $('#div-enfrentamientos ul.ventana-enfrentamiento').each(function(){
-            if ($(this).sortable('toArray').length > 0){
-                aux = aux + 1;
-            }
-        });
-
-        return aux;
-    }
-
-
-
     $(document).ready(function(){
 
         // Example 1.3: Sortable and connectable lists with visual helper

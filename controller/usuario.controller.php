@@ -70,7 +70,8 @@ class controllerUsuario {
   
    public function loginUsuario( $fNick, $fPass ){
     try {
-	
+	   $fNick = $this->oConexBD->escaparCadena($fNick);
+	   $fPass = $this->oConexBD->escaparCadena($fPass);
        $queryDB = "SELECT idUsuario
           FROM mb_usuarios
           WHERE nick = '" . $fNick. "' 

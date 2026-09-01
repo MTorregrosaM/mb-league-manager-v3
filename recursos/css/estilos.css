@@ -56,8 +56,6 @@
   #noform-mensaje-aviso a {text-decoration: none; font-weight: bold; color: #333;}
   #noform-mensaje-aviso a:hover {color: #999;}
   form #mensaje-error,form #mensaje-ok,form #mensaje-aviso {width: 96%; margin-top:20px;}
-  #noform-mensaje-aviso a {text-decoration: none; font-weight: bold; color: #333;}
-  #noform-mensaje-aviso a:hover {color: #999;}
   #noform-mensaje-ok a {text-decoration: none; font-weight: bold; color: #FFF;}
   #noform-mensaje-ok a:hover {color: #333;}
   #mensaje-error,#mensaje-ok,#mensaje-aviso, .aviso-admin-simulacion-empresa   {width: 98%;  border: 1px solid #d33d2e; color: #FFF; padding: 15px 10px;  display: block; } 
@@ -78,7 +76,6 @@
     #mensaje-error, #mensaje-ok, #mensaje-aviso {width: 100% !important;  margin: 0px; text-align: center; border-radius: 3px; padding: 0px; padding: 15px 0px;}
     #contenedor-principal .form-error  { clear: both;  margin: 0px; padding: 15px 0px; text-align: center;}
   }
-  .bottom-login {font-size: 10px; color: #999; ;}
 
   /*---------------------------------------------------
   3. Menu responsive

@@ -22,6 +22,7 @@
 			$idUsuario = $oControllerUsuario->loginUsuario ($user, $pass);
 		
 			if( $idUsuario > 0 ){
+				session_regenerate_id(true);
 				$_SESSION["autorizado"]=1;
 				$_SESSION["usuario"]=$idUsuario;
 				$oControllerUsuario->registroUltimoAcceso( $idUsuario );

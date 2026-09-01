@@ -1,8 +1,9 @@
 <?php 
 
 
-	// visualizar errores. 0 NO. 1 SI
-	ini_set('display_errors', 1);
+	// Do not expose application and database details to visitors.
+	ini_set('display_errors', 0);
+	ini_set('log_errors', 1);
 
 	define('DISABLE_CACHE', true);
 

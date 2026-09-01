@@ -66,6 +66,13 @@ class conexBD {
 		}
 	}
 
+	public function escaparCadena($valor){
+		$this->abrirConexion();
+		$valorEscapado = $this->conexion->real_escape_string((string) $valor);
+		$this->cerrarConexion();
+		return $valorEscapado;
+	}
+
 
     public function ejecutarConsulta ( $query, $dml = null ){
     	try {
