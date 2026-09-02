@@ -17,9 +17,9 @@ INSERT INTO mb_facciones (idFaccion, idJuego, descFaccion, indActivo) VALUES
   (6, 3, 'British Army', 1);
 
 INSERT INTO mb_usuarios (idUsuario, nick, pass, rol, ult_acceso) VALUES
-  (1, 'admin', MD5('admin'), 'ADMIN', NULL),
-  (2, 'league.manager', MD5('manager'), 'USER', NULL),
-  (3, 'scorekeeper', MD5('scorekeeper'), 'USER', NULL);
+  (1, 'admin', '$2y$12$rhPLOhVXfkol.tTh5uKGfuyM6AVctz3Eoqqj63uQgWGuL5f31bQey', 'ADMIN', NULL),
+  (2, 'league.manager', '$2y$12$e19Y30EV.ljr8q/1s0k5EOqJ36zpMakq8P3cPFo9fUhFX1CZOSuJK', 'USER', NULL),
+  (3, 'scorekeeper', '$2y$12$rfuq7Riye1kXINWJedM6iuIYWtW7FO2lhENFatNEwCJiztkXh/UuK', 'USER', NULL);
 
 INSERT INTO mb_ligas (idLiga, nombre, numFases, numRondas, indActivo, fecIni, fecFin, logo, idJuego, audAlta) VALUES
   (1, 'Autumn Test League', 2, 2, 1, '2026-09-01', NULL, 'logo-1.png', 1, '2026-09-01 10:10:00'),

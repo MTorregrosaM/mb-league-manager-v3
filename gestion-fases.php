@@ -1,4 +1,6 @@
-﻿<head>
+<?php require_once __DIR__ . "/config/auth.php"; ?>
+<html lang="es" data-bs-theme="dark">
+<head>
 	<?php require_once ("cabecera.php"); ?>
 </head>
 
@@ -9,7 +11,7 @@
 	require_once ("model/class.php");
 	require_once ("config/config.php");
 	require_once ("controller/controller.php");
-	
+
 
 	try {
 
@@ -41,13 +43,13 @@
 		$fFecIni = (isset($_POST["fFecIni"]))? $_POST["fFecIni"] : "";
 		$fFecFin = (isset($_POST["fFecFin"]))? $_POST["fFecFin"] : "";
 		$fClaveCifrada = (isset($_POST["fClaveCifrada"]))? $_POST["fClaveCifrada"] : "";
-     	
+
 		$fClaveFaseBorrar = (isset($_POST["fClaveFaseBorrar"]))? $_POST["fClaveFaseBorrar"] : "";
 		$fClaveFaseEditar = (isset($_POST["fClaveFaseEditar"]))? $_POST["fClaveFaseEditar"] : "";
 
 		// options para los select de los formularios
 		// LIGAS
-		$arrFases =  $oControllerLiga->recuperarSelectLigas( );
+		$arrFases =  $oControllerLiga->recuperarSelectLigas( null, false, ligasPermitidasUsuario() );
 		$selectLigasSelected = ($fIdLiga != null ) ? $fIdLiga : 0;
 
 		$selectLigas = "";
@@ -57,7 +59,7 @@
 			}
 		}
 
-		/*		
+		/*
 			2. ALTA
 			3. ELIMINAR
 			4. MODIFICAR
@@ -71,26 +73,26 @@
 			/********************************/
 			/* PAGINADOR */
 			/********************************/
-			
+
 
 			$numRegs = $oControllerFase->paginadorFases ($fIdLiga);
 			$numPags = ceil( $numRegs / 10) ;
 			require_once("paginador.inc");
 
-			
+
 
 			/********************************/
 			/* GRID DATOS */
 			/********************************/
 			/* SI SE ENVIA EL FORMULARIO DE BÚSQUEDA, MANDAMOS PARÁMETROS PARA FILTRAR */
-			if (isset ($_POST["accionForm"]) && ($_POST["accionForm"] == 1 || $_POST["accionForm"] == 3)){		
-				$arrFases = $oControllerFase->recuperarListadoFases ( $fIdLiga, ($pagActual-1));		
+			if (isset ($_POST["accionForm"]) && ($_POST["accionForm"] == 1 || $_POST["accionForm"] == 3)){
+				$arrFases = $oControllerFase->recuperarListadoFases ( $fIdLiga, ($pagActual-1));
 			}else{
 				$arrFases = $oControllerFase->recuperarListadoFases( $fIdLiga, 0);
 			}
-			
 
-			// comprobamos que haya datos 
+
+			// comprobamos que haya datos
 			if (is_array($arrFases) && count($arrFases) >= 1){
 				$grid  = "<table class=\"table-6\">\n
 							<tr>
@@ -105,7 +107,7 @@
 					$grid .="\n<tr><td>" . $fila[1] . "</td><td  class=\"align-center\">" .  $fila[4]  . "</td><td class=\"align-center\">" . $fila[2] . "</td><td class=\"align-center\">" .  $fila[3]. "</td>";
 					$grid .= "<td class=\"align-center td-acciones\">";
 
-					
+
 					$grid .= " <form name=\"form-editar-".$fila[0].$fila[1]."\" id=\"form-editar-".$fila[0].$fila[1]."\" method=\"POST\" class=\"form-btn-acciones\">
 								<input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
 								<input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[0]."\"/>
@@ -113,7 +115,7 @@
 								<input type=\"hidden\" name=\"fFecIni\" id=\"fFecIni\" value=\"". $fila[2] ."\" />
 								<input type=\"hidden\" name=\"fFecFin\" id=\"fFecFin\" value=\"". $fila[3] ."\" />
 								<input type=\"hidden\" name=\"fClaveCifrada\" id=\"fClaveCifrada\" value=\"". $fila[4] ."\" />
-								<img src=\"recursos/img/icon_editar.png\" alt=\"form-editar-".$fila[0].$fila[1]."\"  class=\"btn-editar-reg\"/>
+								<img src=\"recursos/img/tool.svg\" alt=\"form-editar-".$fila[0].$fila[1]."\"  class=\"btn-editar-reg\"/>
 							</form>\n";
 				}
 				$grid .= "</tr>\n</table>";
@@ -125,31 +127,31 @@
 
 		/********************************/
 		/* 1. ALTA NUEVA */
-		/********************************/      
+		/********************************/
 		}else if ( $accionForm == 2 ){
 		  $txtAltaModBoton = "Dar de alta nueva fase";
 		  $txtAltaModH3 = "Alta de nueva fase";
 
 		  // grabamos nuevo registro en caso de que se haya enviado el formulario
 		  if (count($_POST) > 2){
-		    $comprobarAltaMod = $oControllerFase->altaFase( $fIdLiga, $fNumFase, $fFecIni, $fFecFin, $fClaveCifrada );      
+		    $comprobarAltaMod = $oControllerFase->altaFase( $fIdLiga, $fNumFase, $fFecIni, $fFecFin, $fClaveCifrada );
 
 		    /*  1. OK
 		      2. ERROR
-		      3. AVISO 
+		      3. AVISO
 		      4. ERROR NUMERO DE FASE YA UTILIZADO
-		    */ 
+		    */
 
-		    $mensajeAltaMod .= "<div id=\"". (($comprobarAltaMod == 1)? "mensaje-ok" : "mensaje-error") ."\">". 
-		              ( ($comprobarAltaMod == 1)? "Fase creada correctamente. " : 
-		                  (($comprobarAltaMod == 4)? "El número de fase ya está utilizado en la Liga, por favor, elige otro." : 
+		    $mensajeAltaMod .= "<div id=\"". (($comprobarAltaMod == 1)? "mensaje-ok" : "mensaje-error") ."\">".
+		              ( ($comprobarAltaMod == 1)? "Fase creada correctamente. " :
+		                  (($comprobarAltaMod == 4)? "El número de fase ya está utilizado en la Liga, por favor, elige otro." :
 		                 "Se ha producido un error en su solicitud.") ) ."</div>";
 		  }
 
 
 		/********************************/
 		/* 3. EDITAR OBJETO */
-		/********************************/			
+		/********************************/
 		}else if ( $accionForm == 4  ){
 			$txtAltaModBoton = "Modificar datos de fase";
 			$txtAltaModH3 = "Modificar fase";
@@ -161,12 +163,12 @@
 
 				/*  1. OK
 					2. ERROR
-					3. AVISO 
+					3. AVISO
 					4. ERROR DUPLICADO
-				*/ 
-			
-				$mensajeAltaMod .= "<div id=\"". ( ($comprobarAltaMod == 1)? "mensaje-ok" : (($comprobarAltaMod == 3)? "mensaje-aviso" : "mensaje-error")) ."\">". 
-								( ($comprobarAltaMod == 1)? "Fase modificada correctamente." : 
+				*/
+
+				$mensajeAltaMod .= "<div id=\"". ( ($comprobarAltaMod == 1)? "mensaje-ok" : (($comprobarAltaMod == 3)? "mensaje-aviso" : "mensaje-error")) ."\">".
+								( ($comprobarAltaMod == 1)? "Fase modificada correctamente." :
 								  (($comprobarAltaMod == 2)? "Se ha producido un error en su solicitud." : "AVISO: debe modificar al menos un campo.") ) ."</div>";
 
 
@@ -177,8 +179,8 @@
 
 	}catch(Exception $e){
 		$oLog = Log::getInstance();
-		$oLog->trazaLog ($e, "gestion-fases.php");	
-		return null;	 
+		$oLog->trazaLog ($e, "gestion-fases.php");
+		return null;
 	}
 
 ?>
@@ -198,20 +200,20 @@
 			$("#pagActual").attr("value", pagActual);
 			$("#buscadorFases").submit();
 
-		}); 
+		});
 
 		// editar registro
 	 	$(".btn-editar-reg").click( function() {
 			var formularioEditar = $(this).attr('alt');
-	 		$("#" + formularioEditar).submit(); 	 
-		
-		});		 	 
-			 	
+	 		$("#" + formularioEditar).submit();
+
+		});
+
 
 	    // boton ALTA registro
 	    $("#btnAltaCliente").click( function() {
 	      $("#btnFormAltaFase").submit();
-	    }); 
+	    });
 
 	 	/* calendario */
 	 	$.datepicker.regional['es'] = {
@@ -221,7 +223,7 @@
 	        currentText: 'Hoy',
 	        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 	        monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
-	        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sáb'],
 	        dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
 	        dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
 	        weekHeader: 'Sm',
@@ -270,16 +272,16 @@
 
 
 
-	<?php /* ALTA DE NUEVA  / MODIFICACION */ 
+	<?php /* ALTA DE NUEVA  / MODIFICACION */
 		   if ($accionForm == 2 || $accionForm == 4) {
 
-		   	
+
 	?>
-	
+
 	<div id="form">
 		<h3><?php printf($txtAltaModH3);?></h3>
 		<form name="altaModFase" id="altaModFase" method="POST" action="" enctype="multipart/form-data">
-		
+
 			<?php printf ($mensajeAltaMod);  ?>
 			<input type="hidden" name="accionForm" id="accionForm" value="<?php printf($accionForm);?>"/>
 			<?php if ($accionForm == 4){ ?> <input type="hidden" name="fClaveFaseEditar" id="fClaveFaseEditar" value="1"/>  <?php } ?>
@@ -287,50 +289,50 @@
 			<input type="hidden" name="fNumFase" id="fNumFase" value="<?php printf($fNumFase);?>"/>
 			<p><label for="fNumFase">Fase: </label>  <input type="text" name="fNumFase" <?php if( $accionForm == 4){ printf("disabled"); } ?>  id="fNumFase" value="<?php printf($fNumFase);?>" class="no-border spinnerFases"></p>
 			<p><label for="fClaveCifrada">Clave cifrada: </label>  <input type="text" name="fClaveCifrada" maxlength="35"  id="fClaveCifrada" value="<?php printf($fClaveCifrada);?>"  ></p>
-			<p><label for="fFecIni">Fecha Inicio: </label>  
-				<input type="text" class="fFecIniForm" name="fFecIni" id="fFecIni" maxlength="10" 
-				value="<?php printf($fFecIni);?>" data-validation="required date" 
+			<p><label for="fFecIni">Fecha Inicio: </label>
+				<input type="text" class="fFecIniForm" name="fFecIni" id="fFecIni" maxlength="10"
+				value="<?php printf($fFecIni);?>" data-validation="required date"
 				data-validation-format="dd-mm-yyyy"></p>
-			<p><label for="fFecFin">Fecha Fin: </label>  
-				<input type="text" class="fFecFinForm" name="fFecFin" id="fFecFin" maxlength="10" 
-				value="<?php printf($fFecFin);?>" data-validation="required date" 
+			<p><label for="fFecFin">Fecha Fin: </label>
+				<input type="text" class="fFecFinForm" name="fFecFin" id="fFecFin" maxlength="10"
+				value="<?php printf($fFecFin);?>" data-validation="required date"
 				data-validation-format="dd-mm-yyyy"></p>
-			
+
 			<p><input type="submit" value="<?php printf($txtAltaModBoton);?>" id="formButton" class="submit-button"/></p>
 		</form>
 		<script>
-			$.validate( { 
+			$.validate( {
 			 		form : '#altaModFase',
 				 	modules : 'file',
 			 		decimalSeparator : ',',
 			 		language : spanish,
 			 		errorMessagePosition : 'top',
 			 		validateOnBlur : false
-			 	});	
+			 	});
 		</script>
 	</div>
 
 
 
-	<?php 
-		/* BOTON VOLVER */		
+	<?php
+		/* BOTON VOLVER */
 		echo "<form action=\"$paginaActiva\" id=\"form-volver\" name=\"form-volver\" method=\"POST\"><input type=\"hidden\" id=\"fIdLiga\" name=\"fIdLiga\" value=\"".$fIdLiga."\"/>";
 		echo "<input type=\"hidden\" id=\"fNumFase\" name=\"fNumFase\" value=\"".$fNumFase."\"/>";
 		echo "<input type=\"hidden\" id=\"accionForm\" name=\"accionForm\" value=\"1\"/>";
 		echo "<input type=\"hidden\" id=\"fIdLiga\" name=\"fIdLiga\" value=\"".$fIdLiga."\"/></form>";
 		echo "<div id=\"div-volver\"><span class=\"btn-volver\" onClick=\"$('#form-volver').submit();\">Volver</span></div>";
-		
-		}else{ 
+
+		}else{
 
 
 			/* BUSCADOR */ ?>
 			<p >Desde este panel puede dar de alta, modificar o eliminar cualquier liga de la aplicaci&oacute;n.</p>
-		
+
 			<div id="buscador">
 				<form name="buscadorFases" id="buscadorFases" method="POST" action="">
 					<input type="hidden" name="accionForm" id="accionForm" value="1"/>
 					<input type="hidden" name="pagActual" id="pagActual" value="1" />
-					<label for="fIdLiga">Liga: </label> <select name="fIdLiga" id="fIdLiga" data-validation="required " ><?php printf($selectLigas); ?> </select>	
+					<label for="fIdLiga">Liga: </label> <select name="fIdLiga" id="fIdLiga" data-validation="required " ><?php printf($selectLigas); ?> </select>
 					<input type="submit" value="Buscar" id="formButton" class="submit-button"/>
 				</form>
 			</div>
@@ -345,11 +347,11 @@
 	        </form>
 	      </div>
 
-			<?php 
-				/* GRID DE CONTENIDO */  
+			<?php
+				/* GRID DE CONTENIDO */
 				printf ($grid);
 
-				/* PAGINADOR */ 
+				/* PAGINADOR */
 				printf ($paginador);
 
 			?>

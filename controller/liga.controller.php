@@ -112,6 +112,8 @@ class controllerLiga {
       if ($_SESSION["rol"] == "ADMIN"){
         $fIndActivo = null;
         $idLigasUsuario = null;
+      } elseif ($idLigasUsuario === null && function_exists('ligasPermitidasUsuario') && isset($_SESSION['rol'])) {
+        $idLigasUsuario = ligasPermitidasUsuario();
       }
       
 
@@ -126,7 +128,7 @@ class controllerLiga {
       if ( $fNombre != null) { $queryDB .= " AND UPPER(nombre) LIKE UPPER('%" . $fNombre  . "%') ";  }
       if ( $fIndActivo != null) { $queryDB .= " AND indActivo = " . $fIndActivo;  }
       if ( $fFecIni != null) { $queryDB .= " AND fecIni >= '" . $this->formatoFecha($fFecIni, true) . "'";  }     
-      if ( $idLigasUsuario != null) { $queryDB .= " AND idLiga in (" . $idLigasUsuario . ")";  }           
+      if ( $idLigasUsuario !== null) { $queryDB .= " AND idLiga in (" . $idLigasUsuario . ")";  }
 
       // ORDENAMOS
       $queryDB .= " ORDER BY fecIni DESC ";
@@ -162,7 +164,7 @@ class controllerLiga {
 
 
     /* método para MODIFICAR los datos de un registro. Previamente debemos comprobar cuáles han cambiado */
-    public function modificarDatosLiga( $fIdLiga, $fNombre, $fNumFases, $fNumRondas, $fFecIni, $fFecFin, $fLogo, $fIndActivo, $fIdJuego ){
+    public function modificarDatosLiga( $fIdLiga, $fNombre, $fNumFases, $fNumRondas, $fFecIni, $fFecFin, $fIndActivo, $fIdJuego ){
       
     try {
 
@@ -236,19 +238,6 @@ class controllerLiga {
 
       }
 
-        if ($fLogo != $this->oLiga->logo){
-        // borramos el logo previo 
-        if (file_exists("./recursos/img/ligas/". $this->oLiga->logo))
-          unlink("./recursos/img/ligas/". $this->oLiga->logo);
-        
-          $fLogoAux = "logo-".$fIdLiga.substr($fLogo,strpos($fLogo, "."));
-          $queryDB .= ($aux > 0)? " , " : "";
-          $queryDB .= " logo = '". $fLogoAux . "'";
-          //$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
-          $aux = 1;
-        }
-
-
         if ( $fFecIni  != $this->oLiga->fecIni){
           $queryDB .= ($aux > 0)? " , " : "";
           $queryDB .= " fecIni = '". $this->formatoFecha( $fFecIni, true) ."' ";
@@ -290,7 +279,7 @@ class controllerLiga {
 
 
     /* método para ALTA NUEVA */
-    public function altaNuevaLiga( $fNombre, $fNumFases, $fNumRondas, $fFecIni, $fFecFin, $fLogo, $fIndActivo, $fIdJuego ){
+    public function altaNuevaLiga( $fNombre, $fNumFases, $fNumRondas, $fFecIni, $fFecFin, $fIndActivo, $fIdJuego ){
   
     try {
       /*if ( $fFecIni >= $fFecFin){
@@ -302,9 +291,9 @@ class controllerLiga {
       }
 
       // insertamos el nuevo registro
-       $queryDB = "INSERT INTO mb_ligas ( nombre, numFases, numRondas, fecIni, fecFin, logo, indActivo, idJuego, audAlta )
-            VALUES ('" . $fNombre . "', " . $fNumFases . ", " . $fNumRondas . ",'" . $this->formatoFecha( $fFecIni, true) . "' , '" . $this->formatoFecha( $fFecFin, true) . "' , '" . 
-              $fLogo . "' ," . $fIndActivo . ", ". $fIdJuego . ",'" . Date('Y-m-d H:i:s') . "' )";
+        $queryDB = "INSERT INTO mb_ligas ( nombre, numFases, numRondas, fecIni, fecFin, indActivo, idJuego, audAlta )
+              VALUES ('" . $fNombre . "', " . $fNumFases . ", " . $fNumRondas . ",'" . $this->formatoFecha( $fFecIni, true) . "' , '" . $this->formatoFecha( $fFecFin, true) . "' , 
+                '" . $fIndActivo . "', ". $fIdJuego . ",'" . Date('Y-m-d H:i:s') . "' )";
       
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
@@ -321,7 +310,8 @@ class controllerLiga {
           foreach ($resultadoBDaux as $fila) {
 
             // actualizamos el nombre del fichero de la imagen
-            $fLogo = ($fLogo != "")? "logo-".$fila[0].substr($fLogo,strpos($fLogo, ".")) : "logo-".$fila[0].".png";
+            // asignamos el logo predeterminado de la liga
+            $fLogo = "logo-".$fila[0].".png";
             $queryDB = "UPDATE mb_ligas SET logo = '". $fLogo . "'
                   WHERE idLiga  = '". $fila[0] . "'";
             $resultadoBDaux2 = $this->oConexBD->ejecutarConsulta($queryDB, 1);
@@ -373,13 +363,32 @@ class controllerLiga {
     
     try {
 
+      $fIdLiga = (int) $fIdLiga;
       $this->oLiga = $this->recuperarDatosLiga ( $fIdLiga );
 
-        $queryDB = "DELETE FROM mb_ligas 
-            WHERE idLiga = ".$fIdLiga ;
+        $queryDB = "DELETE FROM mb_enfren_misiones_sec
+            WHERE idEnfrentamiento IN (SELECT idEnfrentamiento FROM mb_enfrentamientos WHERE idLiga = ".$fIdLiga.")";
 
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
             
+
+        $queryDB = "DELETE FROM mb_listas
+            WHERE idLiga = ".$fIdLiga;
+
+      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+
+
+        $queryDB = "DELETE FROM mb_enfrentamientos
+            WHERE idLiga = ".$fIdLiga;
+
+      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+
+
+        $queryDB = "DELETE FROM mb_jugadores
+            WHERE idLiga = ".$fIdLiga;
+
+      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+
 
         $queryDB = "DELETE FROM mb_fases 
             WHERE idLiga = ".$fIdLiga ;
@@ -387,8 +396,19 @@ class controllerLiga {
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
 
-         $queryDB = "DELETE FROM mb_jugadores 
-            WHERE idLiga = ".$fIdLiga ;
+        $queryDB = "DELETE FROM mb_misiones_secundarias
+            WHERE idLiga = ".$fIdLiga;
+
+      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+
+
+        $queryDB = "DELETE FROM mb_ligas_usuarios
+            WHERE idLiga = ".$fIdLiga;
+
+      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+
+        $queryDB = "DELETE FROM mb_ligas
+            WHERE idLiga = ".$fIdLiga;
 
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
@@ -418,7 +438,7 @@ class controllerLiga {
 
 
   /* método para PAGINADOR de empresas */
-    public function paginadorLigas (  $fNombre = null, $fIndActivo = null, $fFecIni = null ) {
+    public function paginadorLigas (  $fNombre = null, $fIndActivo = null, $fFecIni = null, $idLigasUsuario = null ) {
     
     try {
 
@@ -427,9 +447,11 @@ class controllerLiga {
               WHERE 1=1 ";
             
       // GESTIONAMOS FILTROS
+      if (isset($_SESSION['rol']) && $_SESSION["rol"] != "ADMIN" && $idLigasUsuario === null && function_exists('ligasPermitidasUsuario')) { $idLigasUsuario = ligasPermitidasUsuario(); }
       if ( $fNombre != null) { $queryDB .= " AND UPPER(nombre) LIKE UPPER('%" . $fNombre  . "%') ";  }
       if ( $fIndActivo != null) { $queryDB .= " AND indActivo = " . $fIndActivo;  }
-      if ( $fFecIni != null) { $queryDB .= " AND fecIni = '" . $this->formatoFecha( $fFecIni, true);  }            
+      if ( $fFecIni != null) { $queryDB .= " AND fecIni = '" . $this->formatoFecha( $fFecIni, true);  }
+      if ( $idLigasUsuario !== null) { $queryDB .= " AND idLiga in (" . $idLigasUsuario . ")"; }
 
 
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
@@ -449,7 +471,6 @@ class controllerLiga {
       return null;   
     }
     }
-
 
     /* método para recuperar el último liga */
     public function recuperarUltimaLiga ( $fNombre,  $fFecIni ) {
@@ -485,21 +506,29 @@ class controllerLiga {
 
 
     /* Listado de empresas para los formularios de búsqueda */
-    public function recuperarSelectLigas( $formAlta = null, $mostrarInactivos = false, $idLigas = null ){
+    public function recuperarSelectLigas( $formAlta = null, $mostrarInactivos = false, $idLigas = null, $selectorPublico = false ){
     try {
 
 
       // si es admin no se filtra por inactivos
-      if (isset($_SESSION["rol"]) && $_SESSION["rol"] == "ADMIN"){
+      if (!$selectorPublico && isset($_SESSION["rol"]) && $_SESSION["rol"] == "ADMIN"){
         $mostrarInactivos = true;
         $idLigas = null;
+      } elseif (!$selectorPublico && $idLigas === null && function_exists('ligasPermitidasUsuario') && isset($_SESSION['rol'])) {
+        $idLigas = ligasPermitidasUsuario();
+      }
+      if (!$selectorPublico && isset($_SESSION["rol"]) && $_SESSION["rol"] != "ADMIN" && $idLigas !== null) {
+        $mostrarInactivos = true;
       }
       
 
-        $queryDB = "SELECT idLiga, nombre, indActivo FROM mb_ligas WHERE 1 = 1 ";
+        $queryDB = "SELECT idLiga,
+                CONCAT(COALESCE(YEAR(COALESCE(fecIni, (SELECT MIN(fecIni) FROM mb_fases WHERE mb_fases.idLiga = mb_ligas.idLiga))), ''), '_', nombre),
+                indActivo
+            FROM mb_ligas WHERE 1 = 1 ";
         $queryDB .= (!$mostrarInactivos)? " AND indActivo = 1 " : ""; 
-        $queryDB .= ($idLigas != null)? " AND idLiga in (" . $idLigas . ")" : "";     
-        $queryDB .="  ORDER BY nombre";
+        $queryDB .= ($idLigas !== null)? " AND idLiga in (" . $idLigas . ")" : "";
+      $queryDB .="  ORDER BY fecIni DESC, nombre";
 
       $arrResultados = array ();
       
@@ -518,7 +547,7 @@ class controllerLiga {
         }else{
            $nombreLiga = $fila[1] ;
         }
-          array_push($arr, $fila[0], $nombreLiga ) ;
+          array_push($arr, $fila[0], $nombreLiga, $fila[2] ) ;
           array_push($arrResultados, $arr);
         }
           

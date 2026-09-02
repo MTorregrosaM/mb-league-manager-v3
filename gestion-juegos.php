@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . "/config/auth.php"; exigirAdministrador(); ?>
+<html lang="es" data-bs-theme="dark">
 <head>
   <?php require_once("cabecera.php"); ?>
 </head>
@@ -125,19 +127,19 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
       <td class="align-center td-acciones">
         <form method="GET" action="gestion-facciones.php" class="form-btn-acciones">
           <input type="hidden" name="idJuego" value="<?php echo (int) $juego[0]; ?>" />
-          <img src="recursos/img/icon_fases.png" title="Ver facciones del juego" alt="Ver facciones" class="btn-facciones" />
+          <img src="recursos/img/cog.svg" title="Ver facciones del juego" alt="Ver facciones" class="btn-facciones" />
         </form>
         <form method="POST" action="gestion-juegos.php" class="form-btn-acciones">
           <input type="hidden" name="accionForm" value="3" />
           <input type="hidden" name="fIdJuegoBorrar" value="<?php echo (int) $juego[0]; ?>" />
-          <img src="recursos/img/icon_eliminar.png" title="Eliminar juego" alt="Eliminar juego" class="btn-borrar" />
+          <img src="recursos/img/trash.svg" title="Eliminar juego" alt="Eliminar juego" class="btn-borrar" />
         </form>
         <form method="POST" action="gestion-juegos.php" class="form-btn-acciones">
           <input type="hidden" name="accionForm" value="4" />
           <input type="hidden" name="fIdJuego" value="<?php echo (int) $juego[0]; ?>" />
           <input type="hidden" name="fDescJuego" value="<?php echo htmlspecialchars($juego[1], ENT_QUOTES, "UTF-8"); ?>" />
           <input type="hidden" name="fIndActivo" value="<?php echo (int) $juego[2]; ?>" />
-          <img src="recursos/img/icon_editar.png" title="Editar juego" alt="Editar juego" class="btn-editar-reg" />
+          <img src="recursos/img/tool.svg" title="Editar juego" alt="Editar juego" class="btn-editar-reg" />
         </form>
       </td>
     </tr>

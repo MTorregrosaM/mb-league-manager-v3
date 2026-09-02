@@ -25,8 +25,8 @@ class controllerJugador {
   /* GETTERS Y SETTERS */
   public function __get($property) {
       if (property_exists($this, $property)) {
-        return $this->$property;
-    }
+          return $this->$property;
+        }
   }
 
     public function __set($property, $value) {
@@ -45,7 +45,7 @@ class controllerJugador {
     public function recuperarDatosJugador( $idJugador ){
     try {
 
-        $queryDB = "SELECT idLiga, nick, nombre, apellido1, apellido2, foto, telefono, email, bando, puntosPintura
+        $queryDB = "SELECT idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura
               FROM mb_jugadores
               WHERE 1=1 ";
         $queryDB .= "AND idJugador = '". $idJugador . "' ";
@@ -54,7 +54,7 @@ class controllerJugador {
 
       if ($resultadoBD != null){
         foreach ($resultadoBD as $fila) {
-          $this->oJugador = new Jugador ( $idJugador, $fila[0], $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8], $fila[9] ) ;
+          $this->oJugador = new Jugador ( $idJugador, $fila[0], $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8] ) ;
           return  $this->oJugador;  
         }
       }else{
@@ -81,7 +81,7 @@ class controllerJugador {
 
       $numPag =  ($numPag > 0)? ($numPag * 10) :  $numPag ;
   
-        $queryDB = "SELECT  idJugador, idLiga, nick, nombre, apellido1, apellido2, foto, telefono, email, bando, puntosPintura
+        $queryDB = "SELECT  idJugador, idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura
               FROM mb_jugadores 
               WHERE 1=1 ";
             
@@ -89,7 +89,7 @@ class controllerJugador {
         if ( $fIdLiga != null ) { $queryDB .= " AND idLiga = " . $fIdLiga ;  }
       if ( $fNick != null ) { $queryDB .= " AND UPPER(nick) LIKE UPPER('%" . $fNick  . "%') ";  }
       if ( $fEmail != null ) { $queryDB .= " AND UPPER(email) LIKE '%" . $fEmail. "%'";  }
-      if ( $fTelefono != null ) { $queryDB .= " AND telefono LIKE '%" . fTelefono . "%'";  }  
+      if ( $fTelefono != null ) { $queryDB .= " AND telefono LIKE '%" . $fTelefono . "%'";  }
       if ( $validarEnfrentamientos ) { $queryDB .= " AND (idJugador not in (select distinct idJugador1 from mb_enfrentamientos WHERE numFase = " . $fNumFase . " AND numRonda = " . $fNumRonda  ."  )
                                AND idJugador not in (select distinct idJugador2 from mb_enfrentamientos WHERE numFase = " . $fNumFase . " AND numRonda = " . $fNumRonda   ."))";  }   
 
@@ -108,7 +108,7 @@ class controllerJugador {
         foreach ($resultadoBD as $fila) {
           $arrObjeto = array();
 
-          array_push($arrObjeto, $fila[0], $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8], $fila[9], $fila[10]  ) ;
+          array_push($arrObjeto, $fila[0], $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8], $fila[9]  ) ;
 
           array_push($arrResultados, $arrObjeto);
         }
@@ -245,8 +245,7 @@ class controllerJugador {
               UNION SELECT distinct idEnfrentamiento,idJugador1, idJugador2,nick, resultadoJugador1, resultadoJugador2, fechaBatalla 
               FROM mb_enfrentamientos t1 join mb_jugadores t2 on t1.idJugador1 = t2.idJugador 
               WHERE t1.idLiga = " . $fIdLiga ." AND numRonda = " . $fNumRonda ." and t1.numFase = " .$fNumFase . " and t1.idJugador2 = " .  $fIdJugador1 . "
-              ) A";
-
+                  ) A";
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
 
       $arrResultados = array ();
@@ -322,7 +321,7 @@ class controllerJugador {
 
 
     /* método para MODIFICAR los datos de un registro. Previamente debemos comprobar cuáles han cambiado */
-    public function modificarDatosJugador( $fIdJugador, $fNick, $fNombre, $fApellido1, $fApellido2, $fFoto, $fTelefono, $fEmail, $fBando, $fPuntosPintura ){
+    public function modificarDatosJugador( $fIdJugador, $fNick, $fNombre, $fApellido1, $fApellido2, $fTelefono, $fEmail, $fBando, $fPuntosPintura ){
       
     try {
 
@@ -331,7 +330,6 @@ class controllerJugador {
       $this->oJugador = $this->recuperarDatosJugador ( $fIdJugador );
   
       $aux = 0; 
-      $auxfoto = 0; 
         $queryDB = "UPDATE mb_jugadores SET ";
 
         if ($fNombre != $this->oJugador->nombre){
@@ -378,23 +376,9 @@ class controllerJugador {
           $aux = 1;
         }   
       
-        if ($fFoto != $this->oJugador->foto){
-        // borramos el foto previo 
-        if (file_exists("./recursos/img/jugadores/". $this->oJugador->foto))
-          unlink("./recursos/img/jugadores/". $this->oJugador->foto);
-        
-          $fFotoAux = "foto-".$fIdJugador.substr($fFoto,strpos($fFoto, "."));
-        $queryDB = "UPDATE mb_jugadores SET foto = '". $fFotoAux . "'
-                WHERE idJugador  = '". $fIdJugador . "'";
-        $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
-          $auxfoto = 1;
-        }
         $queryDB .= " WHERE idJugador = " . $fIdJugador;
 
-    
-        if ($auxfoto == 1){
-          return 1;
-        }elseif ($aux == 1){ 
+        if ($aux == 1){
         $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
         if ($resultadoBD >= 1){
@@ -418,7 +402,7 @@ class controllerJugador {
 
 
     /* método para ALTA NUEVA */
-    public function altaNuevoJugador( $fIdLiga, $fNick, $fNombre, $fApellido1, $fApellido2, $fFoto, $fTelefono, $fEmail, $fBando, $fPuntosPintura ){
+    public function altaNuevoJugador( $fIdLiga, $fNick, $fNombre, $fApellido1, $fApellido2, $fTelefono, $fEmail, $fBando, $fPuntosPintura ){
 
     try {
       if ( trim((string) $fIdLiga) === '' || trim((string) $fNick) === '' || trim((string) $fEmail) === '' ) {
@@ -432,39 +416,30 @@ class controllerJugador {
       $fNombre = addslashes(trim((string) $fNombre));
       $fApellido1 = addslashes(trim((string) $fApellido1));
       $fApellido2 = addslashes(trim((string) $fApellido2));
-      $fFoto = addslashes(trim((string) $fFoto));
       $fEmail = addslashes(trim((string) $fEmail));
       $fBando = addslashes(trim((string) $fBando));
 
-      $queryDB = "INSERT INTO mb_jugadores( idLiga, nick, nombre, apellido1, apellido2, foto, telefono, email, bando, puntosPintura, audAlta )
-            VALUES (" . $fIdLiga . ",'". $fNick . "', '" . $fNombre . "', '" . $fApellido1 . "', '" . $fApellido2 . "','" . $fFoto . "' , ". $fTelefono . ", '" .  $fEmail . "' , '" . 
+      $queryDuplicado = "SELECT idJugador FROM mb_jugadores WHERE nick = '" . $fNick . "' OR email = '" . $fEmail . "'";
+      if ($fNombre !== '' && $fApellido1 !== '' && $fApellido2 !== '') {
+        $queryDuplicado .= " OR (nombre = '" . $fNombre . "' AND apellido1 = '" . $fApellido1 . "' AND apellido2 = '" . $fApellido2 . "')";
+      }
+      if ($fTelefono !== 0) {
+        $queryDuplicado .= " OR telefono = " . $fTelefono;
+      }
+      $duplicado = $this->oConexBD->ejecutarConsulta($queryDuplicado);
+      if ($duplicado != null) {
+        return 3;
+      }
+
+      $queryDB = "INSERT INTO mb_jugadores( idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura, audAlta )
+        VALUES (" . $fIdLiga . ",'". $fNick . "', '" . $fNombre . "', '" . $fApellido1 . "', '" . $fApellido2 . "' , ". $fTelefono . ", '" .  $fEmail . "' , '" .
               $fBando . "', " . $fPuntosPintura . ", '" . Date('Y-m-d H:i:s') . "' )";
       
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
 
       if ($resultadoBD >= 1){
-
-        //calculamos el ID para asignar la foto
-        $queryDB = "SELECT MAX(idJugador)  as idJugador FROM mb_jugadores";
-
-        $resultadoBDaux = $this->oConexBD->ejecutarConsulta($queryDB);
-
-        if ($resultadoBDaux != null){
-
-          foreach ($resultadoBDaux as $fila) {
-
-            $fFoto = ($fFoto != "")? "foto-".$fila[0].substr($fFoto,strpos($fFoto, ".")) : "foto-".$fila[0].".png";
-            $queryDB = "UPDATE mb_jugadores SET foto = '". $fFoto . "'
-                  WHERE idJugador  = '". $fila[0] . "'";
-            $resultadoBDaux2 = $this->oConexBD->ejecutarConsulta($queryDB, 1);
-
-            if ($resultadoBDaux2 >= 1){
-
-              return 1; 
-            }
-          }
-        }
+        return 1;
       }else{
         return 2;
       } 
@@ -495,12 +470,6 @@ class controllerJugador {
       if ($resultadoBD >= 1){
 
         // borramos cualquier imagen con las 3 extensiones permitidas
-        if (file_exists("./recursos/img/jugadores/foto-".  $fIdJugador .".png"))
-          unlink("./recursos/img/jugadores/foto-".  $fIdJugador .".png");
-        if (file_exists("./recursos/img/jugadores/foto-".  $fIdJugador .".jpg"))
-          unlink("./recursos/img/jugadores/foto-".  $fIdJugador .".jpg");
-        if (file_exists("./recursos/img/jugadores/foto-".  $fIdJugador  .".gif"))
-          unlink("./recursos/img/jugadores/foto-".  $fIdJugador .".gif");
         return true;  
       }else{
         return false;
@@ -530,7 +499,7 @@ class controllerJugador {
         if ( $fIdLiga != null) { $queryDB .= " AND idLiga = " . $fIdLiga ;  }
       if ( $fNick != null) { $queryDB .= " AND UPPER(nick) LIKE UPPER('%" . $fNick  . "%') ";  }
       if ( $fEmail != null) { $queryDB .= " AND UPPER(email) LIKE '%" . $fEmail. "%'";  }
-      if ( $fTelefono != null) { $queryDB .= " AND telefono LIKE '%" . fTelefono . "%'";  }       
+      if ( $fTelefono != null) { $queryDB .= " AND telefono LIKE '%" . $fTelefono . "%'";  }
 
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
 

@@ -1,4 +1,6 @@
-  ﻿<head>
+  <?php require_once __DIR__ . "/config/auth.php"; exigirAdministrador(); ?>
+  <html lang="es" data-bs-theme="dark">
+  <head>
     <?php require_once ("cabecera.php"); ?>
   </head>
 
@@ -45,8 +47,11 @@
 
 
 		// ACTUALIZAMOS PERMISOS
-		if ( $accionForm == 1 ){
-			$oControllerUsuario->modificarPermisosUsuario($fIdUsuario, $fIdsLigasUsuario);
+    if ( $accionForm == 1 && isset($_POST["guardarPermisos"]) ){
+			$comprobarMod = $oControllerUsuario->modificarPermisosUsuario($fIdUsuario, $fIdsLigasUsuario);
+      $mensajeAltaMod .= "<div id=\"" . (($comprobarMod == 1) ? "mensaje-ok" : "mensaje-error") . "\">" .
+        (($comprobarMod == 1) ? "Permisos actualizados correctamente." : "Se ha producido un error al actualizar los permisos.") .
+        "</div>";
       		$arrLigas =  $oControllerUsuario->recuperarSelectLigasUsuario($fIdUsuario);
 			//echo $ligasUsuario;
 		}
@@ -67,22 +72,23 @@
       
         <?php printf ($mensajeAltaMod);  ?>   
 		<input type="hidden" name="accionForm" id="accionForm" value="1"/>
+    <input type="hidden" name="guardarPermisos" id="guardarPermisos" value="1"/>
         <input type="hidden" name="fIdUsuario" id="fIdUsuario" value="<?php printf($fIdUsuario);?>"/>
         
         <p>Seleccione qué Ligas puede gestionar el usuario <strong><?php echo $oUsuarioForm->nick; ?></strong></p>
-        <p>
+        <div class="ligas-permisos-grid">
         <?php
 
               if (count($arrLigas) >= 1 ){
                 foreach ($arrLigas as $fila){
-                  printf("<input type=\"checkbox\" name=\"fIdsLigasUsuario[]\" value=\"". $fila[0] . "\" class=\"checkbox-form\"");
+                  printf("<label class=\"checkbox-liga\"><input type=\"checkbox\" name=\"fIdsLigasUsuario[]\" value=\"". $fila[0] . "\" class=\"checkbox-form\"");
                    if ($fila[2] != null) printf("checked ");
-                  printf(">" . $fila[1] . "<br/>");      
+                  printf(">" . htmlspecialchars($fila[1], ENT_QUOTES, "UTF-8") . "</label>");
                 }
               }
 
         ?>
-        </p>
+        </div>
    
         
         <p><input type="submit" value="Actualizar permisos" id="formButton" class="submit-button"/></p>

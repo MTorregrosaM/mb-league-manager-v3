@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . "/config/auth.php"; exigirAdministrador(); ?>
+<html lang="es" data-bs-theme="dark">
 <head>
   <?php require_once("cabecera.php"); ?>
 </head>
@@ -113,7 +115,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
           <input type="hidden" name="idJuego" value="<?php echo $idJuego; ?>" />
           <input type="hidden" name="accionForm" value="3" />
           <input type="hidden" name="fIdFaccionBorrar" value="<?php echo (int) $faccion[0]; ?>" />
-          <img src="recursos/img/icon_eliminar.png" title="Eliminar facción" alt="Eliminar facción" class="btn-borrar" />
+          <img src="recursos/img/trash.svg" title="Eliminar facción" alt="Eliminar facción" class="btn-borrar" />
         </form>
         <form method="POST" action="gestion-facciones.php" class="form-btn-acciones">
           <input type="hidden" name="idJuego" value="<?php echo $idJuego; ?>" />
@@ -121,7 +123,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
           <input type="hidden" name="fIdFaccion" value="<?php echo (int) $faccion[0]; ?>" />
           <input type="hidden" name="fDescFaccion" value="<?php echo htmlspecialchars($faccion[2], ENT_QUOTES, "UTF-8"); ?>" />
           <input type="hidden" name="fIndActivo" value="<?php echo (int) $faccion[3]; ?>" />
-          <img src="recursos/img/icon_editar.png" title="Editar facción" alt="Editar facción" class="btn-editar-reg" />
+          <img src="recursos/img/tool.svg" title="Editar facción" alt="Editar facción" class="btn-editar-reg" />
         </form>
       </td>
     </tr>

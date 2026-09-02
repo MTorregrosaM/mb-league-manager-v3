@@ -1,25 +1,10 @@
 ﻿<?php 
-		session_start();
+		require_once __DIR__ . "/config/auth.php";
+		require_once __DIR__ . "/config/mailer.php";
 ?>
+<html lang="es" data-bs-theme="dark">
 <head>
-<meta name="viewport" content="width=device-width" />
-	<!-- js -->
-	<script type="text/javascript" src="recursos/js/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery.form-validator.min.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery-spanish.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery.raty.js"></script>
-	<script type="text/javascript" src="recursos/js/responsive-nav.js"></script>	
-
-	<!-- css  -->
-	<link rel="stylesheet" href="recursos/css/estilos.css" type="text/css" media="screen, projection"/>
-	<link rel="stylesheet" type="text/css" href="recursos/js/css/jquery-ui.min.css" />
-	<link rel="stylesheet" type="text/css" href="recursos/js/css/jquery.raty.css" />
-	<link href="https://fonts.googleapis.com/css?family=Fjalla+One|Open+Sans|Oswald|PT+Serif" rel="stylesheet">
-
-		
-	<link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-32x32.png" sizes="32x32" />
-	<link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-256x256.png" sizes="192x192" />
+<?php require_once "cabecera.php"; ?>
 
 </head>
 
@@ -107,25 +92,17 @@
 			$jug1 = $oControllerJugador->recuperarDatosJugador( $fIdJugador1 );
 			$jug2 = $oControllerJugador->recuperarDatosJugador( $fIdJugador2 );
 
-			$mail_header = "MIME-Version: 1.0\r\n";
-			$mail_header .= "Content-type: text/html; charset=utf-8\r\n";
-			$mail_header .= "From: Rangers Modelbrush <no-reply@modelbrush.com>\r\n";
-			$mail_header .= "Reply-To: Rangers Modelbrush <rangers@modelbrush.com>\r\n";
-			$mail_header .= "Bcc: rangers@modelbrush.com\r\n";
-			$mail_destino = $jug1->email.",".$jug2->email;		
-			$mail_titulo = "Liga FoW GTS - Asignacion de bandos aleatoria (" . $jug1->nick  . " vs " . $jug2->nick . ")";
-
-			$body = "<p>Hola,</p><p>Se han generado aleatoriamente los bandos del enfrentamiento de la " . $fNumFase . "&ordf; fase  de la <i>" . $fNombreLiga . "</i> entre <strong>" .  $jug1->nick . "</strong> y <strong>" . $jug2->nick . "</strong>.</p>";
-			$body .= "<table border=\"0\"><tr><td><img src=\"http://www.modelbrush.com/mb-league/images/" . $banderaBandoJug1 . "\"/></td><td></td>
-						<td><img src=\"http://www.modelbrush.com/mb-league/images/" . $banderaBandoJug2 . "\"/></td></tr>";
-			$body .= "<tr><td style=\"text-align: center; font-weight: bold; font-size: 16px;\">" . $jug1->nick . "</td><td>vs</td><td style=\"text-align: center; font-weight: bold; font-size: 16px;\">" . $jug2->nick . "</td></tr></table>";
-			$body .= "<p>Este correo se ha env&iacute;a a ambos jugadores y a la organizaci&oacute;n. </p>";
-			$body .= "<p>Cualquier duda, pod&eacute;is contactar con <a href=\"mailto:hola@modelbrush.com\">hola@modelbrush.com</a>.</p><p>Un saludo</p>";
-
 			$_SESSION['tockenEnvio'] = 3;
 			$_SESSION['fIdJugador2'] = $fIdJugador2;
-		
-			mail($mail_destino, $mail_titulo, $body, $mail_header);
+			$body = "<p>Hola,</p><p>Se han generado aleatoriamente los bandos del enfrentamiento de la " . $fNumFase . "&ordf; fase de la <i>" . htmlspecialchars($fNombreLiga, ENT_QUOTES, 'UTF-8') . "</i>.</p>";
+			$body .= "<p>" . htmlspecialchars($jug1->nick, ENT_QUOTES, 'UTF-8') . ": " . htmlspecialchars($bandoJug1, ENT_QUOTES, 'UTF-8') . "</p>";
+			$body .= "<p>" . htmlspecialchars($jug2->nick, ENT_QUOTES, 'UTF-8') . ": " . htmlspecialchars($bandoJug2, ENT_QUOTES, 'UTF-8') . "</p>";
+			$body .= "<p>Cualquier duda, pod&eacute;is contactar con <a href=\"mailto:hola@modelbrush.com\">hola@modelbrush.com</a>.</p>";
+			enviarCorreoSeguro(
+				array($jug1->email, $jug2->email),
+				"Liga FoW GTS - Asignacion de bandos aleatoria",
+				$body
+			);
 
 			$mensaje = "<div id=\"mensaje-ok\">Asiganci&oacute;n aleatoria realizada correctamente. Os hemos enviado un correo con el bando de cada jugador.</div>";
 		}else{
@@ -141,13 +118,8 @@
 ?>
 <div id="contenedor-principal">
 	<?php require_once("menu.php"); ?>
-	<div id="img-cabecera">
-		<a href="cruce-doble-lista.php">
-			<img src="images/logo_ligas_2018.jpg" >
-		</a>
-	</div>
 	<div>
-		<h2>Generar bando aleatorio para enfrentamiento con doble lista</h2>
+		<h2 class="h2"><span>Generar bando aleatorio para enfrentamiento con doble lista</span></h2>
 	
 
 			<div id="buscador">

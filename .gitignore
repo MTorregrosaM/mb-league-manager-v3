@@ -4,3 +4,4 @@
 # MySQL test environment and generated server files
 /.mysql-test-data/
 /log.log
+/sql/seed_pro.sql

@@ -1,26 +1,10 @@
 <?php 
-    session_start();
+  require_once __DIR__ . "/config/auth.php";
+  require_once __DIR__ . "/config/mailer.php";
 ?>
+<html lang="es" data-bs-theme="dark">
 <head>
-<meta name="viewport" content="width=device-width" />
-  <!-- js -->
-  <script type="text/javascript" src="recursos/js/jquery-1.11.2.min.js"></script>
-  <script type="text/javascript" src="recursos/js/jquery.form-validator.min.js"></script>
-  <script type="text/javascript" src="recursos/js/jquery-spanish.js"></script>
-  <script type="text/javascript" src="recursos/js/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="recursos/js/jquery.raty.js"></script>
-  <script type="text/javascript" src="recursos/js/responsive-nav.js"></script>  
-
-  <!-- css  -->
-  <link rel="stylesheet" href="recursos/css/estilos.css" type="text/css" media="screen, projection"/>
-  <link rel="stylesheet" type="text/css" href="recursos/js/css/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="recursos/js/css/jquery.raty.css" />
-
-  <link href="https://fonts.googleapis.com/css?family=Fjalla+One|Open+Sans|Oswald|PT+Serif" rel="stylesheet">
-
-    
-  <link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-32x32.png" sizes="32x32" />
-  <link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-256x256.png" sizes="192x192" />
+<?php require_once "cabecera.php"; ?>
 
 </head>
 
@@ -133,7 +117,7 @@
     
     // options para los select de los formularios
     // LIGAS
-    $arrLigas =  $oControllerLiga->recuperarSelectLigas( );
+    $arrLigas =  $oControllerLiga->recuperarSelectLigas( null, false, null, true );
 
     $selectLigasSelected = ($fIdLiga != null ) ? $fIdLiga : 0;
     
@@ -261,7 +245,7 @@
       */ 
 
   
-      $mensajeAltaMod .= "<div id=\"". (($comprobarAlta == 1)? "mensaje-ok" : "mensaje-error") ."\">". 
+      $mensajeAltaMod .= "<div id=\"". (($comprobarAlta == 1)? "mensaje-ok" : "mensaje-error") ." class=\"alert " . (($comprobarAlta == 1)? "alert-success" : "alert-danger") . "\" role=\"alert\">".
                 ( ($comprobarAlta == 1)? "Resultado grabado correctamente." : 
                    (($comprobarAlta == 3)? "Revisa todos los campos." : 
                     (($comprobarAlta == 4)? "Los resultados no coinciden con los registrados por el otro jugador. Ponte en contacto con los rangers." :"Se ha producido un error en su solicitud.") )) ."</div>";
@@ -305,23 +289,21 @@
         $body .= "<a href=\"http://www.modelbrush.com\"><img src=\"http://wiki.modelbrush.com/images/6/67/FIRMA-FOROS.jpg\" border=\"0\"/></a>";
       }
 
+      if (($comprobarAlta == 1 || $comprobarAlta == 4) && isset($body)) {
+        enviarCorreoSeguro(
+          array($oJugador2->email, $oJugador1->email),
+          $oLiga->nombre . " - Registro resultados",
+          $body
+        );
+      }
 
-      $mail_header = "MIME-Version: 1.0\r\n";
-      $mail_header .= "Content-type: text/html; charset=utf-8\r\n";
-      $mail_header .= "From: Rangers Modelbrush <no-reply@modelbrush.com>\r\n";
-      $mail_header .= "Reply-To: Rangers Modelbrush <hola@modelbrush.com>\r\n";
-      $mail_header .= "Bcc: hola@modelbrush.com\r\n";
-      $mail_destino = $oJugador2->email.",".$oJugador1->email;      
-      $mail_titulo =  $oLiga->nombre . " - Registro resultados";
-
-      mail($mail_destino, $mail_titulo, $body, $mail_header);
 
       // tocken para evitar duplicados
       $tockenEnvio = 1;
 
     }else if ($accionForm == 1 && $tockenEnvio = 1){
 
-      $mensajeAltaMod .= "<div id=\"mensaje-error\">El resultado de tu batalla ya se ha enviado, no puedes volver a enviarlo. Si tienes alguna duda escr&iacute;benos a <a href='hola@modelbrush.com'>hola@modelbrush.com</a>.</div>";
+      $mensajeAltaMod .= "<div id=\"mensaje-error\" class=\"alert alert-danger\" role=\"alert\">El resultado de tu batalla ya se ha enviado, no puedes volver a enviarlo. Si tienes alguna duda escr&iacute;benos a <a href='hola@modelbrush.com'>hola@modelbrush.com</a>.</div>";
       
     }
     
@@ -337,28 +319,31 @@
 
 <div id="contenedor-principal">
   <?php require_once("menu.php"); ?>
-  <div id="img-cabecera">
-    <a href="alta-resultados.php">
-        <img src="<?php if(isset($oLiga) and $oLiga != null) { printf("recursos/img/ligas/". $oLiga->logo); }else{ printf("images/logo_ligas_2018.jpg"); } ?>"  width="100%" />     
-    </a>
-  </div>
+  <?php if (isset($oLiga) && $oLiga != null && !empty($oLiga->logo)) { ?>
+    <div id="img-cabecera">
+      <a href="alta-resultados.php">
+        <img src="<?php printf("recursos/img/ligas/" . htmlspecialchars($oLiga->logo, ENT_QUOTES, 'UTF-8')); ?>" width="100%" />
+      </a>
+    </div>
+  <?php } ?>
 
-    <h2 class="h2"><span>Registrar enfrentamiento  <?php if(isset($oLiga) and $oLiga != null) { printf(" en " . $oLiga->nombre); } ?></span></h2> 
+    <h2 class="h2"><span>Registrar enfrentamiento  <?php if(isset($oLiga) and $oLiga != null) { printf(" en " . $oLiga->nombre); } ?></span></h2>
 
   <?php if($fClaveCifrada == null || !$auxClaveCorrecta){ ?>
     <div id="buscador">
 
       <?php if(!$auxClaveCorrecta && $fClaveCifrada != null){ ?>
-        <div id="mensaje-error">&iexcl;&iexcl;ERROR!! CLAVE SECRETA INCORRECTA.</div>
-      <?php } ?> 
+        <div id="mensaje-error" class="alert alert-danger" role="alert">&iexcl;&iexcl;ERROR!! CLAVE SECRETA INCORRECTA.</div>
+      <?php } ?>
 
       <form name="validadorClave" id="validadorClave" method="POST" action="">
         <input type="hidden" name="accionForm" id="accionForm" value="5"/>
-        <label for="fIdLiga">Liga: </label> <select name="fIdLiga" id="fIdLiga" data-validation="required " ><option></option><?php printf($selectLigas); ?> </select>  
+        <label for="fIdLiga">Liga: </label> <select name="fIdLiga" id="fIdLiga" data-validation="required " ><option></option><?php printf($selectLigas); ?> </select>
         <label for="fNumFase">Fase: </label> <span id="selectFases"><select name="fNumFase" id="fNumFase" data-validation="required" ><?php printf($selectFases); ?></select></span>
-        <label for="fClaveCifrada">Clave cifrada: </label>   <input type="password" name="fClaveCifrada" id="fClaveCifrada" data-validation="required "  value="<?php printf($fClaveCifrada);?>"  />  
-        <input type="submit" value="Confirmar clave" id="formButton" class="submit-button"/> 
+        <label for="fClaveCifrada">Clave cifrada: </label> <input type="password" name="fClaveCifrada" id="fClaveCifrada" class="input-corto-200" data-validation="required " value="<?php printf($fClaveCifrada);?>" />
+        <input type="submit" value="Confirmar clave" id="formButton" class="submit-button btn btn-primary w-100"/>
       </form>
+    </div>
     <script>
       $.validate( { 
           form : '#validadorClave',
@@ -416,23 +401,6 @@
                   <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>" >            
                 <p id="enfrentamientoJug1" > </p>
                   <div id="slider-resultado-1" style=" width: 300px; background: #cd5700">
-                  </div>
-                </div>
-
-              <div class="resultados-dec">
-                  <input class="input-resultado" type="text" id="fResultadoJugador2" name="fResultadoJugador2" value="<?php printf($fResultadoJugador2); ?>" >
-                <p id="enfrentamientoJug2" ><?php printf($fIdJugador2Nick);?></p>
-                  <div id="slider-resultado-2" style="width: 300px; background: #cd5700;" ></div>
-                </div>
-              <?php } ?>    
-
-
-            <!-- RESULTADOS - ICONOS VICTORIA, EMPATE, DERROTA. WARHAMMER 40K, BOLT ACTION -->
-            <?php if ($oLiga->idJuego > 2 && $oLiga->idJuego <> 5)  {?>
-              <div class=" resultados-radio">                         
-                    <label>
-                      <input type="radio" name="fResultadoRadio" value="3" <?php if ($fResultadoRadio == 3){ printf("checked"); } ?>/>
-                      <img src="images/icono-victoria.png">
                     </label>                
                     <label>
                       <input type="radio" name="fResultadoRadio" value="1" <?php if ($fResultadoRadio == 1){ printf("checked"); } ?>/>
@@ -484,7 +452,7 @@
           <?php } ?>
 
 
-          <p><input type="submit" value="Confirmar resultado" id="formButton" class="submit-button"/></p>
+          <p><input type="submit" value="Confirmar resultado" id="formButton" class="submit-button btn btn-primary w-100"/></p>
         </form>
         <script>
           $.validate( { 

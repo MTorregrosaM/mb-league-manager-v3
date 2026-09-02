@@ -10,7 +10,6 @@
 	/* cargamos clases de conexion a bd y log */
 	require_once __DIR__ . "/log.class.php";
 	require_once __DIR__ . "/db.class.php";
-	//require_once ($_SERVER['DOCUMENT_ROOT'] .  "motor.correo.php");
 
 	/* personalizamos el tratamiento de errores */
 

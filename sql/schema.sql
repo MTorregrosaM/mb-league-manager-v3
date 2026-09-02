@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS mb_fases (
 CREATE TABLE IF NOT EXISTS mb_usuarios (
   idUsuario INT NOT NULL AUTO_INCREMENT,
   nick VARCHAR(250) NOT NULL,
-  pass VARCHAR(32) NOT NULL,
+  pass VARCHAR(255) NOT NULL,
   rol VARCHAR(45) NOT NULL,
   ult_acceso DATETIME DEFAULT NULL,
   PRIMARY KEY (idUsuario),
@@ -93,8 +93,8 @@ CREATE TABLE IF NOT EXISTS mb_jugadores (
 CREATE TABLE IF NOT EXISTS mb_listas (
   idLiga INT NOT NULL,
   idJugador INT NOT NULL,
-  numFase INT DEFAULT NULL,
-  bando VARCHAR(20) DEFAULT NULL,
+  numFase INT NOT NULL,
+  bando VARCHAR(20) NOT NULL,
   urlDocumento VARCHAR(45) DEFAULT NULL,
   fechaDocumento DATETIME DEFAULT NULL,
   PRIMARY KEY (idLiga, idJugador, numFase, bando),
@@ -103,12 +103,12 @@ CREATE TABLE IF NOT EXISTS mb_listas (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS mb_misiones_secundarias (
-  idMisionSecundaria INT NOT NULL AUTO_INCREMENT,
+  idMisionSecundaria INT NOT NULL,
   idLiga INT NOT NULL,
   tituloMisionSecundaria VARCHAR(250) NOT NULL,
   txtMisionSecundaria VARCHAR(250) NOT NULL,
   numMedallas INT NOT NULL DEFAULT 0,
-  PRIMARY KEY (idMisionSecundaria),
+  KEY idx_mb_misiones_id (idMisionSecundaria),
   KEY idx_mb_misiones_liga (idLiga),
   CONSTRAINT fk_mb_misiones_liga FOREIGN KEY (idLiga) REFERENCES mb_ligas (idLiga)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -153,6 +153,5 @@ CREATE TABLE IF NOT EXISTS mb_enfren_misiones_sec (
   idMisionSecundaria INT NOT NULL,
   PRIMARY KEY (idEnfrentamiento, idJugador1, idMisionSecundaria),
   CONSTRAINT fk_mb_enfren_misiones_enfrentamiento FOREIGN KEY (idEnfrentamiento) REFERENCES mb_enfrentamientos (idEnfrentamiento),
-  CONSTRAINT fk_mb_enfren_misiones_jugador FOREIGN KEY (idJugador1) REFERENCES mb_jugadores (idJugador),
-  CONSTRAINT fk_mb_enfren_misiones_mision FOREIGN KEY (idMisionSecundaria) REFERENCES mb_misiones_secundarias (idMisionSecundaria)
+  CONSTRAINT fk_mb_enfren_misiones_jugador FOREIGN KEY (idJugador1) REFERENCES mb_jugadores (idJugador)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -18,13 +18,12 @@ class Jugador {
 	private $nombre;
 	private $apellido1;
 	private $apellido2;
-	private $foto;
 	private $telefono;
 	private $email;
 	private $bando;
 	private $puntosPintura;
 
-	public function __construct($fIdLiga, $fIdJugador, $fNick, $fNombre,  $fApellido1, $fApellido2, $fFoto, $fTelefono, $fEmail, $fBando, $fPuntosPintura ) 
+	public function __construct($fIdLiga, $fIdJugador, $fNick, $fNombre,  $fApellido1, $fApellido2, $fTelefono, $fEmail, $fBando, $fPuntosPintura ) 
 	{ 
 
 		$this->idLiga = $fIdLiga;
@@ -33,7 +32,6 @@ class Jugador {
 	    $this->nombre = $fNombre;
 	    $this->apellido1 = $fApellido1;
 	    $this->apellido2 = $fApellido2;
-	    $this->foto = $fFoto;
 	    $this->telefono = $fTelefono;
 	    $this->email = $fEmail;
 	    $this->bando = $fBando;

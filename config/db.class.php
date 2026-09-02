@@ -116,6 +116,45 @@ class conexBD {
 
     }
 
+	public function ejecutarConsultaPreparada($query, $tipos = '', $parametros = array(), $dml = null){
+		try {
+			$this->abrirConexion();
+			$sentencia = $this->conexion->prepare($query);
+			if ($sentencia === false) {
+				throw new RuntimeException($this->conexion->error);
+			}
+			if ($tipos !== '') {
+				$referencias = array($tipos);
+				foreach ($parametros as $indice => $valor) {
+					$referencias[] = &$parametros[$indice];
+				}
+				call_user_func_array(array($sentencia, 'bind_param'), $referencias);
+			}
+			if (!$sentencia->execute()) {
+				throw new RuntimeException($sentencia->error);
+			}
+			if ($dml !== null) {
+				$afectadas = $sentencia->affected_rows;
+				$sentencia->close();
+				$this->cerrarConexion();
+				return $afectadas;
+			}
+			$resultado = $sentencia->get_result();
+			$filas = $resultado ? $resultado->fetch_all(MYSQLI_NUM) : array();
+			if ($resultado) {
+				$resultado->free();
+			}
+			$sentencia->close();
+			$this->cerrarConexion();
+			return $filas;
+		} catch (Exception $e) {
+			$oLog = Log::getInstance();
+			$this->cerrarConexion();
+			$oLog->trazaLog($e, "db.class.php");
+			return null;
+		}
+	}
+
 
 
 }

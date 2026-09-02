@@ -22,11 +22,7 @@ The following thumbnails show the main authenticated sections of the application
 
 <table>
 	<tr>
-		<td><a href="docs/screenshots/home.png"><img src="docs/screenshots/home.png" width="240" alt="Application home screen"></a></td>
 		<td><a href="docs/screenshots/leagues.png"><img src="docs/screenshots/leagues.png" width="240" alt="League management screen"></a></td>
-		<td><a href="docs/screenshots/players.png"><img src="docs/screenshots/players.png" width="240" alt="Player management screen"></a></td>
-	</tr>
-	<tr>
 		<td><a href="docs/screenshots/matches.png"><img src="docs/screenshots/matches.png" width="240" alt="Match management screen"></a></td>
 		<td><a href="docs/screenshots/double-list.png"><img src="docs/screenshots/double-list.png" width="240" alt="Double-list workflow screen"></a></td>
 	</tr>

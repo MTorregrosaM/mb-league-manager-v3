@@ -1,3 +1,7 @@
+<?php
+    require_once __DIR__ . "/config/auth.php";
+?>
+<html lang="es" data-bs-theme="dark">
 <head>
     <?php require_once ("cabecera.php"); ?>
 </head>
@@ -38,7 +42,7 @@
          
         // USUARIO
         $oControllerUsuario = new controllerUsuario();
-        $ligasUsuario = $oControllerUsuario->recuperarLigasUsuario( $_SESSION["usuario"] );
+        $ligasUsuario = $oControllerUsuario->recuperarLigasUsuario( $_SESSION["usuario"] ?? 0 );
     
         // options para los select de los formularios
         // LIGAS
@@ -152,11 +156,15 @@
                 <label for="fNumRonda">Ronda: </label> <span id="selectRondas"><select name="fNumRonda" id="fNumRonda" data-validation="required" ><?php printf($selectRondas); ?></select></span>
                 <input type="submit" value="Seleccionar evento" id="formButton" class="submit-button"/> 
 
-                <?php if($accionForm > 0){ ?>
-                    <a href="#" class="btn-grabar" id="btn-grabar">Grabar enfrentamientos</a>
-                <?php } ?>
             </form>
         </div>
+
+        <?php if($accionForm > 0){ ?>
+            <div class="enfrentamientos-actions">
+                <a href="#" class="btn-emparejar" id="btn-generar-emparejamientos">Generar emparejamientos</a>
+                <a href="#" class="btn-grabar" id="btn-grabar">Grabar enfrentamientos</a>
+            </div>
+        <?php } ?>
 
         <?php if($accionForm > 0 && $fIdLiga != null){ ?>
             
@@ -171,7 +179,9 @@
 
                 </div>
 
-                <?php printf($poolEnfrentamientos); ?>
+                <div class="matches-grid">
+                    <?php printf($poolEnfrentamientos); ?>
+                </div>
 
 
 
@@ -201,6 +211,34 @@
             return columns.join('#');
         }
     }
+
+    function generarEmparejamientosAleatorios()
+    {
+        var jugadores = [];
+        $('#div-enfrentamientos .sortable-list').each(function(){
+            $(this).children('li').each(function(){
+                jugadores.push(this);
+            });
+        });
+
+        if (jugadores.length % 2 !== 0){
+            alert("No se puede generar el emparejamiento porque hay un numero impar de jugadores.");
+            return;
+        }
+
+        for (var i = jugadores.length - 1; i > 0; i--){
+            var posicionAleatoria = Math.floor(Math.random() * (i + 1));
+            var jugador = jugadores[i];
+            jugadores[i] = jugadores[posicionAleatoria];
+            jugadores[posicionAleatoria] = jugador;
+        }
+
+        $('#div-enfrentamientos ul.ventana-enfrentamiento').empty();
+        $('#div-enfrentamientos ul.ventana-enfrentamiento').each(function(indice){
+            $(this).append(jugadores[indice * 2], jugadores[indice * 2 + 1]);
+        });
+    }
+
     $(document).ready(function(){
 
         // Example 1.3: Sortable and connectable lists with visual helper
@@ -219,6 +257,11 @@
         $("#fIdLiga").change(function(){ 
              actualizarSelectFases( $('#fIdLiga option:selected').val(), <?php printf($fNumFase); ?>);
              actualizarSelectRondas( $('#fIdLiga option:selected').val(), <?php printf($fNumRonda); ?>);
+        });
+
+        $("#btn-generar-emparejamientos").click(function(evento){
+            evento.preventDefault();
+            generarEmparejamientosAleatorios();
         });
 
         $("#btn-grabar").click(function(){

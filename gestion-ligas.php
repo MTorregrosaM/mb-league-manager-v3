@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . "/config/auth.php"; ?>
+<html lang="es" data-bs-theme="dark">
 <head>
   <?php require_once ("cabecera.php"); ?>
 </head>
@@ -9,13 +11,13 @@
   require_once ("model/class.php");
   require_once ("config/config.php");
   require_once ("controller/controller.php");
-  
+
 
   try {
 
     /* Variables */
     $oControllerLiga = new controllerLiga();
-    
+
     $paginaActiva = "gestion-ligas.php";
     $grid = "";
     $numPags = 1;
@@ -30,7 +32,7 @@
     $mensajeAltaMod = "";
     $comprobarMod = false;
     $mensajeMod = "";
-    
+
     // Variables POST
     $accionForm = $_POST["accionForm"] ?? 1;
     $fIdLiga = $_POST["fIdLiga"] ?? ID_LIGA;
@@ -38,22 +40,22 @@
     $fNumFases = $_POST["fNumFases"] ?? "";
     $fNumRondas = $_POST["fNumRondas"] ?? "";
     $fIdJuego = $_POST["fIdJuego"] ?? "";
-    $fLogo = $_FILES["fLogo"]["name"] ?? ($_POST["fLogo"] ?? ($_POST["fLogoAux"] ?? ""));
     $fFecIni = $_POST["fFecIni"] ?? "";
     $fFecFin = $_POST["fFecFin"] ?? "";
     $fIndActivo = $_POST["fIndActivo"] ?? 1;
     $pagActual = $_POST["pagActual"] ?? 1;
     $fIdLigaBorrar = $_POST["fIdLigaBorrar"] ?? "";
     $fIdLigaEditar = $_POST["fIdLigaEditar"] ?? "";
-    
+
     // Usuario
     $oControllerUsuario = new controllerUsuario();
+    $oUsuario = $oControllerUsuario->recuperarDatosUsuario($_SESSION["usuario"]);
     $ligasUsuario = $oControllerUsuario->recuperarLigasUsuario($_SESSION["usuario"]);
-    
+
     // Select Juegos
     $selectJuegos = "";
     $arrJuegos = $oControllerLiga->recuperarSelectJuegos();
-    
+
     if (is_array($arrJuegos) && count($arrJuegos) > 0) {
         foreach ($arrJuegos as $fila) {
             $selected = ($fIdJuego == $fila[0] && $fIdJuego > 0) ? "selected" : "";
@@ -61,7 +63,7 @@
         }
     }
 
-    /*    
+    /*
       2. ALTA
       3. ELIMINAR
       4. MODIFICAR
@@ -79,7 +81,7 @@
             $comprobarBorrado ? "Liga eliminada correctamente." : "Se ha producido un error en su solicitud."
         );
     }
-    
+
     /********************************/
     /* 1. BUSCADOR */
     /********************************/
@@ -87,10 +89,10 @@
         /********************************/
         /* PAGINADOR */
     /********************************/
-        $numRegs = $oControllerLiga->paginadorLigas($fNombre, $fIndActivo, $fFecIni);
+        $numRegs = $oControllerLiga->paginadorLigas($fNombre, $fIndActivo, $fFecIni, $ligasUsuario);
         $numPags = ceil($numRegs / 10);
         require_once("paginador.inc");
-    
+
         /********************************/
         /* GRID DATOS */
     /********************************/
@@ -100,8 +102,8 @@
         } else {
             $arrLigas = $oControllerLiga->recuperarListadoLigas(null, null, null, 0, $ligasUsuario);
         }
-    
-        // comprobamos que haya datos 
+
+        // comprobamos que haya datos
       if (is_array($arrLigas) && count($arrLigas) >= 1){
         $grid  = "<table class=\"table-6\">\n
               <tr class=\"primerafilatabla\">
@@ -118,13 +120,13 @@
           $grid .="\n<tr><td>" . $fila[1] . "</td><td>" . $oControllerLiga->recuperarDescJuego($fila[8]) . "</td><td  class=\"align-center\">" .  $fila[2]  . " ( ". $fila[3] .")</td><td class=\"align-center\">" . (($fila[4] == 1)? "SI" : "NO" ). "</td><td class=\"align-center\">" .  $fila[5]. "</td><td  class=\"align-center\">" .  $fila[6] . "</td>";
           $grid .= "<td class=\"align-center td-acciones\">";
 
-          
-          
+
+
           $grid .= "  <form name=\"form-fases-".$fila[0]."\" id=\"form-fases-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\" action=\"gestion-fases.php\">
                 <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[0]."\"/>
                 <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>
 
-                <img src=\"recursos/img/icon_fases.png\" title=\"Ver fases de la liga\" alt=\"form-fases-".$fila[0]."\" class=\"btn-fases\"/>               
+                <img src=\"recursos/img/cog.svg\" title=\"Ver fases de la liga\" alt=\"form-fases-".$fila[0]."\" class=\"btn-fases\"/>
               </form>";
 
           $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
@@ -134,9 +136,9 @@
                 <input type=\"hidden\" name=\"fNombre\" id=\"fNombre\" value=\"". $fNombre ."\" />
                 <input type=\"hidden\" name=\"fNumFases\" id=\"fNumFases\" value=\"". $fNumFases ."\" />
                 <input type=\"hidden\" name=\"fNumRondas\" id=\"fNumRondas\" value=\"". $fNumRondas ."\" />
-                <img src=\"recursos/img/icon_eliminar.png\" title=\"Eliminar liga\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>               
+                <img src=\"recursos/img/trash.svg\" title=\"Eliminar liga\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
               </form>";
-          
+
           $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
                 <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
                 <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[0]."\"/>
@@ -146,55 +148,42 @@
                 <input type=\"hidden\" name=\"fIndActivo\" id=\"fIndActivo\" value=\"". $fila[4] ."\" />
                 <input type=\"hidden\" name=\"fFecIni\" id=\"fFecIni\" value=\"". $fila[5] ."\" />
                 <input type=\"hidden\" name=\"fFecFin\" id=\"fFecFin\" value=\"". $fila[6] ."\" />
-                <input type=\"hidden\" name=\"fLogo\" id=\"fLogo\" value=\"". $fila[7] ."\" />
                 <input type=\"hidden\" name=\"fIdJuego\" id=\"fIdJuego\" value=\"". $fila[8] ."\" />
-                <img src=\"recursos/img/icon_editar.png\" title=\"Editar liga\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+                <img src=\"recursos/img/tool.svg\" title=\"Editar liga\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
               </form>\n";
         }
         $grid .= "</tr>\n</table>";
         } else {
             $grid = "<p>No hay resultados</p>";
         }
-  
+
 
 
 
 
     /********************************/
     /* 1. ALTA NUEVA */
-    /********************************/      
+    /********************************/
     }elseif (isset($_POST['accionForm']) && $_POST['accionForm'] == 2) {
         $txtAltaModBoton = "Dar de alta nueva liga";
         $txtAltaModH3 = "Alta de nueva liga";
-    
+
         // Procesar alta nueva si se ha enviado el formulario
         if (!empty($_POST) and $fFecIni != "") {
             echo "aa";
             $comprobarAltaMod = $oControllerLiga->altaNuevaLiga(
                 $fNombre, $fNumFases, $fNumRondas, $fFecIni,
-                $fFecFin, $fLogo, $fIndActivo, $fIdJuego
+                $fFecFin, $fIndActivo, $fIdJuego
             );
-    
+
             if ($comprobarAltaMod == 1) {
                 // Recuperamos el ID de la nueva liga
                 $idNuevaLiga = $oControllerLiga->recuperarUltimaLiga($fNombre, $fFecIni);
-    
-                // Subimos el fichero de la imagen si se proporcionó uno
-                if (!empty($fLogo) && isset($_FILES['fLogo']['tmp_name'])) {
-                    $nuevoLogo = "logo-{$idNuevaLiga}" . substr($fLogo, strpos($fLogo, "."));
-                    
-                    if (!move_uploaded_file($_FILES['fLogo']['tmp_name'], "recursos/img/ligas/{$nuevoLogo}")) {
-                        $nuevoLogo = "logo-{$idNuevaLiga}.png";
-                        
-                        if (file_exists("recursos/img/icono_defecto.png")) {
-                            copy("recursos/img/icono_defecto.png", "recursos/img/ligas/{$nuevoLogo}");
-                        }
-                    }
-                }
+
             }
-            
-            
-    
+
+
+
             // Mensaje de resultado
             $mensajeAltaMod .= sprintf(
                 '<div id="%s">%s</div>',
@@ -212,21 +201,12 @@
     else if ($accionForm == 4) {
         $txtAltaModBoton = "Modificar datos de liga";
         $txtAltaModH3 = "Modificar liga";
-      
+
         if (!empty($fIdLigaEditar)) {
             $comprobarAltaMod = $oControllerLiga->modificarDatosLiga(
                 $fIdLiga, $fNombre, $fNumFases, $fNumRondas, $fFecIni,
-                $fFecFin, $fLogo, $fIndActivo, $fIdJuego
+                $fFecFin, $fIndActivo, $fIdJuego
             );
-
-            // Recuperamos el ID nuevo
-            $idNuevaLiga = $oControllerLiga->recuperarUltimaLiga($fNombre, $fFecIni);
-
-            // Subimos el fichero de la imagen si todo ha ido bien
-            if ($comprobarAltaMod == 1 && !empty($fLogo) && isset($_FILES['fLogo']['tmp_name'])) {
-                $nuevoLogo = "logo-{$idNuevaLiga}" . substr($fLogo, strpos($fLogo, "."));
-                move_uploaded_file($_FILES['fLogo']['tmp_name'], "recursos/img/ligas/{$nuevoLogo}");
-            }
 
             // Mensaje de resultado
             $mensajeAltaMod .= sprintf(
@@ -259,20 +239,21 @@
       var pagActual = $(this).attr('id')
       $("#pagActual").attr("value", pagActual);
       $("#buscadorligas").submit();
-    }); 
+    });
 
     // boton ALTA registro
     $("#btnAltaCliente").click( function() {
       $("#btnFormAltaLiga").submit();
-    }); 
+    });
 
 
     // borrar registro
-    $(".btn-borrar").click( function() {  
+    $(".btn-borrar").click( function() {
       var formularioBorrar = $(this).attr('alt');
-    
-     
+
+
       $('#dialog-modal').dialog({
+        autoFocus: false,
             buttons : {
               "Confirmar" : function() {
             $("#" + formularioBorrar).submit();
@@ -282,22 +263,22 @@
               }
             }
         });
-             
-      
-    }); 
+
+
+    });
 
     // editar registro
     $(".btn-editar-reg").click( function() {
       var formularioEditar = $(this).attr('alt');
-      $("#" + formularioEditar).submit();    
-    
+      $("#" + formularioEditar).submit();
+
     });
 
     // Gestionar fases jugador
     $(".btn-fases").click( function() {
       var formularioFases = $(this).attr('alt');
-      $("#" + formularioFases).submit();   
-    
+      $("#" + formularioFases).submit();
+
     });
 
     /* calendario */
@@ -357,73 +338,64 @@
 
 <div id="contenedor-principal">
   <?php require_once("menu.php"); ?>
-  
+
   <h2 class="h2"><span>Gesti&oacute;n de Ligas</span></h2>
 
   <?php /* MENSAJE ELIMINADO */ printf ($mensajeBorrado);   ?>
 
 
 
-  <?php /* ALTA DE NUEVA  / MODIFICACION */ 
+  <?php /* ALTA DE NUEVA  / MODIFICACION */
        if ($accionForm == 2 || $accionForm == 4) {
 
-        
+
   ?>
-  
+
   <div id="form">
     <h3><?php printf($txtAltaModH3);?></h3>
-    <form name="altaModLiga" id="altaModLiga" method="POST" action="" enctype="multipart/form-data">
-    
+    <form name="altaModLiga" id="altaModLiga" method="POST" action="">
+
       <?php printf ($mensajeAltaMod);  ?>
       <input type="hidden" name="accionForm" id="accionForm" value="<?php printf($accionForm);?>"/>
       <?php if ($accionForm == 4){ ?> <input type="hidden" name="fIdLigaEditar" id="fIdLigaEditar" value="1"/>  <?php } ?>
       <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
-      <input type="hidden" name="fLogoAux" id="fLogoAux" value="<?php printf($fLogo);?>"/>
       <p><label for="fNombre">Nombre: </label>  <input type="text" name="fNombre" maxlength="35"  id="fNombre" data-validation="required " value="<?php printf($fNombre);?>"  ></p>
       <p><label for="fIdJuego">Juego: </label>  <select name="fIdJuego"  id="fIdJuego" ><option></option><?php printf($selectJuegos); ?></select></p>
       <p><label for="fNumFases">N&uacute;mero fases: </label>  <input type="text" name="fNumFases" data-validation="required number"  id="fNumFases" value="<?php printf($fNumFases);?>" class="no-border spinnerFases"></p>
       <p><label for="fNumRondas">Rondas por fase: </label>  <input type="text" name="fNumRondas" maxlength="35"  id="fNumRondas" data-validation="required " value="<?php printf($fNumRondas);?>" class="no-border spinnerRondas" ></p>
-      <p><label for="fFecIni">Fecha Inicio: </label>  
-        <input type="text" class="fFecIniForm" name="fFecIni" id="fFecIni" maxlength="10" 
-        value="<?php printf($fFecIni);?>" data-validation="required date" 
+      <p><label for="fFecIni">Fecha Inicio: </label>
+        <input type="text" class="fFecIniForm" name="fFecIni" id="fFecIni" maxlength="10"
+        value="<?php printf($fFecIni);?>" data-validation="required date"
         data-validation-format="dd-mm-yyyy"></p>
-      <p><label for="fFecFin">Fecha Fin: </label>  
-        <input type="text" class="fFecFinForm" name="fFecFin" id="fFecFin" maxlength="10" 
-        value="<?php printf($fFecFin);?>" data-validation="required date" 
+      <p><label for="fFecFin">Fecha Fin: </label>
+        <input type="text" class="fFecFinForm" name="fFecFin" id="fFecFin" maxlength="10"
+        value="<?php printf($fFecFin);?>" data-validation="required date"
         data-validation-format="dd-mm-yyyy"></p>
       <p><span class="span-radio-button">Activa: </span>
         <input type="radio" name="fIndActivo" id="fIndActivo1" value="1" <?php printf(($fIndActivo == 1)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndActivo1">S&iacute;</label>
-          <input type="radio" name="fIndActivo" id="fIndActivo0" value="0" <?php printf(($fIndActivo == 0)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndActivo0">No</label>   
-      </p>        
-      <p><label for="fLogo">Imagen cabecera: </label>   <input type="file" name="fLogo" id="fLogo" data-validation="mime size" data-validation-allowing="jpg, png, gif" data-validation-max-size="1024kb" 
-                            data-validation-error-msg-size="El logo no puede pesar m&aacute;s de 1024kb"
-                            data-validation-error-msg-mime="El logo debe de ser una imagen"
-                            data-validation-help="Al cargar una nueva imagen, la antigua se eliminar&aacute;."
-                            /></p>
-      <?php if (strlen($fLogo) > 0 && $accionForm == 4 ) { ?>
-          <p><label for=""> </label><div class="config-foto"><img src="recursos/img/ligas/<?php printf($fLogo); ?>" alt="Logo" width="150px"/></div></p>
-      <?php } ?>
+          <input type="radio" name="fIndActivo" id="fIndActivo0" value="0" <?php printf(($fIndActivo == 0)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndActivo0">No</label>
+      </p>
       <p><input type="submit" value="<?php printf($txtAltaModBoton);?>" id="formButton" class="submit-button"/></p>
     </form>
     <script>
-      $.validate( { 
+      $.validate( {
           form : '#altaModLiga',
           modules : 'file',
           decimalSeparator : ',',
           language : spanish,
           errorMessagePosition : 'top',
           validateOnBlur : false
-        }); 
+        });
     </script>
   </div>
 
 
 
-  <?php 
-    /* BOTON VOLVER */    
-    printf("<div id=\"div-volver\"><a href=\"$paginaActiva\" class=\"btn-volver\">Volver</a></div>"); 
+  <?php
+    /* BOTON VOLVER */
+    printf("<div id=\"div-volver\"><a href=\"$paginaActiva\" class=\"btn-volver\">Volver</a></div>");
 
-    }else{ 
+    }else{
 
 
       /* BUSCADOR */ ?>
@@ -435,7 +407,7 @@
           <input type="hidden" name="accionForm" id="accionForm" value="1"/>
           <input type="hidden" name="pagActual" id="pagActual" value="1" />
           <label for="fNombre">Nombre: </label>   <input type="text" name="fNombre" id="fNombre" value="<?php printf($fNombre);?>" />
-          <label for="fIndActivo">Activo: </label>   
+          <label for="fIndActivo">Activo: </label>
           <select name="fIndActivo" id="fIndActivo">
             <option value=""></option>
             <option value="1" <?php printf( ( ($fIndActivo == 1)? 'selected': '' ) ); ?>>S&iacute;</option>
@@ -457,11 +429,11 @@
       <?php } ?>
 
 
-      <?php 
-        /* GRID DE CONTENIDO */  
+      <?php
+        /* GRID DE CONTENIDO */
         printf ($grid);
 
-        /* PAGINADOR */ 
+        /* PAGINADOR */
         printf ($paginador);
 
       ?>

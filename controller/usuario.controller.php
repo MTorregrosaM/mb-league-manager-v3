@@ -68,20 +68,25 @@ class controllerUsuario {
 
     }
   
-   public function loginUsuario( $fNick, $fPass ){
+    public function loginUsuario( $fNick, $fPass ){
     try {
-	   $fNick = $this->oConexBD->escaparCadena($fNick);
-	   $fPass = $this->oConexBD->escaparCadena($fPass);
-       $queryDB = "SELECT idUsuario
-          FROM mb_usuarios
-          WHERE nick = '" . $fNick. "' 
-          AND pass = '" . ($fPass) . "'";
-
-      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+     $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada(
+       "SELECT idUsuario, pass FROM mb_usuarios WHERE nick = ?", "s", array((string) $fNick)
+     );
 
       if ($resultadoBD != null){
       foreach ($resultadoBD as $fila) {
-        return  $fila[0]; 
+    $hashValido = password_verify((string) $fPass, (string) $fila[1]);
+    $hashLegacy = strlen((string) $fila[1]) === 32 && hash_equals((string) $fila[1], md5((string) $fPass));
+    if ($hashValido || $hashLegacy) {
+      if ($hashLegacy) {
+        $nuevoHash = password_hash((string) $fPass, PASSWORD_DEFAULT);
+        $this->oConexBD->ejecutarConsultaPreparada(
+          "UPDATE mb_usuarios SET pass = ? WHERE idUsuario = ?", "si", array($nuevoHash, (int) $fila[0]), 1
+        );
+      }
+      return $fila[0];
+    }
       }
       }else{
       return 0;
@@ -163,9 +168,9 @@ class controllerUsuario {
 	          $queryDB .= " nick = '". $fNick ."' ";
 	          $aux = 1;
 	        } 
-	        if (md5($fPass) != $this->oUsuario->pass){
+          if ($fPass !== '' && !password_verify($fPass, $this->oUsuario->pass)){
 	          $queryDB .= ($aux > 0)? " , " : "";
-	          $queryDB .= " pass = '". md5($fPass) ."' ";
+            $queryDB .= " pass = '". $this->oConexBD->escaparCadena(password_hash($fPass, PASSWORD_DEFAULT)) ."' ";
 	          $aux = 1;
 	        }
 	        if ($fRol != $this->oUsuario->rol){
@@ -204,25 +209,27 @@ class controllerUsuario {
       
 	    try {
 
-	    	if($fIdUsuario == null ||  $idsLigasUsuario  == null) {
+      	$fIdUsuario = (int) $fIdUsuario;
+      	if($fIdUsuario <= 0) {
 	    		return 2;
 	    	}
+      	$idsLigasUsuario = is_array($idsLigasUsuario) ? $idsLigasUsuario : array();
 
-	        $queryDB = "DELETE FROM mb_ligas_usuarios WHERE IdUsuario = " . $fIdUsuario;	    	 
+          $queryDB = "DELETE FROM mb_ligas_usuarios WHERE idUsuario = " . $fIdUsuario;
 	        $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
 
 			foreach($idsLigasUsuario as $idLiga) {
+        $idLiga = (int) $idLiga;
+        if ($idLiga <= 0) {
+          continue;
+        }
             	$queryDB = "INSERT INTO mb_ligas_usuarios (idUsuario, idLiga) VALUES(" . $fIdUsuario . "," . $idLiga . ")" ;	    	 
 	        	$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
          	}
 	       
 
-	        if ($resultadoBD >= 1){
-	          return 1; 
-	        }else{
-	          return 2;
-	        }
+          return 1;
 
 	    }catch(Exception $e){
 	      $oLog = Log::getInstance();
@@ -259,8 +266,8 @@ class controllerUsuario {
 
       if (!$existeUsuario) {
         // insertamos el nuevo registro
-        $queryDB = "INSERT INTO mb_usuarios ( nick, pass, rol, ult_acceso )
-              VALUES ('" . $fNick . "', '" . md5($fPass) . "','" .$fRol."' , '". Date('Y-m-d H:i:s') . "' )";
+          $queryDB = "INSERT INTO mb_usuarios ( nick, pass, rol, ult_acceso )
+            VALUES ('" . $this->oConexBD->escaparCadena($fNick) . "', '" . $this->oConexBD->escaparCadena(password_hash($fPass, PASSWORD_DEFAULT)) . "','" .$this->oConexBD->escaparCadena($fRol)."' , '". Date('Y-m-d H:i:s') . "' )";
         
         $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
@@ -402,10 +409,13 @@ class controllerUsuario {
     /* Listado de empresas para los formularios de búsqueda */
     public function recuperarSelectLigasUsuario( $idUsuario ){
     try {
-        $queryDB = "SELECT T1.idLiga, T1.nombre, T2.idUsuario FROM mb_ligas T1 LEFT JOIN mb_ligas_usuarios T2 on T1.idLiga = T2.idLiga ";
-        $queryDB .= " AND idUsuario = " . $idUsuario ;     
-        $queryDB .= " WHERE indActivo = 1 "; 
-        $queryDB .="  ORDER BY 1 ASC";
+      $idUsuario = (int) $idUsuario;
+      $queryDB = "SELECT T1.idLiga,
+        CONCAT(COALESCE(YEAR(COALESCE(T1.fecIni, (SELECT MIN(fecIni) FROM mb_fases WHERE mb_fases.idLiga = T1.idLiga))), ''), '_', T1.nombre),
+        T2.idUsuario
+          FROM mb_ligas T1
+          LEFT JOIN mb_ligas_usuarios T2 ON T1.idLiga = T2.idLiga AND T2.idUsuario = " . $idUsuario . "
+          ORDER BY T1.fecIni DESC, T1.nombre";
 
       $arrResultados = array ();
       

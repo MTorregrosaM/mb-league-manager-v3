@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . "/config/auth.php"; ?>
+<html lang="es" data-bs-theme="dark">
 <head>
   <?php require_once ("cabecera.php"); ?>
 </head>
@@ -78,9 +80,10 @@
     
     if ($fIdLiga != 0) {
       $oLiga = $oControllerLiga->recuperarDatosLiga($fIdLiga);
-    
-      // FLAMES OF WAR
-      if($oLiga->idJuego <= 2 ){
+
+      if ($oLiga !== null) {
+        // FLAMES OF WAR
+        if($oLiga->idJuego <= 2 ){
         $maxResultado = (($oLiga->idJuego == 1)? 6 : 8);
         $maxResultadoSlider = $maxResultado+1; 
         $minResultado = 1;
@@ -89,7 +92,7 @@
         $fResultadoJugador2 = (isset( $_POST["fResultadoJugador2"]) && $_POST["fResultadoJugador2"] != '')? $_POST["fResultadoJugador2"] : $maxResultado;         
       
       // GUILD BALL  
-      } else  if($oLiga->idJuego == 5 ){
+        } else  if($oLiga->idJuego == 5 ){
         $maxResultado = 12;
         $minResultado = 0;
         $maxResultadoSlider = $maxResultado; 
@@ -98,18 +101,21 @@
         $fResultadoJugador2 = (isset( $_POST["fResultadoJugador2"]) && $_POST["fResultadoJugador2"] != '')? $_POST["fResultadoJugador2"] : $maxResultado;      
 
       // RESTO DE JUEGOS
-      } else {      
-        $maxResultado = 0; // no aplica a resto de juegos
-        $minResultado = 0;
-        $fResultadoJugador1 = $fResultadoRadio;
-        $maxResultadoSlider = $maxResultado; 
-        if($fResultadoRadio == 3) { 
-          $fResultadoJugador2 = 0;
-        }elseif($fResultadoRadio == 1){
-          $fResultadoJugador2 = 1;
-        }else{
-          $fResultadoJugador2 = 3;
+        } else {
+          $maxResultado = 0; // no aplica a resto de juegos
+          $minResultado = 0;
+          $fResultadoJugador1 = $fResultadoRadio;
+          $maxResultadoSlider = $maxResultado;
+          if($fResultadoRadio == 3) {
+            $fResultadoJugador2 = 0;
+          }elseif($fResultadoRadio == 1){
+            $fResultadoJugador2 = 1;
+          }else{
+            $fResultadoJugador2 = 3;
+          }
         }
+      } else {
+        $fIdLiga = 0;
       }
     }
 
@@ -367,35 +373,6 @@
                   <img src=\"recursos/img/icon_reset.png\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>                
                 </form>";
             
-            $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
-                  <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
-                  <input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
-                  <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
-                  <input type=\"hidden\" name=\"fNumFase\" id=\"fNumFase\" value=\"". $fila[2] ."\" />
-                  <input type=\"hidden\" name=\"fNumRonda\" id=\"fNumRonda\" value=\"". $fila[3] ."\" />
-                  <input type=\"hidden\" name=\"fIdJugador1\" id=\"fIdJugador1\" value=\"". $fila[4] ."\" />
-                  <input type=\"hidden\" name=\"fIdJugador2\" id=\"fIdJugador2\" value=\"". $fila[5] ."\" />
-                  <input type=\"hidden\" name=\"fResultadoJugador1\" id=\"fResultadoJugador1\" value=\"". $fila[6] ."\" />
-                  <input type=\"hidden\" name=\"fResultadoRadio\" id=\"fResultadoRadio\" value=\"". $fila[6] ."\" />  
-                  <input type=\"hidden\" name=\"fResultadoJugador2\" id=\"fResultadoJugador2\" value=\"". $fila[7] ."\" />
-                  <input type=\"hidden\" name=\"fValPinturaJug1\" id=\"fValPinturaJug1\" value=\"". $fila[8] ."\" />
-                  <input type=\"hidden\" name=\"fValPinturaJug2\" id=\"fValPinturaJug2\" value=\"". $fila[9] ."\" />
-                  <input type=\"hidden\" name=\"fFechaBatalla\" id=\"fFechaBatalla\" value=\"". $fila[10] ."\" />
-                  <input type=\"hidden\" name=\"fIndValidado\" id=\"fIndValidado\" value=\"". $fila[11] ."\" />
-                  <input type=\"hidden\" name=\"fValDeportividadJug1\" id=\"fValDeportividadJug1\" value=\"". $fila[12] ."\" />
-                  <input type=\"hidden\" name=\"fValDeportividadJug2\" id=\"fValDeportividadJug2\" value=\"". $fila[13] ."\" />
-                  <input type=\"hidden\" name=\"fIdJugVictoriaConcedida\" id=\"fIdJugVictoriaConcedida\" value=\"". $fila[14] ."\" />
-                  <input type=\"hidden\" name=\"fVictoriaSector\" id=\"fVictoriaSector\" value=\"". $fila[15] ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug11\" id=\"fIdMisionSecJug11\" value=\"". $fIdMisionSecJug11 ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug12\" id=\"fIdMisionSecJug12\" value=\"". $fIdMisionSecJug12 ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug13\" id=\"fIdMisionSecJug13\" value=\"". $fIdMisionSecJug13 ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug14\" id=\"fIdMisionSecJug14\" value=\"". $fIdMisionSecJug14 ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug21\" id=\"fIdMisionSecJug21\" value=\"". $fIdMisionSecJug21 ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug22\" id=\"fIdMisionSecJug22\" value=\"". $fIdMisionSecJug22 ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug23\" id=\"fIdMisionSecJug23\" value=\"". $fIdMisionSecJug23 ."\" />
-                  <input type=\"hidden\" name=\"fIdMisionSecJug24\" id=\"fIdMisionSecJug24\" value=\"". $fIdMisionSecJug24 ."\" />
-                  <img src=\"recursos/img/icon_editar.png\" title=\"Editar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
-                </form>\n";
           }
         
         $grid .= "</tr>\n</table>";
@@ -474,13 +451,13 @@
               if ($selectMisSecJug21 > 0 ){
                 array_push($arrMisionesSecJug2, $selectMisSecJug21);
               }
-              if ($selectMisSecJug12 > 0 ){
+              if ($selectMisSecJug22 > 0 ){
                 array_push($arrMisionesSecJug2, $selectMisSecJug22);
               }
-              if ($selectMisSecJug13 > 0 ){
+              if ($selectMisSecJug23 > 0 ){
                 array_push($arrMisionesSecJug2, $selectMisSecJug23);
               }
-              if ($selectMisSecJug14 > 0 ){
+              if ($selectMisSecJug24 > 0 ){
                 array_push($arrMisionesSecJug2, $selectMisSecJug24);
               } 
          }
@@ -554,6 +531,7 @@
           
            
             $('#dialog-modal').dialog({
+              autoFocus: false,
                   buttons : {
                     "Confirmar" : function() {
                   $("#" + formularioBorrar).submit();
@@ -568,11 +546,13 @@
           }); 
 
           // editar registro
-          $(".btn-editar-reg").click( function() {
-            var formularioEditar = $(this).attr('alt');
-            $("#" + formularioEditar).submit();    
-          
-         });
+          $(".btn-editar-reg").click( function(e) {
+            e.preventDefault();
+            var formulario = $(this).closest('form');
+            if (formulario.length) {
+              formulario.submit();
+            }
+          });
 
 
           // formulario en caso de no haber seleccionado una liga   

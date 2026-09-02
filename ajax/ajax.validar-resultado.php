@@ -1,6 +1,6 @@
 <?php
 	require_once __DIR__ . '/../config/auth.php';
-	
+
 
 		// importamos librerias
 		require_once("../controller/controller.php");
@@ -20,15 +20,15 @@
 		$oControllerJugador = new controllerJugador();
 
 		// actualizamos la marca de validacion
-		$arrEnfrentamientos = $oControllerEnfrentamiento->validarResultado ( $fIdLiga, $fIdEnfrentamiento );	
+		$arrEnfrentamientos = $oControllerEnfrentamiento->validarResultado ( $fIdLiga, $fIdEnfrentamiento );
 
 
 		// generamos de nuevo el grid
-		$arrEnfrentamientos = $oControllerEnfrentamiento->recuperarListadoEnfrentamientosCompleto ( $fIdLiga, $fIdJugador1, $fFechaBatalla, $fIndValidado, ($pagActual-1));		
+		$arrEnfrentamientos = $oControllerEnfrentamiento->recuperarListadoEnfrentamientosCompleto ( $fIdLiga, $fIdJugador1, $fFechaBatalla, $fIndValidado, ($pagActual-1));
 
 		$grid="";
 
-			// comprobamos que haya datos 
+			// comprobamos que haya datos
 			if (is_array($arrEnfrentamientos) && count($arrEnfrentamientos) >= 1){
 				$grid  = "<table class=\"table-6\">\n
 							<tr>
@@ -44,7 +44,7 @@
 					// gestion de correos
 					$oJugador1 = $oControllerJugador->recuperarDatosJugador( $fila[4] );
 					$oJugador2 = $oControllerJugador->recuperarDatosJugador( $fila[5]  );
-				
+
 
 					// misiones secundarias
 					$arrMisionesSecJug1BD = $oControllerEnfrentamiento->recuperarMisionesSecJugador( $fila[0], $fila[4] );
@@ -54,12 +54,12 @@
 					$fIdMisionSecJug12 = (isset($arrMisionesSecJug1BD[1]))? $arrMisionesSecJug1BD[1] : 0;
 					$fIdMisionSecJug13 = (isset($arrMisionesSecJug1BD[2]))? $arrMisionesSecJug1BD[2] : 0;
 					$fIdMisionSecJug14 = (isset($arrMisionesSecJug1BD[3]))? $arrMisionesSecJug1BD[3] : 0;
-					
+
 					$fIdMisionSecJug21 = (isset($arrMisionesSecJug2BD[0]))? $arrMisionesSecJug2BD[0] : 0;
 					$fIdMisionSecJug22 = (isset($arrMisionesSecJug2BD[1]))? $arrMisionesSecJug2BD[1] : 0;
 					$fIdMisionSecJug23 = (isset($arrMisionesSecJug2BD[2]))? $arrMisionesSecJug2BD[2] : 0;
 					$fIdMisionSecJug24 = (isset($arrMisionesSecJug2BD[3]))? $arrMisionesSecJug2BD[3] : 0;
-					
+
 					$imgStar = ($fila[4] == $fIdJugador1) ? "<img src=\"recursos/img/icon_star_peq_rojo.png\" title=\"Deportividad\"/>" : "<img src=\"recursos/img/icon_star_peq.png\" title=\"Deportividad\"/>";
 					$imgFlag = ($fila[4] == $fIdJugador1) ? "<img src=\"recursos/img/icon_rendido_peq_rojo.png\" title=\"Victoria concedida\"/>" : "<img src=\"recursos/img/icon_rendido_peq.png\" title=\"Victoria concedida\"/>";
 
@@ -70,7 +70,7 @@
 					if ($fila[12] > 0){
 							for($i = 1; $i<= $fila[12]; $i++) { $grid .= $imgStar; }
 					}else if($fila[14] > 0) {
-						$grid .=  $imgFlag;	
+						$grid .=  $imgFlag;
 					}else{
 						$grid .= "<strong>?</strong>";
 					}
@@ -86,7 +86,7 @@
 					if ($fila[13] > 0){
 							for($i = 1; $i<= $fila[13]; $i++) { $grid .= $imgStar; }
 					}else if($fila[14] > 0) {
-						$grid .= $imgFlag;	
+						$grid .= $imgFlag;
 					}else{
 						$grid .= "<strong>?</strong>";
 					}
@@ -96,7 +96,7 @@
 
 					$grid .= "<td class=\"align-center td-acciones\">";
 
-					
+
 					if($fila[11] == 0 && $fila[6] != null && $fila[8]  > 0 && $fila[9]  > 0) {
 						$grid .= "<img src=\"recursos/img/icon_validate.png\"  alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\"/ onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\">";
 					}else{
@@ -140,9 +140,9 @@
 								<input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
 								<input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
 								<input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
-								<img src=\"recursos/img/icon_reset.png\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>								
+								<img src=\"recursos/img/icon_reset.png\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
 							</form>";
-					
+
 					$grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
 								<input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
 								<input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
@@ -168,10 +168,10 @@
 								<input type=\"hidden\" name=\"fIdMisionSecJug22\" id=\"fIdMisionSecJug22\" value=\"". $fIdMisionSecJug22 ."\" />
 								<input type=\"hidden\" name=\"fIdMisionSecJug23\" id=\"fIdMisionSecJug23\" value=\"". $fIdMisionSecJug23 ."\" />
 								<input type=\"hidden\" name=\"fIdMisionSecJug24\" id=\"fIdMisionSecJug24\" value=\"". $fIdMisionSecJug24 ."\" />
-								<img src=\"recursos/img/icon_editar.png\" title=\"Editar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+								<img src=\"recursos/img/tool.svg\" title=\"Editar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
 							</form>\n";
 				}
-			
+
 			$grid .= "</tr>\n</table>";
 			}else{
 				$grid  =  "<p>No hay resultados</p>";
@@ -192,20 +192,21 @@
 		 	var pagActual = $(this).attr('id')
 			$("#pagActual").attr("value", pagActual);
 			$("#buscadorligas").submit();
-		}); 
+		});
 
 
-		$("#fIdLiga").change(function(){ 
+		$("#fIdLiga").change(function(){
 			if( $('#fIdLiga option:selected').val() > 0)
 				 actualizarSelectJugador( $('#fIdLiga option:selected').val());
 		});
 
 		// borrar registro
-	 	$(".btn-borrar").click( function() {	
+	 	$(".btn-borrar").click( function() {
 			var formularioBorrar = $(this).attr('alt');
-	 	
-		 
+
+
 			$('#dialog-modal').dialog({
+				autoFocus: false,
 		        buttons : {
 			        "Confirmar" : function() {
 			 		  $("#" + formularioBorrar).submit();
@@ -215,15 +216,15 @@
 		        	}
       			}
     		});
-					 	 
-		 	
-		}); 
+
+
+		});
 
 		// editar registro
 	 	$(".btn-editar-reg").click( function() {
 			var formularioEditar = $(this).attr('alt');
-	 		$("#" + formularioEditar).submit(); 	 
-		
+	 		$("#" + formularioEditar).submit();
+
 		});
 
 

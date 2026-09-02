@@ -2,7 +2,7 @@
 
 /* Floats */
 
-.left,.alignleft {float: left; margin-right: 6px; margin-top: 5px;}
+.left,.alignleft {float: left; margin-right: 25px; margin-top: 5px;}
 .right,.alignright {float: right;}
 
 .clear,.clearer {clear: both;}
@@ -15,22 +15,25 @@
 
 
 
-.sortable-item {list-style: none; padding: 10px 0px; width: 166px; cursor: pointer; text-align: center}
-.sortable-item {background-color: #d0d5c6; border: 1px solid #a7ab9e; border-radius: 3px; margin-top: 5px;}
+.sortable-item {list-style: none; padding: 10px 0px; width: 166px; cursor: pointer; text-align: center; color: #e8edf2;}
+.sortable-item {background-color: var(--app-surface-raised); border: 1px solid var(--app-border); border-radius: 3px; margin-top: 5px; transition: background-color .15s ease, border-color .15s ease;}
+.sortable-item:hover {background-color: var(--app-surface); border-color: var(--app-accent-hover);}
 .sortable-list {
-	width: 166px;
+	box-sizing: border-box;
+	min-width: 215px;
 	margin: 0;
 	padding: 10px;
-	background: #EEE;
+	background: var(--app-surface);
+	border: 1px solid var(--app-border);
 	border-radius: 3px;
 	min-height: 93px;
 }
 
-.placeholder {list-style: none;  background-color: #c9ec84;  width: 166px;  height: 40px; border: 1px #a8c66e dashed; border-radius: 3px;}
+.placeholder {list-style: none; background-color: rgba(45,230,138,.12); width: 166px; height: 40px; border: 1px var(--app-accent-hover) dashed; border-radius: 3px;}
 
 .loader {
 	display: block;
-	background: #FFF url('img/spinner.gif') no-repeat center center;
+	background: var(--app-surface) url('img/spinner.gif') no-repeat center center;
 }
 
 #sidebar-list .loader {height: 170px;}
@@ -42,8 +45,50 @@
 #splash-list .sortable-item:first-child {margin-left: 0;}
 #splash-list .loader, #splash-list .placeholder {height: 220px;}
 
-.titulo-columna-drag { text-align: center; background: #333; color: #eee; height: 20px; margin: 0px; padding:10px 0px;}
+#div-enfrentamientos {
+	display: grid;
+	grid-template-columns: 210px minmax(0, 1fr);
+	align-items: start;
+	column-gap: 1rem;
+}
+#div-enfrentamientos .matches-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(210px, 1fr));
+	align-items: start;
+	gap: 1rem;
+}
+#div-enfrentamientos .column {
+	float: none;
+	width: 100%;
+	margin: 0;
+}
+#div-enfrentamientos .sortable-list {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+#div-enfrentamientos .clearer {display: none;}
+
+#div-enfrentamientos .first {margin-right: 0;}
+
+.titulo-columna-drag { text-align: center; background: var(--app-bg); color: #fff; height: 20px; margin: 0px; padding:20px 0px; border: 1px solid var(--app-border); border-bottom: 0;}
 .maestra{clear: both; min-height: 500px}
-.ALIADO {background-color: #c9ec84; border: 1px #a8c66e dashed; }
-.EJE {background-color: #de8c60; border: 1px #ab6640 dashed; }
-.DOBLE {background-color: #94bef1; border: 1px #7097c7 dashed; }
+.first {margin-right: 40px;}
+#div-enfrentamientos .first {
+	box-sizing: border-box;
+	background: var(--app-surface);
+	border: 1px solid var(--app-border);
+	border-radius: 3px;
+	overflow: hidden;
+}
+#div-enfrentamientos .first .titulo-columna-drag {
+	background: var(--app-surface);
+	border: 0;
+}
+#div-enfrentamientos .first .sortable-list {
+	width: 100%;
+	min-width: 0;
+	background: var(--app-surface);
+	border: 0;
+	border-radius: 0;
+}
