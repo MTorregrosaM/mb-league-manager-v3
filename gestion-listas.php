@@ -38,6 +38,14 @@
     $fUrlDocumento = $fUrlDocumentoAux;
     $fSubidaValida = true;
     $fArchivoSubido = isset($_FILES["fUrlDocumento"]) && $_FILES["fUrlDocumento"]["error"] !== UPLOAD_ERR_NO_FILE;
+
+    if ($fIdJugador > 0) {
+      $jugadorLiga = $oControllerJugador->recuperarDatosJugador($fIdJugador);
+      if ($jugadorLiga !== null) {
+        $fIdLiga = (int) $jugadorLiga->idLiga;
+      }
+    }
+
     if ($fArchivoSubido) {
       $archivo = $_FILES["fUrlDocumento"];
       $extensionesPermitidas = array("pdf", "doc", "docx", "xls", "xlsx");

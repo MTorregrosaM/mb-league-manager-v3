@@ -152,6 +152,7 @@
 
             $grid .= "  
               <form name=\"form-listas-".$fila[0]."\" id=\"form-listas-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\" action=\"gestion-listas.php\">
+	                <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\"/>
 	                <input type=\"hidden\" name=\"fIdJugador\" id=\"fIdJugador\" value=\"".$fila[0]."\"/>
 	                <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
 	                <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>
@@ -389,7 +390,7 @@
   <form name="btnFormVolver" id="btnFormVolver" method="POST" action="">
       <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
   </form>
-
+                <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fila[1]); ?>"/>
 
 
   <?php

@@ -904,37 +904,41 @@ class controllerEnfrentamiento {
   	public function recuperarRankingPuntosPintura(  $fIdLiga ) {
 
 		try {
+			$queryDB = "SELECT j.nick,
+							ROUND(IFNULL(SUM(CASE
+								WHEN e.idJugador1 = j.idJugador THEN e.valPinturaJug1
+								WHEN e.idJugador2 = j.idJugador THEN e.valPinturaJug2
+								ELSE 0
+							END) / NULLIF(COUNT(e.idEnfrentamiento), 0), 0), 2) AS puntosNumericos,
+							REPLACE(CAST(ROUND(IFNULL(SUM(CASE
+								WHEN e.idJugador1 = j.idJugador THEN e.valPinturaJug1
+								WHEN e.idJugador2 = j.idJugador THEN e.valPinturaJug2
+								ELSE 0
+							END) / NULLIF(COUNT(e.idEnfrentamiento), 0), 0), 2) AS CHAR), '.', ',') AS puntosPintura
+						FROM mb_jugadores j
+						LEFT JOIN mb_enfrentamientos e
+							ON e.idLiga = j.idLiga
+							AND (e.idJugador1 = j.idJugador OR e.idJugador2 = j.idJugador)
+							AND e.idJugVictoriaConcedida = 0
+						WHERE j.idLiga = ?
+						AND j.nick <> 'zMercenario'
+						GROUP BY j.idJugador, j.nick
+						ORDER BY j.idJugador";
 
-	  		$queryDB = "SELECT distinct idJugador, nick FROM mb_jugadores WHERE idLiga = " .  $fIdLiga . "
-						and nick != 'zMercenario'  order by idJugador";  
+			$resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'i', array((int) $fIdLiga));
+			$arrResultados = array();
 
-			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
-
-			$arrResultados = array ();
-
-			if ($resultadoBD != null){
-
+			if (is_array($resultadoBD)) {
 				foreach ($resultadoBD as $fila) {
-
-					$query1 = "SELECT 
-						            REPLACE(ROUND(IFNULL(sum(CASE WHEN idJugador1 = " . $fila[0] . " THEN valPinturaJug1 ELSE 0 END) + 
-						            sum(CASE WHEN idJugador2 = " . $fila[0] . " THEN valPinturaJug2 ELSE 0 END),0)/count(1),2 ),'.',',') AS PuntosPintura
-					            FROM mb_enfrentamientos WHERE (IdJugador1 = " . $fila[0] . " or idJugador2 = " . $fila[0] . ") 
-					            and idJugVictoriaConcedida = 0";      
-					$resultadoBD1 = $this->oConexBD->ejecutarConsulta($query1);
-
-					foreach ($resultadoBD1 as $fila1) {
-					    $arrRankingRow = array ();
-					    array_push($arrRankingRow, $fila["nick"], str_replace(',', '', $fila1["PuntosPintura"]), $fila1["PuntosPintura"]);
-					    array_push($arrResultados, $arrRankingRow);   
-					}
-
+					$arrResultados[] = array(
+						$fila[0],
+						(float) ($fila[1] ?? 0),
+						(string) ($fila[2] ?? '0')
+					);
 				}
-    			//usort($arrResultados, "sortByOrder");
-				return $arrResultados;	
-			}else{
-				return null;
 			}
+
+			return $arrResultados;
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();

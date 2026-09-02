@@ -77,6 +77,39 @@
     #contenedor-principal .form-error  { clear: both;  margin: 0px; padding: 15px 0px; text-align: center;}
   }
 
+  @media (max-width: 767.98px) {
+    #buscador form:has(input.fFecIniForm),
+    #buscador form:has(input.fFecFinForm),
+    #buscador form:has(input.fFechaBatallaForm) {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .35rem;
+    }
+    #buscador form:has(input.fFecIniForm) > label,
+    #buscador form:has(input.fFecFinForm) > label,
+    #buscador form:has(input.fFechaBatallaForm) > label {
+      flex: 0 0 100%;
+    }
+    #buscador form:has(input.fFecIniForm) input.fFecIniForm,
+    #buscador form:has(input.fFecFinForm) input.fFecFinForm,
+    #buscador form:has(input.fFechaBatallaForm) input.fFechaBatallaForm {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
+    #buscador form:has(input.fFecIniForm) input.fFecIniForm + .ui-datepicker-trigger,
+    #buscador form:has(input.fFecFinForm) input.fFecFinForm + .ui-datepicker-trigger,
+    #buscador form:has(input.fFechaBatallaForm) input.fFechaBatallaForm + .ui-datepicker-trigger {
+      flex: 0 0 24px;
+      width: 24px !important;
+      height: 24px;
+      margin: 0 !important;
+    }
+  }
+
   /*---------------------------------------------------
   3. Menu responsive
   ---------------------------------------------------*/
@@ -470,7 +503,7 @@
     grid-column: 1;
     width: 140px !important;
     margin: 0 !important;
-    text-align: right;
+    text-align: center;
     line-height: 1.45;
     color: var(--app-muted);
   }
@@ -480,7 +513,7 @@
     display: flex;
     align-items: center;
     grid-column: 2;
-    justify-self: start !important;
+    justify-self: center !important;
     width: max-content !important;
     min-width: max-content;
     white-space: nowrap;
@@ -529,6 +562,21 @@
   #form h3 { margin-bottom: 15px; font-size: 1.5em }
   .input-fecha  {width: 70px !important; margin-right: 5px !important; cursor: pointer ;}
   .ui-datepicker-trigger {cursor: pointer !important; margin-bottom: -4px; margin-right: 10px; }
+  #buscador input.fFecIniForm,
+  #buscador input.fFecFinForm,
+  #buscador input.fFechaBatallaForm {
+    display: inline-block !important;
+    width: 70px !important;
+    max-width: none !important;
+    vertical-align: middle;
+  }
+  #buscador input.fFecIniForm + .ui-datepicker-trigger,
+  #buscador input.fFecFinForm + .ui-datepicker-trigger,
+  #buscador input.fFechaBatallaForm + .ui-datepicker-trigger {
+    display: inline-block !important;
+    vertical-align: middle;
+    margin: 0 10px 0 0;
+  }
   .input-peq{width: 80px !important}
   .p-hora {height: 25px;}
   .span-hora {  float: left; margin-right: 8px; margin-top: 5px; display: inline-block;}
@@ -797,6 +845,14 @@
     font-size: 1rem;
     background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
     background-size: 32px 32px;
+  }
+
+  .login-page {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
   }
 
   #contenedor-principal {
@@ -1653,14 +1709,28 @@
 
   @media (max-width: 767.98px) {
     #contenedor-principal { width: calc(100% - 1rem); margin-top: .5rem; }
-    .index-ranking-grid { grid-template-columns: 1fr; }
+    .index-ranking-grid { grid-template-columns: 1fr; gap: .5rem; }
+    .index-main-ranking,
+    .index-ranking-grid,
+    .index-ranking-grid > div {
+      min-width: 0;
+      max-width: 100%;
+    }
+    #selectLiga { min-width: 0; }
+    #selectLiga label { flex: 0 0 auto; }
+    #selectLiga select { min-width: 0; width: 100%; }
     .app-navbar { border-radius: .5rem; }
     #form label { width: auto; float: none; display: block; margin: .75rem 0 .25rem; text-align: left; }
     #form input, #form select, #form textarea { width: 100% !important; max-width: none !important; margin: 0; }
     #form .submit-button { margin: 1rem 0 0; width: 100% !important; }
     #buscador form { display: grid; gap: .35rem; }
-    #buscador input, #buscador select { width: 100% !important; max-width: none !important; margin: 0; }
-    .div-ranking-izq, .div-ranking-dch { width: 100%; margin: 0 0 1rem; }
+    #buscador input:not(.fFecIniForm):not(.fFecFinForm):not(.fFechaBatallaForm),
+    #buscador select { width: 100% !important; max-width: none !important; margin: 0; }
+    .div-ranking-izq, .div-ranking-dch, .index-main-ranking {
+      box-sizing: border-box;
+      width: 100%;
+      margin: 0 0 1rem;
+    }
     .resultados { height: auto; }
     .resultados-izq, .resultados-dec { width: 100% !important; margin: 0 !important; }
     table { display: block; overflow-x: auto; white-space: nowrap; }
@@ -1677,5 +1747,468 @@
     .index-main-ranking table td:nth-child(3) { width: 30%; }
     .index-main-ranking table th:nth-child(4),
     .index-main-ranking table td:nth-child(4) { width: 30%; }
+  }
+
+  @media (max-width: 480px) {
+    body { overflow-x: hidden; }
+    #boxlogomodelbrush {
+      padding: 1.25rem .75rem 0;
+    }
+    .login-brand-mark {
+      width: 128px;
+      height: 116px;
+    }
+    .login-brand-name { font-size: 3.1rem; }
+    #login {
+      width: calc(100% - 2rem);
+      max-width: none;
+      margin: 2.5rem auto .75rem;
+    }
+    #login fieldset {
+      padding: 1.5rem;
+      border-radius: .55rem;
+    }
+    #login form { gap: .8rem; }
+    #login label,
+    #login input { font-size: 1.3rem; }
+    #login label { margin-top: .7rem; }
+    #login input { min-height: 56px; padding: .8rem .9rem; }
+    #login input[type="submit"] {
+      min-height: 58px;
+      margin-top: 1.25rem;
+    }
+    .bottom-login { font-size: .9rem; }
+    .site-footer { margin-top: .5rem; }
+    .app-navbar {
+      width: calc(100% + 1rem);
+      max-width: none;
+      margin-left: -.5rem;
+      margin-right: -.5rem;
+      border-right: 0;
+      border-left: 0;
+      border-radius: 0;
+    }
+    #contenedor-principal {
+      width: calc(100% - 1rem);
+      min-width: 0;
+      margin-top: .5rem;
+    }
+    .app-navbar { padding: .5rem .65rem; }
+    .app-navbar .navbar-brand { font-size: 1.45rem; }
+    .app-navbar .navbar-toggler { padding: .35rem .5rem; }
+    #contenedor-principal > h2,
+    #contenedor-principal h2.h2,
+    .h2-gerente,
+    .h2-admin {
+      padding: .75rem .85rem;
+      font-size: 1.3rem;
+      overflow-wrap: anywhere;
+    }
+    #btn-alta {
+      display: block;
+    }
+    #btn-alta .button {
+      display: block;
+      width: 100% !important;
+      text-align: center;
+    }
+    #buscador, #form, #selector-informes, .ranking-card,
+    .index-main-ranking, .div-ranking-izq, .div-ranking-dch {
+      padding: .8rem;
+      border-radius: .5rem;
+    }
+    #paginador {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .35rem;
+    }
+    #paginador span, #paginador .btn-paginador,
+    #paginador .paginador-puntos { margin: 0; }
+    #contenedor-principal table {
+      width: max-content;
+      min-width: 100%;
+      max-width: none;
+      table-layout: auto;
+    }
+    #contenedor-principal table th,
+    #contenedor-principal table td {
+      padding: .65rem .7rem;
+      white-space: nowrap;
+    }
+    #contenedor-principal table td.td-acciones,
+    #contenedor-principal table th.td-acciones {
+      width: 104px !important;
+      min-width: 104px;
+    }
+    #contenedor-principal table td.td-acciones {
+      display: table-cell;
+      white-space: nowrap;
+    }
+    #contenedor-principal .form-btn-acciones {
+      display: inline-block;
+    }
+    #contenedor-principal .form-btn-acciones img {
+      width: 22px !important;
+      height: 22px !important;
+    }
+    .ranking-card table,
+    .index-main-ranking table {
+      width: 100%;
+      min-width: 0;
+      table-layout: fixed;
+    }
+    #contenedor-principal .index-main-ranking table,
+    #contenedor-principal .index-ranking-grid table {
+      display: table;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      table-layout: fixed;
+      overflow: visible;
+      white-space: normal;
+    }
+    #contenedor-principal .index-main-ranking table th,
+    #contenedor-principal .index-main-ranking table td,
+    #contenedor-principal .index-ranking-grid table th,
+    #contenedor-principal .index-ranking-grid table td {
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: normal;
+      font-size: .82rem;
+    }
+    #contenedor-principal .index-main-ranking table th:first-child,
+    #contenedor-principal .index-main-ranking table td:first-child { width: 14%; }
+    #contenedor-principal .index-main-ranking table th:nth-child(2),
+    #contenedor-principal .index-main-ranking table td:nth-child(2) { width: 38%; }
+    #contenedor-principal .index-main-ranking table th:nth-child(3),
+    #contenedor-principal .index-main-ranking table td:nth-child(3) { width: 24%; }
+    #contenedor-principal .index-main-ranking table th:nth-child(4),
+    #contenedor-principal .index-main-ranking table td:nth-child(4) { width: 24%; }
+    #contenedor-principal .index-main-ranking table th:nth-child(4) {
+      padding-right: .2rem;
+      padding-left: .2rem;
+      font-size: .75rem;
+      white-space: nowrap;
+    }
+    #contenedor-principal .index-main-ranking table td:nth-child(2) .link-grid {
+      display: block;
+      box-sizing: border-box;
+      width: 100% !important;
+      min-width: 0;
+      padding: .35rem .25rem;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+    .ranking-card table th,
+    .ranking-card table td,
+    .index-main-ranking table th,
+    .index-main-ranking table td {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      padding: .55rem .4rem;
+    }
+    .ranking-card h3 { font-size: 1rem; }
+    #validadorClave form {
+      display: grid;
+      grid-template-columns: 1fr;
+      overflow: visible;
+    }
+    #validadorClave form input,
+    #validadorClave form select,
+    #validadorClave form .submit-button {
+      width: 100% !important;
+      min-width: 0;
+    }
+    #altaResultado .contenedor-estrellas {
+      width: 100% !important;
+      grid-template-columns: 1fr;
+      overflow: visible;
+    }
+    #altaResultado .contenedor-estrellas > .valoracion-label {
+      width: 100% !important;
+      text-align: center;
+    }
+    #altaResultado #estrellasPintura,
+    #altaResultado #estrellasDeportividad {
+      grid-column: 1;
+      max-width: 100%;
+      overflow-x: auto;
+      justify-self: center !important;
+      justify-content: center;
+    }
+    .site-footer { width: calc(100% - 1rem); padding: .75rem 0; }
+  }
+
+  @media (max-width: 767.98px) {
+    #div-volver:has(.btn-volver),
+    .btn-volver {
+      display: none !important;
+    }
+    #altaResultado {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: center;
+      gap: .4rem;
+      overflow: visible;
+    }
+    #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) label {
+      box-sizing: border-box;
+      width: auto;
+      min-width: 0;
+      flex: none;
+      overflow-wrap: anywhere;
+    }
+    #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) input,
+    #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) select,
+    #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) span {
+      box-sizing: border-box;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0;
+      flex: none;
+    }
+    #altaResultado > p:has(input.fFechaBatallaForm) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+    #altaResultado > p:has(input.fFechaBatallaForm) label {
+      flex: 0 0 100%;
+    }
+    #altaResultado > p:has(input.fFechaBatallaForm) input.fFechaBatallaForm {
+      flex: 1 1 auto;
+      width: auto !important;
+    }
+    #altaResultado > p:has(> input[type="submit"]) {
+      display: block !important;
+      grid-column: 1 / -1;
+    }
+    #altaResultado > p:has(> input[type="submit"]) .submit-button {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0;
+      box-sizing: border-box;
+      white-space: nowrap;
+    }
+    #altaResultado > p:has(input.fFechaBatallaForm) input.fFechaBatallaForm + .ui-datepicker-trigger {
+      flex: 0 0 24px;
+      width: 24px !important;
+      height: 24px;
+      margin: 0 !important;
+    }
+    #altaResultado .fecha-batalla-control {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+    }
+    #altaResultado .fecha-batalla-control input.fFechaBatallaForm.hasDatepicker {
+      flex: 0 1 70%;
+      min-width: 0;
+      width: 70% !important;
+      max-width: calc(100% - 32px) !important;
+      box-sizing: border-box;
+      margin: 0 !important;
+    }
+    #altaResultado .fecha-batalla-control .ui-datepicker-trigger {
+      flex: 0 0 24px;
+      width: 24px !important;
+      height: 24px;
+      max-width: 24px;
+      object-fit: contain;
+      display: block !important;
+      margin: 0 !important;
+    }
+    #altaResultado .fecha-batalla-control .ui-datepicker-trigger:hover {
+      opacity: 1 !important;
+    }
+    #altaResultado .resultados-izq,
+    #altaResultado .resultados-dec,
+    #altaResultado .contenedor-estrellas {
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+    #altaResultado .contenedor-estrellas {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: visible;
+    }
+    #altaResultado .contenedor-estrellas > .valoracion-label {
+      box-sizing: border-box;
+      width: 100% !important;
+      text-align: center;
+    }
+    #altaResultado #estrellasPintura,
+    #altaResultado #estrellasDeportividad {
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      width: 100% !important;
+      min-width: 0;
+      max-width: 100% !important;
+      overflow: visible;
+    }
+    #contenedor-principal table:not(.detalle-jugador-tabla) {
+      box-sizing: border-box;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      table-layout: fixed;
+    }
+    #contenedor-principal table:not(.detalle-jugador-tabla) th,
+    #contenedor-principal table:not(.detalle-jugador-tabla) td {
+      min-width: 0 !important;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      white-space: normal;
+    }
+    #contenedor-principal table:not(.detalle-jugador-tabla) tr {
+      display: table-row !important;
+      width: auto;
+    }
+    #contenedor-principal table:not(.detalle-jugador-tabla) th,
+    #contenedor-principal table:not(.detalle-jugador-tabla) td {
+      display: table-cell !important;
+    }
+    .index-ranking-grid > div,
+    .index-main-ranking {
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .index-ranking-grid h2,
+    .index-main-ranking h2 {
+      margin-bottom: .65rem !important;
+      padding: .35rem .25rem !important;
+      font-size: 1.15rem;
+      line-height: 1.1;
+    }
+    .index-ranking-grid table,
+    .index-main-ranking table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .index-ranking-grid table th,
+    .index-ranking-grid table td,
+    .index-main-ranking table th,
+    .index-main-ranking table td {
+      padding: .55rem .4rem;
+      line-height: 1.25;
+      vertical-align: middle;
+    }
+    .index-ranking-grid table th {
+      font-size: .76rem;
+      letter-spacing: .01em;
+    }
+    .index-ranking-grid table td,
+    .index-main-ranking table td {
+      font-size: .86rem;
+    }
+    .index-ranking-grid table tbody tr:nth-child(even) td,
+    .index-main-ranking table tbody tr:nth-child(even) td {
+      background: transparent !important;
+    }
+
+    #altaModJugador p:has(.span-radio-button) {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .35rem;
+    }
+    #altaModJugador p:has(.span-radio-button) .span-radio-button {
+      width: auto;
+      margin: 0 .5rem 0 0;
+      padding: 0;
+      float: none;
+      text-align: left;
+    }
+    #altaModJugador p:has(.span-radio-button) .radio-button {
+      width: 18px !important;
+      height: 18px;
+      min-height: 18px !important;
+      margin: 0;
+      padding: 0;
+      flex: 0 0 18px;
+    }
+    #altaModJugador p:has(.span-radio-button) .label-radio-button {
+      width: auto !important;
+      margin: 0 .45rem 0 0;
+      line-height: 1.2;
+    }
+    #contenedor-principal table:has(td.td-acciones) th:nth-child(n + 3):not(.td-acciones),
+    #contenedor-principal table:has(td.td-acciones) td:nth-child(n + 3):not(.td-acciones) {
+      display: none !important;
+    }
+    #contenedor-principal table:has(td.td-acciones) th.td-acciones,
+    #contenedor-principal table:has(td.td-acciones) td.td-acciones {
+      width: 108px !important;
+      min-width: 108px !important;
+      max-width: 108px !important;
+      padding-right: .15rem;
+      padding-left: .15rem;
+      white-space: nowrap !important;
+    }
+    #contenedor-principal table:has(td.td-acciones) td.td-acciones > form.form-btn-acciones {
+      display: inline-flex !important;
+      flex: 0 0 auto;
+      align-items: center;
+      white-space: nowrap !important;
+      margin: 0 .1rem;
+    }
+    #contenedor-principal table:has(td.td-acciones) {
+      display: table !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: visible;
+    }
+    #contenedor-principal table:has(td.td-acciones) {
+      table-layout: fixed !important;
+      width: 100% !important;
+    }
+    #contenedor-principal table:has(td.td-acciones) th:nth-child(1),
+    #contenedor-principal table:has(td.td-acciones) td:nth-child(1),
+    #contenedor-principal table:has(td.td-acciones) th:nth-child(2),
+    #contenedor-principal table:has(td.td-acciones) td:nth-child(2) {
+      width: calc(50% - 54px) !important;
+      white-space: nowrap !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #contenedor-principal table:not(.detalle-jugador-tabla) tbody tr {
+      border-bottom: 0 !important;
+    }
+  }
+
+  #buscador input.fFecIniForm,
+  #buscador input.fFecFinForm,
+  #buscador input.fFechaBatallaForm {
+    display: inline-block !important;
+    box-sizing: border-box;
+    width: 70px !important;
+    max-width: 70px !important;
+    margin: 0 5px 0 0 !important;
+    vertical-align: middle;
+  }
+  #buscador input.fFecIniForm + .ui-datepicker-trigger,
+  #buscador input.fFecFinForm + .ui-datepicker-trigger,
+  #buscador input.fFechaBatallaForm + .ui-datepicker-trigger {
+    display: inline-block !important;
+    width: auto !important;
+    margin: 0 10px 0 0 !important;
+    vertical-align: middle;
   }
 

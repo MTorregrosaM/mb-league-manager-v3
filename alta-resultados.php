@@ -398,9 +398,11 @@
           <p><label for="fIdJugador2Nick">Tu contrincante: </label><span id="selectJugador2" name="selectJugador2"><input type="text" name="fIdJugador2Nick" id="fIdJugador2Nick" value="<?php printf($fIdJugador2Nick);?>" class="input-contrincante" disabled /></span></p>
           
           <p><label for="fFechaBatalla">Fecha de batalla: </label>  
-          <input type="text" class="fFechaBatallaForm" name="fFechaBatalla" id="fFechaBatalla" maxlength="10" 
-          value="<?php printf($fFechaBatalla);?>" data-validation="required date" 
-          data-validation-format="dd-mm-yyyy"></p>
+          <span class="fecha-batalla-control">
+            <input type="text" class="fFechaBatallaForm" name="fFechaBatalla" id="fFechaBatalla" maxlength="10"
+            value="<?php printf($fFechaBatalla);?>" data-validation="required date"
+            data-validation-format="dd-mm-yyyy">
+          </span></p>
 
 
 

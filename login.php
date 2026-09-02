@@ -58,6 +58,7 @@
 
 <html lang="es" data-bs-theme="dark">
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- js -->
 	<script type="text/javascript" src="recursos/js/jquery-1.11.2.min.js"></script>
 	<script type="text/javascript" src="recursos/js/jquery.form-validator.min.js"></script>
@@ -88,7 +89,7 @@
 
 </head>
 
-<body>
+<body class="login-page">
 <div id="boxlogomodelbrush" aria-label="MB Leagues">
 	<span class="login-brand-mark" aria-hidden="true"></span>
 	<span class="login-brand-name">MB Leagues</span>

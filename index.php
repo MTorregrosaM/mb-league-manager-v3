@@ -1,6 +1,8 @@
-<html lang="es" data-bs-theme="dark">
-
 <?php
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 require_once "cabecera.php";
 require_once "model/class.php";
 require_once "config/config.php";
@@ -127,7 +129,7 @@ $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
   <?php if ($oLiga !== null) { ?>
     <section class="index-main-ranking">
       <h2>Ranking de resultados</h2>
-      <table><tr><th>Posición</th><th>Nick</th><th>Partidas jugadas</th><th>Resultado</th></tr><?php pintarRankingResultados($oControllerEnfrentamiento->recuperarRankingResultados($fIdLiga)); ?></table>
+      <table><tr><th>Nº</th><th>Nick</th><th>Partidas jugadas</th><th>Resultado</th></tr><?php pintarRankingResultados($oControllerEnfrentamiento->recuperarRankingResultados($fIdLiga)); ?></table>
     </section>
     <section class="index-ranking-grid">
       <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "dch" : "izq"; ?>"><h2>Top Puntuación Pintura</h2><table><tr><th>Nick</th><th>Media puntos pintura (partidas disputadas)</th></tr><?php pintarRanking($oControllerEnfrentamiento->recuperarRankingPuntosPintura($fIdLiga), 2, "ordenarRanking", array(0, 2)); ?></table></div>
@@ -143,6 +145,10 @@ $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
     <p class="center">No hay competiciones disponibles.</p>
   <?php } ?>
 </div>
-<script>$("#fIdLiga").on("change", function () { $("#selectLiga").submit(); });</script>
+<script>
+  document.getElementById("fIdLiga").addEventListener("change", function () {
+    document.getElementById("selectLiga").submit();
+  });
+</script>
 </body>
 </html>

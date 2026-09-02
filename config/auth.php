@@ -42,7 +42,7 @@ function usuarioPuedeAccederLiga(int $idLiga): bool {
     if ($idLiga <= 0 || empty($_SESSION['usuario'])) {
         return false;
     }
-    if (($_SESSION['rol'] ?? '') === 'ADMIN') {
+    if (strtoupper(trim((string) ($_SESSION['rol'] ?? ''))) === 'ADMIN') {
         return true;
     }
 
@@ -56,7 +56,7 @@ function usuarioPuedeAccederLiga(int $idLiga): bool {
 }
 
 function ligasPermitidasUsuario(): ?string {
-    if (($_SESSION['rol'] ?? '') === 'ADMIN') {
+    if (strtoupper(trim((string) ($_SESSION['rol'] ?? ''))) === 'ADMIN') {
         return null;
     }
 
@@ -89,7 +89,7 @@ function exigirAccesoLiga(int $idLiga): void {
 }
 
 function exigirAdministrador(): void {
-    if (($_SESSION['rol'] ?? '') !== 'ADMIN') {
+    if (strtoupper(trim((string) ($_SESSION['rol'] ?? ''))) !== 'ADMIN') {
         http_response_code(403);
         exit('Acceso no autorizado');
     }
@@ -116,6 +116,22 @@ function validarAccesoLigaEnPeticion(): void {
     }
 
     $idJugador = $_POST['fIdJugador'] ?? $_GET['fIdJugador'] ?? null;
+    $ligaDelJugador = null;
+    if ($idJugador !== null && filter_var($idJugador, FILTER_VALIDATE_INT) !== false && (int) $idJugador > 0) {
+        $conexion = new conexBD();
+        $resultado = $conexion->ejecutarConsultaPreparada(
+            'SELECT idLiga FROM mb_jugadores WHERE idJugador = ? LIMIT 1',
+            'i',
+            array((int) $idJugador)
+        );
+        if (is_array($resultado) && count($resultado) > 0) {
+            $ligaDelJugador = (int) $resultado[0][0];
+        }
+    }
+
+    if ($ligaDelJugador !== null) {
+        $valores = array($ligaDelJugador);
+    }
     $hayLigaValida = false;
     foreach ($valores as $valor) {
         if ($valor !== null && $valor !== '' && filter_var($valor, FILTER_VALIDATE_INT) !== false && (int) $valor > 0) {
@@ -124,17 +140,9 @@ function validarAccesoLigaEnPeticion(): void {
         }
     }
     $ligaResueltaDesdeJugador = false;
-    if (!$hayLigaValida && $idJugador !== null && filter_var($idJugador, FILTER_VALIDATE_INT) !== false && (int) $idJugador > 0) {
-        $conexion = new conexBD();
-        $resultado = $conexion->ejecutarConsultaPreparada(
-            'SELECT idLiga FROM mb_jugadores WHERE idJugador = ? LIMIT 1',
-            'i',
-            array((int) $idJugador)
-        );
-        if (is_array($resultado) && count($resultado) > 0) {
-            $valores[] = (int) $resultado[0][0];
-            $ligaResueltaDesdeJugador = true;
-        }
+    if (!$hayLigaValida && $ligaDelJugador !== null) {
+        $valores[] = $ligaDelJugador;
+        $ligaResueltaDesdeJugador = true;
     }
 
     foreach ($valores as $valor) {
