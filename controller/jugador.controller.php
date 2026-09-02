@@ -45,16 +45,14 @@ class controllerJugador {
     public function recuperarDatosJugador( $idJugador ){
     try {
 
-        $queryDB = "SELECT idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura
-              FROM mb_jugadores
-              WHERE 1=1 ";
-        $queryDB .= "AND idJugador = '". $idJugador . "' ";
-      
-      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+          $queryDB = "SELECT idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura
+            FROM mb_jugadores
+            WHERE idJugador = ?";
+        $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'i', array((int) $idJugador));
 
       if ($resultadoBD != null){
         foreach ($resultadoBD as $fila) {
-          $this->oJugador = new Jugador ( $idJugador, $fila[0], $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8] ) ;
+          $this->oJugador = new Jugador ( $fila[0], $idJugador, $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8] ) ;
           return  $this->oJugador;  
         }
       }else{
@@ -84,14 +82,22 @@ class controllerJugador {
         $queryDB = "SELECT  idJugador, idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura
               FROM mb_jugadores 
               WHERE 1=1 ";
+      $tipos = '';
+      $parametros = array();
             
       // GESTIONAMOS FILTROS
-        if ( $fIdLiga != null ) { $queryDB .= " AND idLiga = " . $fIdLiga ;  }
-      if ( $fNick != null ) { $queryDB .= " AND UPPER(nick) LIKE UPPER('%" . $fNick  . "%') ";  }
-      if ( $fEmail != null ) { $queryDB .= " AND UPPER(email) LIKE '%" . $fEmail. "%'";  }
-      if ( $fTelefono != null ) { $queryDB .= " AND telefono LIKE '%" . $fTelefono . "%'";  }
-      if ( $validarEnfrentamientos ) { $queryDB .= " AND (idJugador not in (select distinct idJugador1 from mb_enfrentamientos WHERE numFase = " . $fNumFase . " AND numRonda = " . $fNumRonda  ."  )
-                               AND idJugador not in (select distinct idJugador2 from mb_enfrentamientos WHERE numFase = " . $fNumFase . " AND numRonda = " . $fNumRonda   ."))";  }   
+        if ( $fIdLiga != null ) { $queryDB .= " AND idLiga = ?"; $tipos .= 'i'; $parametros[] = (int) $fIdLiga; }
+      if ( $fNick != null ) { $queryDB .= " AND UPPER(nick) LIKE UPPER(?) "; $tipos .= 's'; $parametros[] = '%' . $fNick . '%'; }
+      if ( $fEmail != null ) { $queryDB .= " AND UPPER(email) LIKE UPPER(?)"; $tipos .= 's'; $parametros[] = '%' . $fEmail . '%'; }
+      if ( $fTelefono != null ) { $queryDB .= " AND telefono LIKE ?"; $tipos .= 's'; $parametros[] = '%' . $fTelefono . '%'; }
+      if ( $validarEnfrentamientos ) { $queryDB .= " AND (idJugador NOT IN (SELECT DISTINCT idJugador1 FROM mb_enfrentamientos WHERE numFase = ? AND numRonda = ?)
+                               AND idJugador NOT IN (SELECT DISTINCT idJugador2 FROM mb_enfrentamientos WHERE numFase = ? AND numRonda = ?))";
+        $tipos .= 'iiii';
+        $parametros[] = (int) $fNumFase;
+        $parametros[] = (int) $fNumRonda;
+        $parametros[] = (int) $fNumFase;
+        $parametros[] = (int) $fNumRonda;
+      }
 
       // ORDENAMOS
         $queryDB .= " ORDER BY nick DESC ";
@@ -99,7 +105,7 @@ class controllerJugador {
       // PAGINAMOS
       $queryDB .= " LIMIT " . $numPag . ", ".  $numLim . "  ";
 
-      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+      $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, $tipos, $parametros);
 
       $arrResultados = array ();
 
@@ -412,30 +418,42 @@ class controllerJugador {
       $fIdLiga = (int) $fIdLiga;
       $fTelefono = trim((string) $fTelefono) === '' ? 0 : (int) $fTelefono;
       $fPuntosPintura = (int) $fPuntosPintura;
-      $fNick = addslashes(trim((string) $fNick));
-      $fNombre = addslashes(trim((string) $fNombre));
-      $fApellido1 = addslashes(trim((string) $fApellido1));
-      $fApellido2 = addslashes(trim((string) $fApellido2));
-      $fEmail = addslashes(trim((string) $fEmail));
-      $fBando = addslashes(trim((string) $fBando));
+      $fNick = trim((string) $fNick);
+      $fNombre = trim((string) $fNombre);
+      $fApellido1 = trim((string) $fApellido1);
+      $fApellido2 = trim((string) $fApellido2);
+      $fEmail = trim((string) $fEmail);
+      $fBando = trim((string) $fBando);
 
-      $queryDuplicado = "SELECT idJugador FROM mb_jugadores WHERE nick = '" . $fNick . "' OR email = '" . $fEmail . "'";
+      $queryDuplicado = "SELECT idJugador FROM mb_jugadores WHERE idLiga = ? AND (nick = ? OR email = ?";
+      $tiposDuplicado = 'iss';
+      $parametrosDuplicado = array($fIdLiga, $fNick, $fEmail);
       if ($fNombre !== '' && $fApellido1 !== '' && $fApellido2 !== '') {
-        $queryDuplicado .= " OR (nombre = '" . $fNombre . "' AND apellido1 = '" . $fApellido1 . "' AND apellido2 = '" . $fApellido2 . "')";
+        $queryDuplicado .= " OR (nombre = ? AND apellido1 = ? AND apellido2 = ?)";
+        $tiposDuplicado .= 'sss';
+        $parametrosDuplicado[] = $fNombre;
+        $parametrosDuplicado[] = $fApellido1;
+        $parametrosDuplicado[] = $fApellido2;
       }
       if ($fTelefono !== 0) {
-        $queryDuplicado .= " OR telefono = " . $fTelefono;
+        $queryDuplicado .= " OR telefono = ?";
+        $tiposDuplicado .= 'i';
+        $parametrosDuplicado[] = $fTelefono;
       }
-      $duplicado = $this->oConexBD->ejecutarConsulta($queryDuplicado);
+      $queryDuplicado .= ")";
+      $duplicado = $this->oConexBD->ejecutarConsultaPreparada($queryDuplicado, $tiposDuplicado, $parametrosDuplicado);
       if ($duplicado != null) {
         return 3;
       }
 
       $queryDB = "INSERT INTO mb_jugadores( idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura, audAlta )
-        VALUES (" . $fIdLiga . ",'". $fNick . "', '" . $fNombre . "', '" . $fApellido1 . "', '" . $fApellido2 . "' , ". $fTelefono . ", '" .  $fEmail . "' , '" .
-              $fBando . "', " . $fPuntosPintura . ", '" . Date('Y-m-d H:i:s') . "' )";
-      
-      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada(
+        $queryDB,
+        'issssissis',
+        array($fIdLiga, $fNick, $fNombre, $fApellido1, $fApellido2, $fTelefono, $fEmail, $fBando, $fPuntosPintura, date('Y-m-d H:i:s')),
+        1
+      );
 
 
       if ($resultadoBD >= 1){
@@ -461,10 +479,9 @@ class controllerJugador {
 
       $this->oJugador = $this->recuperarDatosJugador ( $fIdJugador );
     
-        $queryDB = "DELETE FROM mb_jugadores
-            WHERE idJugador = ".$fIdJugador ;
+        $queryDB = "DELETE FROM mb_jugadores WHERE idJugador = ?";
 
-      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+      $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'i', array((int) $fIdJugador), 1);
             
       
       if ($resultadoBD >= 1){
@@ -740,6 +757,10 @@ class controllerJugador {
 
     /* método para cambiar el formato de fecha de la BD al UTC español */
     public function formatoFecha ( $utcUsa = true, $fFecha = null ){
+
+    if ($fFecha === null || trim((string) $fFecha) === '') {
+      return null;
+    }
 
       if ($utcUsa){
       $user_tz = 'America/Los_Angeles';

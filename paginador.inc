@@ -7,7 +7,7 @@
 		if ($numPags > 1){
 			$paginador = "<div id=\"paginador\">";
 			$aux = 0;
-			$btnPuntos = "<span>...</span>";
+			$btnPuntos = "<span class=\"paginador-puntos\">...</span>";
 			for($i = 1; $i<= $numPags; $i++){
 				if($pagActual > 1 && $aux == 0){
 					$paginador .= "<span id=\"".($pagActual-1)."\" class=\"btn-paginador\" >&laquo;</span>" ;

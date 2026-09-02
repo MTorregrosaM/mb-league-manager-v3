@@ -1,5 +1,7 @@
 <?php
-	require_once __DIR__ . '/../config/auth.php';
+	require_once __DIR__ . '/../config/db.class.php';
+	require_once __DIR__ . '/../config/security.php';
+	validarCsrfPublico();
 	
 
 		// importamos librerias
@@ -10,6 +12,7 @@
 		$fIdLiga = (isset($_POST['fIdLiga'])? $_POST["fIdLiga"] : null);
 		$fIdJugador = (isset($_POST['fIdJugador'])? $_POST["fIdJugador"] : null);
 		$fNumFase = (isset($_POST['fNumFase'])? $_POST["fNumFase"] : null);
+		exigirLigaActivaPublica($fIdLiga);
 
 		$oControllerEnfrentamiento = new controllerEnfrentamiento();
 
@@ -79,8 +82,8 @@
 							$("#enfrentamientoJug2").text( $('#fIdJugador2Nick').val() );
 							$("#fResultadoJugador1").val( $('#fResultadoJugador1Aux').val() );
 			        		$("#slider-resultado-1").slider( "option", "value", $('#fResultadoJugador1Aux').val() );
-							$("#fResultadoJugador2").val( $('#fResultadoJugador2Aux').val() );
-			        		$("#slider-resultado-2").slider( "option", "value", $('#fResultadoJugador2Aux').val() );
+							$("#fResultadoJugador2").val( $("#slider-resultado-1").slider("option", "max") + 1 - $('#fResultadoJugador1Aux').val() );
+			        		$("#slider-resultado-2").slider( "option", "value", $("#slider-resultado-1").slider("option", "max") + 1 - $('#fResultadoJugador1Aux').val() );
 							$("#fFechaBatalla").val( $('#fFechaBatallaAux').val() );
 							$('#estrellasPintura').raty({ score: 1, click: function(score, evt) { $("#fValPintura").val(score);} });
 							$('#fValPintura').val( 1 );

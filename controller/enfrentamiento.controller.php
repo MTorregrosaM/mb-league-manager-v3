@@ -136,6 +136,10 @@ class controllerEnfrentamiento {
 				if ( $oEnfrentamiento->idJugador2 == $fIdJugador &&  ($oEnfrentamiento->resultadoJugador2 != $fResultadoJugador1 || ($oEnfrentamiento->resultadoJugador1 != $fResultadoJugador2 ))) {
 					$errorDatos = true;
 				}
+
+				if ($errorDatos) {
+					return 4;
+				}
 			}
 
 			// actualizamos la pintura del jugador 
@@ -195,9 +199,7 @@ class controllerEnfrentamiento {
 				}
 			}
 			
-			if ($errorDatos ){
-				return 4;
-			}else if (!$errorPrincipal){
+			if (!$errorPrincipal){
 				return 1;				
 			}else{
 				return 2;
@@ -478,6 +480,12 @@ class controllerEnfrentamiento {
   	}  	
 
 
+	/* método para recuperar todos los enfrentamientos de un jugador. */
+	public function recuperarDetalleEnfrentamientosJugador($fIdLiga, $fIdJugador) {
+		return $this->recuperarListadoEnfrentamientosCompleto($fIdLiga, $fIdJugador, null, null, 0, null);
+	}
+
+
   	/* método para recuperar el listado de registros. */
   	public function recuperarListadoEnfrentamientos ( $fIdLiga, $fNumFase, $fNumRonda) {
 
@@ -546,7 +554,9 @@ class controllerEnfrentamiento {
 	  	    $queryDB .= " ORDER BY fechaBatalla desc, indValidado asc   ";
 
 			// PAGINAMOS
-			$queryDB .= " LIMIT " . $numPag . ", ".  $numLim . "	";
+			if ($numLim !== null) {
+				$queryDB .= " LIMIT " . $numPag . ", ".  $numLim . "	";
+			}
 
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
 
@@ -855,6 +865,42 @@ class controllerEnfrentamiento {
 
 
   	/* Ranking puntos pintura. */
+	   public function recuperarRankingResultados($fIdLiga) {
+
+			try {
+				$queryDB = "SELECT j.idJugador AS idJugador, j.nick,
+						SUM(CASE WHEN e.fechaBatalla IS NOT NULL AND e.fechaBatalla > 0 THEN 1 ELSE 0 END) AS partidasJugadas,
+						SUM(CASE WHEN e.idJugador1 = j.idJugador THEN IFNULL(e.resultadoJugador1, 0) ELSE IFNULL(e.resultadoJugador2, 0) END) AS resultado
+					FROM mb_jugadores j
+					LEFT JOIN mb_enfrentamientos e
+						ON (e.idJugador1 = j.idJugador OR e.idJugador2 = j.idJugador)
+						AND e.idLiga = " . (int) $fIdLiga . "
+					WHERE j.idLiga = " . (int) $fIdLiga . "
+						AND j.nick != 'zMercenario'
+					GROUP BY j.idJugador, j.nick
+					ORDER BY resultado DESC, partidasJugadas DESC, j.nick";
+
+				$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+				$arrResultados = array();
+
+				if ($resultadoBD != null) {
+					foreach ($resultadoBD as $fila) {
+						$arrResultados[] = array($fila["nick"], $fila["partidasJugadas"], $fila["resultado"], $fila["idJugador"]);
+					}
+				}
+
+				return $arrResultados;
+
+			}catch(Exception $e){
+				$oLog = Log::getInstance();
+				$oLog->trazaLog ($e, "recuperarRankingResultados - enfrentamiento.controller.php");
+				return null;
+			}
+		}
+
+
+
+	   /* Ranking puntos pintura. */
   	public function recuperarRankingPuntosPintura(  $fIdLiga ) {
 
 		try {

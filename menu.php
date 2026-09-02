@@ -43,9 +43,9 @@
 					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['gestion-jugadores.php']) ? ' active' : ''); ?>" href="gestion-jugadores.php">Jugadores</a></li>
 					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['gestion-enfrentamientos.php']) ? ' active' : ''); ?>" href="gestion-enfrentamientos.php">Cruces</a></li>
 					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['editar-resultados.php']) ? ' active' : ''); ?>" href="editar-resultados.php">Resultados</a></li>
-					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['alta-resultados.php']) ? ' active' : ''); ?>" href="alta-resultados.php">Alta resultados</a></li>
 					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['cruce-doble-lista.php']) ? ' active' : ''); ?>" href="cruce-doble-lista.php">Doble lista</a></li>
 				<?php } ?>
+				<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['alta-resultados.php']) ? ' active' : ''); ?>" href="alta-resultados.php">Alta resultados</a></li>
 			</ul>
 			<a class="btn btn-outline-light btn-sm" href="<?php echo $estaLogado ? 'logout.php' : 'login.php'; ?>"><?php echo $estaLogado ? 'Salir' : 'Admin'; ?></a>
 		</div>

@@ -12,13 +12,15 @@
  */
 class Log {
 
-    private $ficheroLog = __DIR__ . "/../log.log";
+    private $ficheroLog;
     private $diasRetencion = 30;
 	private $mensaje;
 	private static $oLog = NULL;
 
 
-	public function __construct( ) { } 
+	public function __construct( ) {
+        $this->ficheroLog = getenv('MB_LOG_FILE') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'mb-league-manager.log';
+    }
 
     // método que escribe en el log el error 
     public function trazaLog ($e = null, $texto = null){

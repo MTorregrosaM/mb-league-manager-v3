@@ -1,5 +1,7 @@
 <?php
-	require_once __DIR__ . '/../config/auth.php';
+	require_once __DIR__ . '/../config/db.class.php';
+	require_once __DIR__ . '/../config/security.php';
+	validarCsrfPublico();
 	
 
 		// importamos librerias
@@ -9,6 +11,7 @@
 
 		$fIdLiga = (isset($_POST['fIdLiga'])? $_POST["fIdLiga"] : null);
 		$fNumRonda = (isset($_POST['fNumRonda'])? $_POST["fNumRonda"] : null);
+		exigirLigaActivaPublica($fIdLiga);
 
 		$oControllerLiga = new controllerLiga();
 

@@ -85,7 +85,7 @@
         // FLAMES OF WAR
         if($oLiga->idJuego <= 2 ){
         $maxResultado = (($oLiga->idJuego == 1)? 6 : 8);
-        $maxResultadoSlider = $maxResultado+1; 
+        $maxResultadoSlider = $maxResultado; 
         $minResultado = 1;
       
         $fResultadoJugador1 = (isset( $_POST["fResultadoJugador1"]) && $_POST["fResultadoJugador1"] != '')? $_POST["fResultadoJugador1"] : 1; 
@@ -287,8 +287,8 @@
 
             // SI HEMOS BUSCADO POR UN JUGADOR, LO PINTAMOS DE OTRO COLOR
             $classJugadorBuscado = ($fila[4] == $fIdJugador1) ? "class=\"jugadorSeleccionado\"" : "";
-            $imgStar = ($fila[4] == $fIdJugador1) ? "<img src=\"recursos/img/icon_star_peq_rojo.png\" title=\"Deportividad\"/>" : "<img src=\"recursos/img/icon_star_peq.png\" title=\"Deportividad\"/>";
-            $imgFlag = ($fila[4] == $fIdJugador1) ? "<img src=\"recursos/img/icon_rendido_peq_rojo.png\" title=\"Victoria concedida\"/>" : "<img src=\"recursos/img/icon_rendido_peq.png\" title=\"Victoria concedida\"/>";
+            $imgStar = "<img class=\"star-deportividad\" src=\"recursos/img/star.svg\" title=\"Deportividad\"/>";
+            $imgFlag = "<img class=\"star-deportividad\" src=\"recursos/img/flag.svg\" title=\"Victoria concedida\"/>";
 
 
             $grid .="\n<tr><td>" . $fila[2] . " (" . $fila[3]  . ")</td><td>" . $fila[10] . "</td><td ". $classJugadorBuscado . ">" .  $oJugador1->nick ." (" ;
@@ -305,8 +305,8 @@
 
             // SI HEMOS BUSCADO POR UN JUGADOR, LO PINTAMOS DE OTRO COLOR
             $classJugadorBuscado = ($fila[5] == $fIdJugador1) ? "class=\"jugadorSeleccionado\"" : "";
-            $imgStar = ($fila[5] == $fIdJugador1) ? "<img src=\"recursos/img/icon_star_peq_rojo.png\" title=\"Deportividad\"/>" : "<img src=\"recursos/img/icon_star_peq.png\" title=\"Deportividad\"/>";
-            $imgFlag = ($fila[5] == $fIdJugador1) ? "<img src=\"recursos/img/icon_rendido_peq_rojo.png\" title=\"Victoria concedida\"/>" : "<img src=\"recursos/img/icon_rendido_peq.png\" title=\"Victoria concedida\"/>";
+            $imgStar = "<img class=\"star-deportividad\" src=\"recursos/img/star.svg\" title=\"Deportividad\"/>";
+            $imgFlag = "<img class=\"star-deportividad\" src=\"recursos/img/flag.svg\" title=\"Victoria concedida\"/>";
 
             $grid .= "<td ". $classJugadorBuscado . ">" . $oJugador2->nick . " (";
 
@@ -324,8 +324,8 @@
             $grid .= "<td class=\"align-center td-acciones\">";
 
             
-            if($fila[11] == 0 && $fila[6] != null && $fila[8]  > 0 && $fila[9]  > 0) {
-              $grid .= "<img src=\"recursos/img/icon_validate.png\"  alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\"/ onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\">";
+            if($fila[11] == 0) {
+              $grid .= "<img src=\"recursos/img/ok.svg\"  alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\"/ onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\">";
             }else{
               $icon = "";
                if ( ($fila[10] != null && $fila[8]  == 0) || ($fila[10] != null && $fila[9] == 0) || $fila[10] == null ){
@@ -335,6 +335,7 @@
               }
 
               $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
+                  <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\" />
                     <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
                     <input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
                     <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
@@ -362,15 +363,16 @@
                     <input type=\"hidden\" name=\"fIdMisionSecJug23\" id=\"fIdMisionSecJug23\" value=\"". $fIdMisionSecJug23 ."\" />
                     <input type=\"hidden\" name=\"fIdMisionSecJug24\" id=\"fIdMisionSecJug24\" value=\"". $fIdMisionSecJug24 ."\" />
 
-                    <img src=\"recursos/img/" . $icon . ".png\" title=\"Editar o validar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+                    <img src=\"recursos/img/check.svg\" width=\"24\" height=\"24\" title=\"Editar o validar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
                   </form>\n";
             }
             $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
+              <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\" />
                   <input type=\"hidden\" name=\"fIdEnfrentamientoReset\" id=\"fIdEnfrentamientoReset\" value=\"".$fila[0]."\"/>
                   <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
                   <input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
                   <input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
-                  <img src=\"recursos/img/icon_reset.png\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>                
+                    <img src=\"recursos/img/trash.svg\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>                
                 </form>";
             
           }
@@ -461,8 +463,9 @@
                 array_push($arrMisionesSecJug2, $selectMisSecJug24);
               } 
          }
-
-
+          if ($oLiga->idJuego <= 2) {
+            $fResultadoJugador2 = $maxResultado + 1 - (int) $fResultadoJugador1;
+          }
           $comprobarAltaMod = $oControllerEnfrentamiento->modificarDatosEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador1, $fIdJugador2, $fResultadoJugador1, $fResultadoJugador2,
                       $fValPinturaJug1, $fValPinturaJug2, $fFechaBatalla, $fIndValidado, $arrMisionesSecJug1, $arrMisionesSecJug2, $fValDeportividadJug1, $fValDeportividadJug2, $fIdJugVictoriaConcedida, $fVictoriaSector );
 
@@ -657,14 +660,14 @@
                     range: "max",
                     min: <?php echo $minResultado; ?>,
                     max: <?php echo $maxResultadoSlider; ?>,
-                    value: <?php printf($fResultadoJugador2);?>,
+                    value: <?php echo $maxResultado+1; ?> - <?php printf($fResultadoJugador1);?>,
                     slide: function( event, ui ) {
                       $("#fResultadoJugador2" ).val( ui.value );
-                      /*$("#fResultadoJugador1" ).val( 7-ui.value );
-                      $("#slider-resultado-1").slider( "option", "value", 7-ui.value );*/
+                      $("#fResultadoJugador1" ).val( <?php echo $maxResultado+1; ?>-ui.value );
+                      $("#slider-resultado-1").slider( "option", "value", <?php echo $maxResultado+1; ?>-ui.value );
                     }
                   });
-                  $("#fResultadoJugador2" ).val( $( "#slider-resultado-2" ).slider( "value" ) );
+                  $("#fResultadoJugador2" ).val( <?php echo $maxResultado+1; ?> - $( "#slider-resultado-1" ).slider( "value" ) );
         <?php } ?>
   });
 
@@ -682,6 +685,7 @@
                         "fFechaBatalla" : fFechaBatalla,
                         "fIndValidado" : fIndValidado,
                         "pagActual" : pagActual,
+                        "csrf_token" : "<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>",
                 };
 
                 $.ajax({
@@ -779,14 +783,14 @@
             <div class="resultados-izq">                          
                 <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>" >            
               <p id="enfrentamientoJug1" > </p>
-                <div id="slider-resultado-1" style=" width: 300px; background: #cd5700">
+                <div id="slider-resultado-1">
                 </div>
               </div>
 
             <div class="resultados-dec">
                 <input class="input-resultado" type="text" id="fResultadoJugador2" name="fResultadoJugador2" value="<?php printf($fResultadoJugador2); ?>" >
               <p id="enfrentamientoJug2" ><?php printf($fIdJugador2Nick);?></p>
-                <div id="slider-resultado-2" style="width: 300px; background: #cd5700;" ></div>
+                <div id="slider-resultado-2"></div>
               </div>
             <?php } ?>    
 
@@ -853,10 +857,10 @@
       </div>
     
 
-      <p><span class="span-radio-button">Resultado validado: </span>
+      <p class="resultado-validado"><span class="span-radio-button">Resultado validado:</span><span class="resultado-validado-opciones">
         <input type="radio" name="fIndValidado" id="fIndValidado1" value="1" <?php printf(($fIndValidado == 1)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndValidado1">S&iacute;</label>
-          <input type="radio" name="fIndValidado" id="fIndValidado0" value="0" <?php printf(($fIndValidado == 0)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndValidado0">No</label>   
-      </p>  
+        <input type="radio" name="fIndValidado" id="fIndValidado0" value="0" <?php printf(($fIndValidado == 0)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndValidado0">No</label>
+      </span></p>
 
       <p><span class="span-radio-button">Victoria concedida a: </span>
         <select name="fIdJugVictoriaConcedida" id="fIdJugVictoriaConcedida" data-validation="required " >
@@ -869,7 +873,7 @@
       <?PHP 
       // FLAMES OF WAR
       if($oLiga->idJuego <= 2 ){ ?>
-          <p><br/>
+          <p class="p-misiones-titulo"><br/>
           Misiones secundarias <strong><?php echo $oJugador1->nick; ?></strong>:</p>
           <p class="p-misiones">
             <span id="fIdMisionSecJug11"><select name="fIdMisionSecJug11" id="fIdMisionSecJug11" data-validation="required " style="width: 100px !important" ><option value="0"></option><?php printf($selectMisionSecJug11); ?></select></span> 
@@ -879,7 +883,7 @@
           </p>
 
 
-          <p><br/>
+          <p class="p-misiones-titulo"><br/>
           Misiones secundarias <strong><?php echo $oJugador2->nick; ?></strong>:</p>
           <p class="p-misiones">
             <span id="fIdMisionSecJug21"><select name="fIdMisionSecJug21" id="fIdMisionSecJug21" data-validation="required " style="width: 100px !important" ><option value="0"></option><?php printf($selectMisionSecJug21); ?></select></span> 
@@ -921,7 +925,8 @@
         <form name="buscadorligas" id="buscadorligas" method="POST" action="">
           <input type="hidden" name="accionForm" id="accionForm" value="1"/>
           <input type="hidden" name="pagActual" id="pagActual" value="1" />
-          <label for="fIdLiga">Liga:</label> <span id="selectLigas"><select name="fIdLiga" id="fIdLiga" data-validation="required " ><option value="0"></option><?php printf($selectLigas); ?> </select>
+          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
+          <label for="fIdLiga">Liga:</label> <span id="selectLigas"><select name="fIdLiga" id="fIdLiga" data-validation="required " ><?php printf($selectLigas); ?> </select>
           <label for="fIdJugador1">Jugador:</label> <span id="divSelectJugadores" class="divSelectJugadores"><select name="fIdJugador1" id="fIdJugador1" data-validation="required " ><option value="0"></option><?php printf($selectJugadores); ?> </select></span>  
           <label for="fIndValidado">Validado: </label>   
           <select name="fIndValidado" id="fIndValidado">

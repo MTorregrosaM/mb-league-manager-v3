@@ -37,7 +37,7 @@
 
 		// variables POST
 		$accionForm = (isset($_POST["accionForm"]))? $_POST["accionForm"] : 1;
-		$fIdLiga = (isset( $_POST["fIdLiga"]))? $_POST["fIdLiga"] : "";
+		$fIdLiga = (isset( $_POST["fIdLiga"]))? $_POST["fIdLiga"] : (isset($_SESSION["fIdLiga"])? $_SESSION["fIdLiga"] : "");
 		$fNumFase = (isset($_POST["fNumFase"]))? $_POST["fNumFase"] : "";
 		$fNumRonda = (isset($_POST["fNumRonda"]))? $_POST["fNumRonda"] : "";
 		$fFecIni = (isset($_POST["fFecIni"]))? $_POST["fFecIni"] : "";
@@ -133,7 +133,7 @@
 		  $txtAltaModH3 = "Alta de nueva fase";
 
 		  // grabamos nuevo registro en caso de que se haya enviado el formulario
-		  if (count($_POST) > 2){
+		  if (isset($_POST["fNumFase"], $_POST["fFecIni"], $_POST["fFecFin"], $_POST["fClaveCifrada"])){ 
 		    $comprobarAltaMod = $oControllerFase->altaFase( $fIdLiga, $fNumFase, $fFecIni, $fFecFin, $fClaveCifrada );
 
 		    /*  1. OK
@@ -142,10 +142,18 @@
 		      4. ERROR NUMERO DE FASE YA UTILIZADO
 		    */
 
-		    $mensajeAltaMod .= "<div id=\"". (($comprobarAltaMod == 1)? "mensaje-ok" : "mensaje-error") ."\">".
-		              ( ($comprobarAltaMod == 1)? "Fase creada correctamente. " :
-		                  (($comprobarAltaMod == 4)? "El número de fase ya está utilizado en la Liga, por favor, elige otro." :
-		                 "Se ha producido un error en su solicitud.") ) ."</div>";
+		    if ($comprobarAltaMod == 1) {
+				$mensajeTexto = "Fase creada correctamente. ";
+			} elseif ($comprobarAltaMod == 4) {
+				$mensajeTexto = "El nombre o número de fase ya está utilizado en la Liga, por favor, elige otro.";
+			} elseif ($comprobarAltaMod == 5) {
+				$mensajeTexto = "Las fechas de la fase se solapan con otra fase de la Liga o no son válidas.";
+			} elseif ($comprobarAltaMod == 6) {
+				$mensajeTexto = "Las fechas de la fase deben estar dentro del calendario de la Liga.";
+			} else {
+				$mensajeTexto = "Completa todos los campos obligatorios antes de guardar la fase.";
+			}
+			$mensajeAltaMod .= "<div id=\"" . (($comprobarAltaMod == 1) ? "mensaje-ok" : "mensaje-error") . "\">" . $mensajeTexto . "</div>";
 		  }
 
 
@@ -167,9 +175,11 @@
 					4. ERROR DUPLICADO
 				*/
 
-				$mensajeAltaMod .= "<div id=\"". ( ($comprobarAltaMod == 1)? "mensaje-ok" : (($comprobarAltaMod == 3)? "mensaje-aviso" : "mensaje-error")) ."\">".
+				$mensajeAltaMod .= "<div id=\"". ( ($comprobarAltaMod == 1)? "mensaje-ok" : (($comprobarAltaMod == 3 || $comprobarAltaMod == 4 || $comprobarAltaMod == 6)? "mensaje-aviso" : "mensaje-error")) ."\">".
 								( ($comprobarAltaMod == 1)? "Fase modificada correctamente." :
-								  (($comprobarAltaMod == 2)? "Se ha producido un error en su solicitud." : "AVISO: debe modificar al menos un campo.") ) ."</div>";
+								  (($comprobarAltaMod == 6)? "Las fechas de la fase deben estar dentro del calendario de la Liga." :
+								  (($comprobarAltaMod == 4)? "Las fechas de la fase se solapan con otra fase de la Liga." :
+								  (($comprobarAltaMod == 2)? "Se ha producido un error en su solicitud." : "AVISO: debe modificar al menos un campo."))) ) ."</div>";
 
 
 			}
@@ -283,19 +293,22 @@
 		<form name="altaModFase" id="altaModFase" method="POST" action="" enctype="multipart/form-data">
 
 			<?php printf ($mensajeAltaMod);  ?>
+			<input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
 			<input type="hidden" name="accionForm" id="accionForm" value="<?php printf($accionForm);?>"/>
 			<?php if ($accionForm == 4){ ?> <input type="hidden" name="fClaveFaseEditar" id="fClaveFaseEditar" value="1"/>  <?php } ?>
-			<input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
-			<input type="hidden" name="fNumFase" id="fNumFase" value="<?php printf($fNumFase);?>"/>
-			<p><label for="fNumFase">Fase: </label>  <input type="text" name="fNumFase" <?php if( $accionForm == 4){ printf("disabled"); } ?>  id="fNumFase" value="<?php printf($fNumFase);?>" class="no-border spinnerFases"></p>
+			<input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php echo htmlspecialchars($fIdLiga, ENT_QUOTES, 'UTF-8');?>"/>
+			<?php if ($accionForm == 4){ ?>
+			<input type="hidden" name="fNumFase" value="<?php echo htmlspecialchars($fNumFase, ENT_QUOTES, 'UTF-8');?>"/>
+			<?php } ?>
+			<p><label for="fNumFase">Fase: </label>  <input type="text" name="fNumFase" <?php if( $accionForm == 4){ printf("disabled"); } ?>  id="fNumFase" value="<?php echo htmlspecialchars($fNumFase, ENT_QUOTES, 'UTF-8');?>" class="no-border spinnerFases" data-validation="required number"></p>
 			<p><label for="fClaveCifrada">Clave cifrada: </label>  <input type="text" name="fClaveCifrada" maxlength="35"  id="fClaveCifrada" value="<?php printf($fClaveCifrada);?>"  ></p>
 			<p><label for="fFecIni">Fecha Inicio: </label>
 				<input type="text" class="fFecIniForm" name="fFecIni" id="fFecIni" maxlength="10"
-				value="<?php printf($fFecIni);?>" data-validation="required date"
+				value="<?php echo htmlspecialchars($fFecIni, ENT_QUOTES, 'UTF-8');?>" data-validation="required date"
 				data-validation-format="dd-mm-yyyy"></p>
 			<p><label for="fFecFin">Fecha Fin: </label>
 				<input type="text" class="fFecFinForm" name="fFecFin" id="fFecFin" maxlength="10"
-				value="<?php printf($fFecFin);?>" data-validation="required date"
+				value="<?php echo htmlspecialchars($fFecFin, ENT_QUOTES, 'UTF-8');?>" data-validation="required date"
 				data-validation-format="dd-mm-yyyy"></p>
 
 			<p><input type="submit" value="<?php printf($txtAltaModBoton);?>" id="formButton" class="submit-button"/></p>
@@ -341,6 +354,7 @@
 
 	      <div id="btn-alta">
 	        <form name="btnFormAltaFase" id="btnFormAltaFase" method="POST" action="">
+	          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
 	          <input type="hidden" name="accionForm" id="accionForm" value="2"/>
 	       	  <input type="hidden" id="fIdLiga" name="fIdLiga" value="<?php printf($fIdLiga); ?>"/>
 	          <a href="#" class="button" id="btnAltaCliente"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva fase</a>

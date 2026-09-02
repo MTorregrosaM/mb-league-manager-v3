@@ -90,6 +90,7 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
     </form>
   </div>
   <div id="div-volver"><a href="gestion-juegos.php" class="btn-volver">Volver</a></div>
+  
   <?php } else { ?>
   <p>Desde este panel puede dar de alta, modificar o eliminar cualquier juego de la aplicaci&oacute;n.</p>
   <div id="buscador">
@@ -145,6 +146,7 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
     </tr>
     <?php } ?>
   </table>
+  <div id="div-volver"><a href="gestion-ligas.php" class="btn-volver">Volver</a></div>
   <?php } else { echo "<p>No hay juegos.</p>"; } ?>
   <?php } ?>
 </div>

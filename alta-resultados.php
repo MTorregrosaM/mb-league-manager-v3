@@ -1,6 +1,8 @@
 <?php 
-  require_once __DIR__ . "/config/auth.php";
+  require_once __DIR__ . "/config/db.class.php";
+  require_once __DIR__ . "/config/security.php";
   require_once __DIR__ . "/config/mailer.php";
+  validarCsrfPublico();
 ?>
 <html lang="es" data-bs-theme="dark">
 <head>
@@ -71,6 +73,10 @@
       4          | BOLT ACTION
     /**********************************************************************************************/
   
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $fIdLiga != 0) {
+      exigirLigaActivaPublica($fIdLiga);
+    }
+
     if ($fIdLiga != 0) {
       $oLiga = $oControllerLiga->recuperarDatosLiga($fIdLiga);
       
@@ -238,6 +244,9 @@
       } 
 
          
+      if ($oLiga->idJuego <= 2) {
+        $fResultadoJugador2 = $maxResultado + 1 - (int) $fResultadoJugador1;
+      }
       $comprobarAlta = $oControllerEnfrentamiento->altaResultadoEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador1, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector );
       /*  1. OK
         2. ERROR
@@ -245,18 +254,19 @@
       */ 
 
   
-      $mensajeAltaMod .= "<div id=\"". (($comprobarAlta == 1)? "mensaje-ok" : "mensaje-error") ." class=\"alert " . (($comprobarAlta == 1)? "alert-success" : "alert-danger") . "\" role=\"alert\">".
+      $mensajeAltaMod .= "<div id=\"". (($comprobarAlta == 1)? "mensaje-ok" : "mensaje-error") ."\">".
                 ( ($comprobarAlta == 1)? "Resultado grabado correctamente." : 
                    (($comprobarAlta == 3)? "Revisa todos los campos." : 
                     (($comprobarAlta == 4)? "Los resultados no coinciden con los registrados por el otro jugador. Ponte en contacto con los rangers." :"Se ha producido un error en su solicitud.") )) ."</div>";
 
 
       // gestion de correos
-      $oJugador1 = $oControllerJugador->recuperarDatosJugador( $fIdJugador1 );
-      $oJugador2 = $oControllerJugador->recuperarDatosJugador( $fIdJugador2 );
+      try {
+        $oJugador1 = $oControllerJugador->recuperarDatosJugador( $fIdJugador1 );
+        $oJugador2 = $oControllerJugador->recuperarDatosJugador( $fIdJugador2 );
 
       // todo OK
-      if ($comprobarAlta == 1){
+      if ($comprobarAlta == 1 && $oJugador1 != null && $oJugador2 != null){
         $body = "<p>Hola, <br/><br/>El jugador <strong>" . $oJugador1->nick . "</strong> ha registrado a las " . Date('H:i') . " el resultado de la batalla contra <strong>" . $oJugador2->nick . "</strong> 
             con un resultado de <strong>" . $fResultadoJugador1 . " - " . $fResultadoJugador2 . "</strong>. Para validar el enfrentamiento es necesario que <u>ambos jugadores registren el resultado del mismo</u>.</p>";
         
@@ -279,7 +289,7 @@
         
 
       // resultados no coincidentes
-      }else if ($comprobarAlta == 4){
+      }else if ($comprobarAlta == 4 && $oJugador1 != null && $oJugador2 != null){
         $oEnfrentamiento = $oControllerEnfrentamiento->recuperarEnfrentamiento($fIdEnfrentamiento);
         $body = "<p>Hola, los resultados introducidos por ambos jugadores no coinciden, por favor, confirmadnos el resultado correcto de la batalla enviandonos un correo a 
               <a href='hola@modelbrush.com'>hola@modelbrush.com</a>. Los resultados que hemos recibido son: ";
@@ -289,28 +299,32 @@
         $body .= "<a href=\"http://www.modelbrush.com\"><img src=\"http://wiki.modelbrush.com/images/6/67/FIRMA-FOROS.jpg\" border=\"0\"/></a>";
       }
 
-      if (($comprobarAlta == 1 || $comprobarAlta == 4) && isset($body)) {
+      if (($comprobarAlta == 1 || $comprobarAlta == 4) && isset($body) && $oJugador1 != null && $oJugador2 != null) {
         enviarCorreoSeguro(
           array($oJugador2->email, $oJugador1->email),
           $oLiga->nombre . " - Registro resultados",
           $body
         );
       }
+      } catch (Throwable $e) {
+        $oLog = Log::getInstance();
+        $oLog->trazaLog ($e, "notificacion resultado - alta-resultados.php");
+      }
 
 
       // tocken para evitar duplicados
       $tockenEnvio = 1;
 
-    }else if ($accionForm == 1 && $tockenEnvio = 1){
+    }else if ($accionForm == 1 && (int) $tockenEnvio === 1){
 
       $mensajeAltaMod .= "<div id=\"mensaje-error\" class=\"alert alert-danger\" role=\"alert\">El resultado de tu batalla ya se ha enviado, no puedes volver a enviarlo. Si tienes alguna duda escr&iacute;benos a <a href='hola@modelbrush.com'>hola@modelbrush.com</a>.</div>";
       
     }
     
-  }catch(Exception $e){
+  }catch(Throwable $e){
     $oLog = Log::getInstance();
     $oLog->trazaLog ($e, "gestion-ligas.php");  
-    return null;   
+    $mensajeAltaMod = '<div id="mensaje-error" class="alert alert-danger" role="alert">Se ha guardado el resultado, pero no se pudo preparar la confirmaci&oacute;n.</div>';
   }
 
 ?>
@@ -338,7 +352,7 @@
 
       <form name="validadorClave" id="validadorClave" method="POST" action="">
         <input type="hidden" name="accionForm" id="accionForm" value="5"/>
-        <label for="fIdLiga">Liga: </label> <select name="fIdLiga" id="fIdLiga" data-validation="required " ><option></option><?php printf($selectLigas); ?> </select>
+        <label for="fIdLiga">Liga: </label> <select name="fIdLiga" id="fIdLiga" data-validation="required " onchange="window.actualizarSelectFases(this.value, 1)" ><option></option><?php printf($selectLigas); ?> </select>
         <label for="fNumFase">Fase: </label> <span id="selectFases"><select name="fNumFase" id="fNumFase" data-validation="required" ><?php printf($selectFases); ?></select></span>
         <label for="fClaveCifrada">Clave cifrada: </label> <input type="password" name="fClaveCifrada" id="fClaveCifrada" class="input-corto-200" data-validation="required " value="<?php printf($fClaveCifrada);?>" />
         <input type="submit" value="Confirmar clave" id="formButton" class="submit-button btn btn-primary w-100"/>
@@ -381,7 +395,7 @@
           
           <p><label for="fNumRonda">Ronda: </label> <span id="selectRondas"><?php printf($selectRondas); ?></span><br/></p>
           
-          <p><label for="fIdJugador2Nick">Tu contrincante: </label><span id="selectJugador2" name="selectJugador2"><input type="text" name="fIdJugador2Nick" id="fIdJugador2Nick" value="<?php printf($fIdJugador2Nick);?>"  disabled /></span></p>
+          <p><label for="fIdJugador2Nick">Tu contrincante: </label><span id="selectJugador2" name="selectJugador2"><input type="text" name="fIdJugador2Nick" id="fIdJugador2Nick" value="<?php printf($fIdJugador2Nick);?>" class="input-contrincante" disabled /></span></p>
           
           <p><label for="fFechaBatalla">Fecha de batalla: </label>  
           <input type="text" class="fFechaBatallaForm" name="fFechaBatalla" id="fFechaBatalla" maxlength="10" 
@@ -400,8 +414,8 @@
               <div class="resultados-izq">                          
                   <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>" >            
                 <p id="enfrentamientoJug1" > </p>
-                  <div id="slider-resultado-1" style=" width: 300px; background: #cd5700">
-                    </label>                
+                  <div id="slider-resultado-1"></div>
+                  <div class="resultados-radio">
                     <label>
                       <input type="radio" name="fResultadoRadio" value="1" <?php if ($fResultadoRadio == 1){ printf("checked"); } ?>/>
                       <img src="images/icono-empate.png">
@@ -410,6 +424,7 @@
                       <input id="fb3" type="radio" name="fResultadoRadio" value="0"  <?php if ($fResultadoRadio == 0){ printf("checked"); } ?>/>
                       <img src="images/icono-derrota.png">
                     </label>
+                  </div>
                 </div>
 
               
@@ -431,18 +446,17 @@
           <?php } ?>
 
 
-            <p class="contenedor-estrellas">
-            <input type="hidden" name="fValPintura" id="fValPintura" value="<?php printf($fValPintura); ?>"/>
-            <label for="PinturaJugador1">Valora el nivel de pintura de tu contrincante:</label><div id="estrellasPintura" name="estrellasPintura"></div></p>
+            <div class="contenedor-estrellas">
+            <input type="hidden" name="fValPintura" id="fValPintura" value="<?php printf($fValPintura); ?>"/><label class="valoracion-label" for="estrellasPintura">Valora el nivel de pintura de tu contrincante:</label><div id="estrellasPintura" name="estrellasPintura"></div></div>
 
 
-            <p class="contenedor-estrellas">
-            <input type="hidden" name="fValDeportividad" id="fValDeportividad" value="<?php printf($fValDeportividad); ?>"/>
-            <label for="DeportividadJugador1">Deportividad de tu contrincante:</label><div id="estrellasDeportividad" name="estrellasDeportividad"></div></p>
+            <div class="contenedor-estrellas">
+            <input type="hidden" name="fValDeportividad" id="fValDeportividad" value="<?php printf($fValDeportividad); ?>"/><label class="valoracion-label" for="estrellasDeportividad">Deportividad de tu contrincante:</label><div id="estrellasDeportividad" name="estrellasDeportividad"></div></div>
   
-            <?php if ($fIdLiga != 0 && $oLiga->idJuego <= 2) {  // SOLO FLAMES OF WAR?>
-            <p><br/>
+            <?php if ($fIdLiga == 0 ) {  // SOLO FLAMES OF WAR?>
+           
             Misiones secundarias: <i>indica el n&uacute;mero de la carta que has completado que encontrar&aacute;s en la esquina derecha</i></p>
+            <br/>
             <p class="p-misiones">
               <span id="fIdMisionSec1"><select name="fIdMisionSec1" id="fIdMisionSec1" data-validation="required " style="width: 100px !important" ><option value="0"></option><?php printf($selectMisionSec1); ?></select></span> 
               <span id="fIdMisionSec2"><select name="fIdMisionSec2" id="fIdMisionSec2" data-validation="required " style="width: 100px !important"><option value="0"></option><?php printf($selectMisionSec2); ?></select></span>  
@@ -486,13 +500,6 @@
             $("#fValDeportividad").val(score);
         }
       });
-
-      $("#fIdLiga").change(function(){ 
-        
-        if( $('#fIdLiga option:selected').val() > 0)
-         actualizarSelectFases( $('#fIdLiga option:selected').val(), <?php printf("1.".$fNumFase); ?>);
-      });
-
 
       <?php if($fClaveCifrada != null && $auxClaveCorrecta == true){ ?>
 
@@ -565,20 +572,20 @@
                     range: "max",
                     min: <?php echo $minResultado; ?>,
                     max: <?php echo $maxResultado; ?>,
-                    value: <?php printf($fResultadoJugador2);?>,
+                    value: <?php echo $maxResultado+1; ?> - <?php printf($fResultadoJugador1);?>,
                     slide: function( event, ui ) {
                       $("#fResultadoJugador2" ).val( ui.value );
-                      /*$("#fResultadoJugador1" ).val( <?php echo $maxResultado+1; ?>-ui.value );
-                      $("#slider-resultado-1").slider( "option", "value",<?php echo $maxResultado+1; ?>-ui.value );*/
+                      $("#fResultadoJugador1" ).val( <?php echo $maxResultado+1; ?>-ui.value );
+                      $("#slider-resultado-1").slider( "option", "value", <?php echo $maxResultado+1; ?>-ui.value );
                     }
                   });
-                  $("#fResultadoJugador2" ).val( $( "#slider-resultado-2" ).slider( "value" ) );
+                  $("#fResultadoJugador2" ).val( <?php echo $maxResultado+1; ?> - $( "#slider-resultado-1" ).slider( "value" ) );
 
       <?php } ?>
     }); 
 
     // select de fases
-    function actualizarSelectFases( fIdLiga, fNumFase ) {
+    window.actualizarSelectFases = function( fIdLiga, fNumFase ) {
 
             var parametros = {
                     "fIdLiga" : fIdLiga,
@@ -597,10 +604,12 @@
                     success:  function (response) {
                             $("#selectFases").html(response);
                           //  bindAjaxSelectChange();
+                        },
+                        error: function () {
+                          $("#selectFases").html('<select name="fNumFase" id="fNumFase" data-validation="required"><option value="">No se pudieron cargar las fases</option></select>');
                     }
             });
-    }
-
+    };
 
     // select de jugadores
     function actualizarRadioRondas( fIdLiga,  fIdJugador, fNumFase ) {
@@ -649,8 +658,9 @@
                           $("#enfrentamientoJug2").text( $('#fIdJugador2Nick').val() );
                           $("#fResultadoJugador1").val( $('#fResultadoJugador1Aux').val() );
                           $("#slider-resultado-1").slider( "option", "value", $('#fResultadoJugador1Aux').val() );
-                          $("#fResultadoJugador2").val( $('#fResultadoJugador2Aux').val() );
-                          $("#slider-resultado-2").slider( "option", "value", $('#fResultadoJugador2Aux').val() );
+                          var totalResultado = $("#slider-resultado-1").slider("option", "max") + 1;
+                          $("#fResultadoJugador2").val( totalResultado - $('#fResultadoJugador1Aux').val() );
+                          $("#slider-resultado-2").slider( "option", "value", totalResultado - $('#fResultadoJugador1Aux').val() );
                           $("#fFechaBatalla").val( $('#fFechaBatallaAux').val() );
                           $('#estrellasPintura').raty({ score: 1, click: function(score, evt) { $("#fValPintura").val(score);} });
                           $('#estrellasDeportividad').raty({ score: 1, click: function(score, evt) { $("#fValDeportividad").val(score);} });

@@ -1,4 +1,10 @@
 <?php
+    require_once __DIR__ . "/config/security.php";
+
+    register_shutdown_function(function () {
+        require_once __DIR__ . "/footer.php";
+    });
+
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
@@ -31,9 +37,9 @@
     <script type="text/javascript" src="recursos/js/jquery.qtip.min.js"></script>
     <script type="text/javascript" src="recursos/js/lang/es.js"></script>
     <script type="text/javascript" src="recursos/js/responsive-nav.js"></script>
-        <?php if (function_exists('csrfToken')): ?>
+        <?php if (function_exists('csrfToken') || function_exists('csrfTokenPublico')): ?>
         <script>
-            window.csrfToken = <?php echo json_encode(csrfToken(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+            window.csrfToken = <?php echo json_encode(function_exists('csrfToken') ? csrfToken() : csrfTokenPublico(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
             $(function () {
                 $('form[method="POST"], form[method="post"]').each(function () {
                     if (!this.querySelector('input[name="csrf_token"]')) {

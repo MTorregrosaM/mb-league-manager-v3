@@ -132,7 +132,7 @@
       this.opt.path = '';
 
       for (var i = 0; i < replaces.length; i++) {
-        this.opt[replaces[i]] = this.opt[replaces[i]].replace('.', '-');
+        this.opt[replaces[i]] = this.opt[replaces[i]].replace(/\.(?=[^.]*$)/, '-');
       }
     },
 
@@ -745,9 +745,9 @@
     scoreName    : 'score',
     single       : false,
     space        : true,
-    starHalf     : 'recursos/img/star-half.png',
-    starOff      : 'recursos/img/star-off.png',
-    starOn       : 'recursos/img/star-on.png',
+    starHalf     : 'recursos/img/star.svg#on',
+    starOff      : 'recursos/img/star.svg#off',
+    starOn       : 'recursos/img/star.svg#on',
     starType     : 'img',
     target       : undefined,
     targetFormat : '{score}',

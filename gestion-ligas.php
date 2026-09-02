@@ -123,6 +123,7 @@
 
 
           $grid .= "  <form name=\"form-fases-".$fila[0]."\" id=\"form-fases-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\" action=\"gestion-fases.php\">
+                <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\"/>
                 <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[0]."\"/>
                 <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>
 
@@ -170,7 +171,6 @@
 
         // Procesar alta nueva si se ha enviado el formulario
         if (!empty($_POST) and $fFecIni != "") {
-            echo "aa";
             $comprobarAltaMod = $oControllerLiga->altaNuevaLiga(
                 $fNombre, $fNumFases, $fNumRondas, $fFecIni,
                 $fFecFin, $fIndActivo, $fIdJuego
@@ -185,12 +185,23 @@
 
 
             // Mensaje de resultado
-            $mensajeAltaMod .= sprintf(
-                '<div id="%s">%s</div>',
-                ($comprobarAltaMod == 1) ? "mensaje-ok" : "mensaje-error",
-                ($comprobarAltaMod == 1) ? "Liga creada correctamente. <a href=\"{$paginaActiva}\">Volver</a>" :
-                (($comprobarAltaMod == 3) ? "Revisa las fechas de inicio y fin." : "Se ha producido un error en su solicitud.")
-            );
+            if ($comprobarAltaMod == 1) {
+              $mensajeClase = "mensaje-ok";
+              $mensajeTexto = "Liga creada correctamente.";
+            } elseif ($comprobarAltaMod == 3) {
+              $mensajeClase = "mensaje-error";
+              $mensajeTexto = "Revisa las fechas de inicio y fin.";
+            } elseif ($comprobarAltaMod == 5) {
+              $mensajeClase = "mensaje-error";
+              $mensajeTexto = "El número de fases y rondas debe ser un entero mayor que cero.";
+            } elseif ($comprobarAltaMod == 4) {
+              $mensajeClase = "mensaje-error";
+              $mensajeTexto = "Ya existe una liga con ese nombre.";
+            } else {
+              $mensajeClase = "mensaje-error";
+              $mensajeTexto = "Se ha producido un error en su solicitud.";
+            }
+            $mensajeAltaMod .= sprintf('<div id="%s">%s</div>', $mensajeClase, $mensajeTexto);
         }
     }
 
@@ -209,13 +220,23 @@
             );
 
             // Mensaje de resultado
-            $mensajeAltaMod .= sprintf(
-                '<div id="%s">%s</div>',
-                ($comprobarAltaMod == 1) ? "mensaje-ok" :
-                (($comprobarAltaMod == 3) ? "mensaje-aviso" : "mensaje-error"),
-                ($comprobarAltaMod == 1) ? "Liga modificada correctamente. <a href=\"{$paginaActiva}\">Volver</a>" :
-                (($comprobarAltaMod == 2) ? "Se ha producido un error en su solicitud." : "AVISO: debe modificar al menos un campo.")
-            );
+            if ($comprobarAltaMod == 1) {
+              $mensajeClase = "mensaje-ok";
+              $mensajeTexto = "Liga modificada correctamente. <a href=\"{$paginaActiva}\">Volver</a>";
+            } elseif ($comprobarAltaMod == 3) {
+              $mensajeClase = "mensaje-aviso";
+              $mensajeTexto = "AVISO: debe modificar al menos un campo.";
+            } elseif ($comprobarAltaMod == 4) {
+              $mensajeClase = "mensaje-error";
+              $mensajeTexto = "Ya existe una liga con ese nombre.";
+            } elseif ($comprobarAltaMod == 5) {
+              $mensajeClase = "mensaje-error";
+              $mensajeTexto = "El número de fases y rondas debe ser un entero mayor que cero.";
+            } else {
+              $mensajeClase = "mensaje-error";
+              $mensajeTexto = "Se ha producido un error en su solicitud.";
+            }
+            $mensajeAltaMod .= sprintf('<div id="%s">%s</div>', $mensajeClase, $mensajeTexto);
         }
     }
 } catch (Exception $e) {
@@ -353,16 +374,17 @@
 
   <div id="form">
     <h3><?php printf($txtAltaModH3);?></h3>
-    <form name="altaModLiga" id="altaModLiga" method="POST" action="">
+    <form name="altaModLiga" id="altaModLiga" method="POST" action="" autocomplete="new-password">
 
       <?php printf ($mensajeAltaMod);  ?>
+      <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
       <input type="hidden" name="accionForm" id="accionForm" value="<?php printf($accionForm);?>"/>
       <?php if ($accionForm == 4){ ?> <input type="hidden" name="fIdLigaEditar" id="fIdLigaEditar" value="1"/>  <?php } ?>
       <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
       <p><label for="fNombre">Nombre: </label>  <input type="text" name="fNombre" maxlength="35"  id="fNombre" data-validation="required " value="<?php printf($fNombre);?>"  ></p>
       <p><label for="fIdJuego">Juego: </label>  <select name="fIdJuego"  id="fIdJuego" ><option></option><?php printf($selectJuegos); ?></select></p>
-      <p><label for="fNumFases">N&uacute;mero fases: </label>  <input type="text" name="fNumFases" data-validation="required number"  id="fNumFases" value="<?php printf($fNumFases);?>" class="no-border spinnerFases"></p>
-      <p><label for="fNumRondas">Rondas por fase: </label>  <input type="text" name="fNumRondas" maxlength="35"  id="fNumRondas" data-validation="required " value="<?php printf($fNumRondas);?>" class="no-border spinnerRondas" ></p>
+      <p><label for="fNumFases">N&uacute;mero fases: </label>  <input type="number" name="fNumFases" min="1" step="1" autocomplete="new-password" data-validation="required number"  id="fNumFases" value="<?php printf($fNumFases);?>" class="no-border spinnerFases"></p>
+      <p><label for="fNumRondas">Rondas por fase: </label>  <input type="number" name="fNumRondas" min="1" step="1" autocomplete="new-password" data-validation="required number"  id="fNumRondas" value="<?php printf($fNumRondas);?>" class="no-border spinnerRondas" ></p>
       <p><label for="fFecIni">Fecha Inicio: </label>
         <input type="text" class="fFecIniForm" name="fFecIni" id="fFecIni" maxlength="10"
         value="<?php printf($fFecIni);?>" data-validation="required date"
@@ -422,6 +444,7 @@
       <div id="btn-alta">
         <a href="gestion-juegos.php" class="button"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Gesti&oacute;n de juegos</a>
         <form name="btnFormAltaLiga" id="btnFormAltaLiga" method="POST" action="">
+          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
           <input type="hidden" name="accionForm" id="accionForm" value="2"/>
           <a href="#" class="button" id="btnAltaCliente"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva liga</a>
         </form>

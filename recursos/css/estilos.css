@@ -206,6 +206,11 @@
   4. Contenido
   ---------------------------------------------------*/
   #contenedor-principal  {position:relative;  max-width:960px; min-width:320px; margin: 0 auto; margin-top: 20px; display: block; clear: both; padding-bottom:60px;}
+  .site-footer { width: min(100% - 2rem, 960px); margin: 2rem auto 1rem; padding: 1rem 0; color: var(--app-muted, #9da8b5); text-align: center; }
+  .site-footer small { font-size: .75rem; }
+  .site-footer a, .site-footer a:visited { color: #2DE68A; text-decoration: none; }
+  .site-footer a:hover, .site-footer a:focus,
+  .site-footer a:visited:hover, .site-footer a:visited:focus { color: #fff; text-decoration: none; }
   #contenedor-principal h2 { font-family: 'Oswald', sans-serif; font-size: 1.4em; color:#EEE;}
   #contenedor-principal table {width: 100%; font-size: 0.9em}
   #contenedor-principal table th { background: #f3f1f1;}
@@ -272,6 +277,18 @@
     margin: 0 0 1rem;
   }
 
+  #altaResultado #mensaje-ok {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 1rem 0;
+    padding: .85rem 1rem;
+    border: 1px solid #2d9968;
+    border-radius: .4rem;
+    background: #17633c !important;
+    color: #fff;
+  }
+
   #altaResultado .resultados {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -297,6 +314,12 @@
     border-radius: .55rem;
     background: var(--app-surface-raised);
     text-align: left;
+  }
+
+  #altaResultado .resultados-izq {
+    grid-column: 1 / -1;
+    max-width: 505px;
+    margin: 0 !important;
   }
 
   #altaResultado .resultados-izq p,
@@ -325,7 +348,9 @@
   }
 
   #altaResultado #slider-resultado-1,
-  #altaResultado #slider-resultado-2 {
+  #altaResultado #slider-resultado-2,
+  #modEnfrentamiento #slider-resultado-1,
+  #modEnfrentamiento #slider-resultado-2 {
     width: 100% !important;
     height: 8px;
     margin: 1.25rem 0 .35rem;
@@ -334,8 +359,10 @@
     background: rgba(255,255,255,.14) !important;
   }
 
-  #altaResultado .ui-slider .ui-slider-range { background: var(--app-accent); }
-  #altaResultado .ui-slider .ui-slider-handle {
+  #altaResultado .ui-slider .ui-slider-range,
+  #modEnfrentamiento .ui-slider .ui-slider-range { background: var(--app-accent); }
+  #altaResultado .ui-slider .ui-slider-handle,
+  #modEnfrentamiento .ui-slider .ui-slider-handle {
     top: 50%;
     width: 22px;
     height: 22px;
@@ -346,12 +373,19 @@
     background: var(--app-accent);
   }
 
+  #altaResultado .ui-slider .ui-slider-handle:hover,
+  #altaResultado .ui-slider .ui-slider-handle:focus,
+  #modEnfrentamiento .ui-slider .ui-slider-handle:hover,
+  #modEnfrentamiento .ui-slider .ui-slider-handle:focus {
+    background: var(--app-accent-hover);
+  }
+
   #altaResultado .resultados-radio {
-    grid-column: 1 / -1;
+    grid-column: auto;
     display: flex;
     justify-content: center;
     gap: 1rem;
-    width: auto;
+    width: 100%;
     margin: 0;
   }
 
@@ -372,7 +406,6 @@
 
   #altaResultado .resultados-radio label > input:checked + img {
     border-color: var(--app-accent);
-    background: rgba(224,107,47,.18);
   }
 
   #altaResultado .p-misiones {
@@ -385,13 +418,74 @@
   #altaResultado .p-misiones span,
   #altaResultado .p-misiones select { width: auto !important; }
 
+  #altaResultado #p-sectores {
+    display: none !important;
+  }
+
+  #modEnfrentamiento .p-sectores,
+  #modEnfrentamiento .p-misiones,
+  #modEnfrentamiento .p-misiones-titulo {
+    display: none !important;
+  }
+
+  #altaResultado .input-contrincante {
+    display: block;
+    width: 300px !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: .65rem .75rem;
+    border: 1px solid var(--app-border) !important;
+    border-radius: .45rem;
+    background: var(--app-surface-raised) !important;
+    color: var(--app-text) !important;
+    opacity: 1;
+  }
+
+  #altaResultado #selectJugador2 {
+    display: block;
+    flex: 0 0 300px;
+    width: 300px;
+    max-width: 100%;
+    min-width: 0;
+  }
+
   #altaResultado .contenedor-estrellas {
+    display: grid !important;
+    grid-template-columns: 140px max-content !important;
+    align-items: center;
+    column-gap: .75rem;
+    width: max-content !important;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: auto;
+    overflow-x: auto;
     padding: .85rem 0;
-    border-top: 1px solid var(--app-border);
+  }
+
+  #altaResultado .contenedor-estrellas > input[type="hidden"] {
+    display: none;
+  }
+
+  #altaResultado .contenedor-estrellas > .valoracion-label {
+    grid-column: 1;
+    width: 140px !important;
+    margin: 0 !important;
+    text-align: right;
+    line-height: 1.45;
+    color: var(--app-muted);
   }
 
   #altaResultado #estrellasPintura,
-  #altaResultado #estrellasDeportividad { margin-top: .5rem; }
+  #altaResultado #estrellasDeportividad {
+    display: flex;
+    align-items: center;
+    grid-column: 2;
+    justify-self: start !important;
+    width: max-content !important;
+    min-width: max-content;
+    white-space: nowrap;
+    margin: 0 !important;
+  }
 
   @media (max-width: 767.98px) {
     #altaResultado .resultados { grid-template-columns: 1fr; }
@@ -404,7 +498,7 @@
   5. Formularios
   ---------------------------------------------------*/
   #buscador, #form, #selector-informes { background: var(--app-bg); min-height: 30px; color: white; }
-  .input-resultado {  background: #777 !important; color:#FFF; font-size: 3.3em; font-weight: bold; border: 0px !important;  text-align: center; }
+  .input-resultado {  background: #11161c !important; border: 1px solid var(--app-border); color:#FFF; font-size: 3.3em; font-weight: bold;  text-align: center; }
   #buscador {clear:both; }
   #form { min-height: 280px; margin-top: 55px;}
   #buscador form { padding: 20px 0px 20px 10px;  }
@@ -449,9 +543,12 @@
   .btn-img-horario:hover, .ui-datepicker-trigger:hover, .btn-img-horario-buscador:hover {opacity: 0.5 !important;}
   form input[type="text"]:disabled { color: #888 !important; background: #ddd!important}
   /*form select:disabled { color: #888 !important; background: #ddd!important}*/
-  .radio-button {width: auto !important;  display: inline-block !important; float:inherit !important;}
-  .label-radio-button {width: auto !important;  display: inline-block !important; float:inherit !important; cursor: pointer; margin-left: -5px; }
+  .radio-button {width: auto !important;  display: inline-block !important; float:inherit !important; vertical-align: middle;}
+  .label-radio-button {width: auto !important;  display: inline-block !important; float:inherit !important; cursor: pointer; margin-left: -5px; vertical-align: middle; }
   .span-radio-button{width: 150px; display: block; float: left; margin-top: 5px; text-align: right; padding-right: 15px; }
+  .resultado-validado {display: flex; align-items: center; justify-content: flex-start; gap: 4px;}
+  .resultado-validado .span-radio-button {float: none; flex: 0 0 150px; margin-top: 0;}
+  .resultado-validado-opciones {display: inline-flex; align-items: center; gap: 2px;}
   .spinner{margin-right: 0px !Important;}
   #login{display: block; margin:35px auto 0 auto; width: 300px; text-align: center}
   #login fieldset { padding: 20px; border: 1px solid #CCC; }
@@ -651,7 +748,7 @@
       background: #888;
     }
     .resultados-radio label > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
-      border:2px solid #000; background: #333;
+      border:2px solid #000; background: #2DE68A;
     }
 
   :root {
@@ -677,6 +774,7 @@
   }
 
   a, a:visited { color: var(--app-accent); }
+  .site-footer a, .site-footer a:visited { color: #2DE68A; text-decoration: none; }
   a:hover, a:focus { color: var(--app-accent-hover); }
   #contenedor-principal a:not(.btn):not(.button):not(.btn-volver):not(.nav-link):not(.link-grid):not(.btn-grabar):hover,
   #contenedor-principal a:not(.btn):not(.button):not(.btn-volver):not(.nav-link):not(.link-grid):not(.btn-grabar):focus,
@@ -693,6 +791,8 @@
   }
 
   body {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     font-size: 1rem;
     background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
@@ -700,11 +800,14 @@
   }
 
   #contenedor-principal {
+    flex: 1 0 auto;
     max-width: 1180px;
     width: calc(100% - 2rem);
-    margin: 1.5rem auto 4rem;
+    margin: 1.5rem auto 0;
     padding-bottom: 2rem;
   }
+
+  .site-footer { flex: 0 0 auto; margin-bottom: 0; }
 
   #logo { display: none; }
 
@@ -812,8 +915,14 @@
   .checkbox-liga input { flex: 0 0 auto; margin-top: .2rem; }
   #altaModFase #formButton {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 160px;
+    margin-right: 0;
+  }
+  @media (max-width: 450px) {
+    #altaModFase #formButton {
+      margin-left: 0;
+      width: 96% !important;
+    }
   }
   @media (max-width: 700px) {
     .ligas-permisos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -849,6 +958,40 @@
     box-sizing: border-box;
     vertical-align: top;
   }
+  .index-main-ranking {
+    width: 100%;
+    margin: 0 0 1rem;
+    padding: 1rem;
+    box-sizing: border-box;
+    border: 1px solid var(--app-border);
+    border-radius: .65rem;
+    background: var(--app-surface);
+  }
+  .index-main-ranking h2 {
+    margin: 0 0 1rem !important;
+    padding: .5rem !important;
+    color: #2DE68A !important;
+    text-align: left !important;
+  }
+  .index-main-ranking table {
+    width: 100%;
+    border: 1px solid var(--app-border);
+    border-radius: .6rem;
+    background: var(--app-surface);
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  .index-main-ranking th,
+  .index-main-ranking td {
+    padding: .85rem 1rem;
+    border-color: var(--app-border);
+    text-align: left;
+  }
+  .index-main-ranking th {
+    background: var(--app-surface-raised) !important;
+    color: #fff;
+  }
+  .index-main-ranking td { color: #d9e0e7; }
   .index-ranking-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -865,6 +1008,11 @@
     border-radius: .6rem;
     background: var(--app-surface);
   }
+  .ranking-deportividad table { table-layout: fixed; }
+  .ranking-deportividad th:first-child, .ranking-deportividad td:first-child { width: 42%; }
+  .ranking-deportividad th:nth-child(2), .ranking-deportividad td:nth-child(2) { width: 16%; }
+  .ranking-deportividad th:nth-child(3), .ranking-deportividad td:nth-child(3) { width: 19%; }
+  .ranking-deportividad th:nth-child(4), .ranking-deportividad td:nth-child(4) { width: 23%; }
   .index-ranking-grid table th {
     padding: .85rem 1rem;
     background: var(--app-surface-raised) !important;
@@ -890,6 +1038,22 @@
     min-width: 120px;
     white-space: nowrap;
   }
+  #contenedor-principal table td.td-acciones {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #contenedor-principal table td.td-acciones > form:has(.btn-borrar) {
+    order: 2;
+  }
+
+  #contenedor-principal table td img.star-deportividad {
+    width: 14px;
+    height: 14px;
+    margin: 0 2px;
+    filter: brightness(0) saturate(100%) invert(87%) sepia(8%) saturate(400%) hue-rotate(175deg) brightness(93%);
+    vertical-align: middle;
+  }
   #contenedor-principal .form-btn-acciones {
     vertical-align: middle;
     margin: 0 .15rem;
@@ -899,12 +1063,53 @@
     height: 24px !important;
     vertical-align: middle;
   }
+  #contenedor-principal .form-btn-acciones .btn-borrar {
+    content: url("../img/trash.svg");
+  }
+  #contenedor-principal .form-btn-acciones .btn-editar-reg {
+    content: url("../img/check.svg");
+  }
+  #contenedor-principal .btn-validar-resultado {
+    width: 24px !important;
+    height: 24px !important;
+    vertical-align: middle;
+    content: url("../img/ok.svg");
+  }
+  #estrellasPintura img[src*="star.svg#off"],
+  #estrellasDeportividad img[src*="star.svg#off"],
+  #estrellasPintura2 img[src*="star.svg#off"],
+  #estrellasDeportividad1 img[src*="star.svg#off"],
+  #estrellasDeportividad2 img[src*="star.svg#off"],
+  #estrellasPintura img[src*="star-svg#off"],
+  #estrellasDeportividad img[src*="star-svg#off"],
+  #estrellasPintura2 img[src*="star-svg#off"],
+  #estrellasDeportividad1 img[src*="star-svg#off"],
+  #estrellasDeportividad2 img[src*="star-svg#off"] {
+    width: 30px !important;
+    height: 30px !important;
+    filter: brightness(0) saturate(100%) invert(87%) sepia(8%) saturate(400%) hue-rotate(175deg) brightness(93%);
+  }
+  #estrellasPintura img[src*="star.svg#on"],
+  #estrellasDeportividad img[src*="star.svg#on"],
+  #estrellasPintura2 img[src*="star.svg#on"],
+  #estrellasDeportividad1 img[src*="star.svg#on"],
+  #estrellasDeportividad2 img[src*="star.svg#on"],
+  #estrellasPintura img[src*="star-svg#on"],
+  #estrellasDeportividad img[src*="star-svg#on"],
+  #estrellasPintura2 img[src*="star-svg#on"],
+  #estrellasDeportividad1 img[src*="star-svg#on"],
+  #estrellasDeportividad2 img[src*="star-svg#on"] {
+    width: 30px !important;
+    height: 30px !important;
+    filter: brightness(0) saturate(100%) invert(77%) sepia(93%) saturate(1000%) hue-rotate(88deg) brightness(103%) contrast(91%);
+  }
   #contenedor-principal .btn-listas,
   #contenedor-principal .btn-ligas-usuario,
   #contenedor-principal .btn-editar-reg,
   #contenedor-principal .btn-fases,
   #contenedor-principal .btn-facciones,
-  #contenedor-principal .btn-borrar {
+  #contenedor-principal .btn-borrar,
+  #contenedor-principal .btn-validar-resultado {
     filter: brightness(0) saturate(100%) invert(78%) sepia(78%) saturate(858%) hue-rotate(91deg) brightness(96%) contrast(88%);
     transition: filter .15s ease;
   }
@@ -1069,20 +1274,20 @@
   #validadorClave form .submit-button {
     min-width: max-content;
   }
-  #altaResultado > form > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) {
+  #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
     gap: .5rem;
     overflow-x: auto;
   }
-  #altaResultado > form > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) label {
+  #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) label {
     flex: 0 0 150px;
     margin: 0;
   }
-  #altaResultado > form > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) input,
-  #altaResultado > form > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) select,
-  #altaResultado > form > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) span {
+  #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) input,
+  #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) select,
+  #altaResultado > p:not(:first-of-type):not(.contenedor-estrellas):not(.p-misiones) span {
     flex: 0 0 auto;
   }
   #btn-alta { margin: 0 0 1rem; }
@@ -1119,9 +1324,50 @@
     width: 100%;
   }
 
-  .div-ranking-izq, .div-ranking-dch { width: 49%; margin-right: 2%; padding: 1rem; border: 1px solid var(--app-border); border-radius: .65rem; background: var(--app-surface); }
+  .div-ranking-izq, .div-ranking-dch, .index-main-ranking { width: 49%; margin-right: 2%; padding: 1rem; border: 1px solid var(--app-border); border-radius: .65rem; background: var(--app-surface); }
   .div-ranking-dch { margin-right: 0; }
-  .div-ranking-izq h2, .div-ranking-dch h2 { border: 0 !important; margin: 0 0 1rem !important; padding: .5rem !important; background: transparent !important; text-align: left !important; }
+  .index-main-ranking { width: 100%; margin-right: 0; }
+  .div-ranking-izq h2, .div-ranking-dch h2, .index-main-ranking h2 { border: 0 !important; margin: 0 0 1rem !important; padding: .5rem !important; background: transparent !important; background-color: transparent !important; background-image: none !important; text-align: left !important; }
+  .index-main-ranking table { width: 100%; border: 1px solid var(--app-border); border-radius: .6rem; background: var(--app-surface); }
+  .index-main-ranking table th, .index-main-ranking table td { padding: .85rem 1rem; border-color: var(--app-border); text-align: left; }
+  .index-main-ranking table th:first-child, .index-main-ranking table td:first-child { text-align: center; }
+  .index-main-ranking table th { background: var(--app-surface-raised) !important; color: #fff; }
+  .index-main-ranking table td { color: #d9e0e7; }
+  .detalle-jugador-cabecera { margin-bottom: 1rem; }
+  .detalle-jugador-cabecera .h2 { margin-bottom: .35rem; }
+  .detalle-jugador-liga { margin: 0; color: var(--app-muted); }
+  .detalle-jugador-bloque { margin: 0 0 1.25rem; padding: 1rem; border: 1px solid var(--app-border); border-radius: .65rem; background: var(--app-surface); }
+  .detalle-jugador-bloque h3 { margin: 0 0 1rem; color: #2DE68A; font-size: 1.15rem; }
+  .detalle-jugador-tabla-wrap { overflow-x: auto; }
+  .detalle-jugador-tabla { min-width: 900px; border: 1px solid var(--app-border); border-radius: .6rem; background: var(--app-surface); }
+  .detalle-jugador-tabla th, .detalle-jugador-tabla td { padding: .55rem .7rem; border-color: var(--app-border); text-align: left; white-space: nowrap; }
+  .detalle-jugador-tabla th { background: var(--app-surface-raised) !important; color: #fff; }
+  .detalle-jugador-tabla td { color: #d9e0e7; }
+  .detalle-jugador-tabla tr:hover td { background: rgba(255,255,255,.035); }
+  .detalle-jugador-listas { min-width: 560px; }
+  .detalle-jugador-listas td:last-child { text-align: center; }
+  .index-main-ranking tr.ranking-position-1 td:first-child,
+  .index-main-ranking tr.ranking-position-2 td:first-child,
+  .index-main-ranking tr.ranking-position-3 td:first-child {
+    width: auto;
+    min-width: 0;
+    padding: 2px;
+    text-align: center;
+  }
+  .index-main-ranking table td:first-child { width: 1%; padding: 2px; background: transparent !important; color: #fff; text-align: center; }
+  .index-main-ranking .ranking-position-badge { display: inline; padding: 0; border-radius: 0; background: transparent; font-weight: 700; font-size: .9rem; line-height: 1; color: #fff; }
+  .index-main-ranking tr.ranking-position-1 td:first-child,
+  .index-main-ranking tr.ranking-position-2 td:first-child,
+  .index-main-ranking tr.ranking-position-3 td:first-child { background: transparent !important; }
+  .index-main-ranking tr.ranking-position-1 .ranking-position-badge,
+  .index-main-ranking tr.ranking-position-2 .ranking-position-badge,
+  .index-main-ranking tr.ranking-position-3 .ranking-position-badge { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; color: #000; }
+  .index-main-ranking tr.ranking-position-1 .ranking-position-badge,
+  .index-main-ranking tr.ranking-position-1:hover .ranking-position-badge { background: #d4a72c !important; }
+  .index-main-ranking tr.ranking-position-2 .ranking-position-badge,
+  .index-main-ranking tr.ranking-position-2:hover .ranking-position-badge { background: #aeb7c2 !important; }
+  .index-main-ranking tr.ranking-position-3 .ranking-position-badge,
+  .index-main-ranking tr.ranking-position-3:hover .ranking-position-badge { background: #b87333 !important; }
   .bg-0, .bg-1, .bg-2 { background: rgba(224,107,47,.16); }
 
   #login { width: min(100% - 2rem, 420px); margin: 4rem auto; text-align: left; }
@@ -1191,7 +1437,8 @@
     border-color: var(--app-accent) !important;
     color: #fff !important;
   }
-  #paginador .btn-paginador {
+  #paginador .btn-paginador,
+  #paginador .paginador-puntos {
     display: inline-block;
     min-width: 38px;
     min-height: 38px;
@@ -1205,6 +1452,9 @@
     text-align: center;
     transition: background .15s ease, border-color .15s ease, color .15s ease;
   }
+  #paginador .paginador-puntos {
+    cursor: default;
+  }
   #paginador .btn-paginador:hover {
     background: var(--app-accent-hover);
     border-color: var(--app-accent-hover);
@@ -1214,6 +1464,87 @@
   .ui-widget-overlay {
     background: #000;
     opacity: .72;
+  }
+  #ui-datepicker-div.ui-datepicker {
+    z-index: 1000 !important;
+    width: 19rem;
+    padding: .65rem;
+    border: 1px solid var(--app-border) !important;
+    border-radius: .45rem;
+    background: var(--app-surface) !important;
+    color: #e8edf2 !important;
+    box-shadow: 0 18px 50px rgba(0,0,0,.45);
+  }
+  #ui-datepicker-div .ui-datepicker-header {
+    padding: .45rem;
+    border: 0;
+    border-bottom: 1px solid var(--app-border);
+    border-radius: .3rem;
+    background: var(--app-surface-raised) !important;
+    color: #fff !important;
+  }
+  #ui-datepicker-div .ui-datepicker-title {
+    color: #fff;
+    font-weight: 700;
+  }
+  #ui-datepicker-div .ui-datepicker-prev,
+  #ui-datepicker-div .ui-datepicker-next {
+    top: .45rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: .25rem;
+    cursor: pointer;
+  }
+  #ui-datepicker-div .ui-datepicker-prev:hover,
+  #ui-datepicker-div .ui-datepicker-next:hover {
+    background: var(--app-accent-hover) !important;
+  }
+  #ui-datepicker-div .ui-datepicker-prev span,
+  #ui-datepicker-div .ui-datepicker-next span {
+    filter: invert(1);
+  }
+  #ui-datepicker-div table {
+    margin: .45rem 0 0;
+    background: transparent;
+  }
+  #ui-datepicker-div th {
+    padding: .35rem .15rem;
+    color: var(--app-muted);
+    font-weight: 700;
+  }
+  #ui-datepicker-div td {
+    padding: .15rem;
+    border: 0;
+  }
+  #ui-datepicker-div td a,
+  #ui-datepicker-div td span {
+    display: block;
+    padding: .4rem .2rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #e8edf2 !important;
+    text-align: center;
+    text-decoration: none;
+  }
+  #ui-datepicker-div .ui-state-default {
+    border-color: var(--app-border) !important;
+    background: var(--app-surface-raised) !important;
+    color: #e8edf2 !important;
+  }
+  #ui-datepicker-div td a:hover,
+  #ui-datepicker-div td a.ui-state-hover {
+    border-color: var(--app-accent-hover);
+    background: var(--app-accent-hover) !important;
+    color: #20242a !important;
+  }
+  #ui-datepicker-div td a.ui-state-active,
+  #ui-datepicker-div td a.ui-state-highlight {
+    border-color: var(--app-accent);
+    background: var(--app-accent) !important;
+    color: #fff !important;
+  }
+  #ui-datepicker-div td.ui-datepicker-today a {
+    border-color: var(--app-accent-hover);
   }
   .ui-dialog {
     padding: 0;
@@ -1335,5 +1666,16 @@
     table { display: block; overflow-x: auto; white-space: nowrap; }
     #contenedor-principal table th,
     #contenedor-principal table td { padding: .7rem .85rem; }
+    .index-main-ranking table { display: table; table-layout: fixed; overflow: visible; white-space: normal; }
+    .index-main-ranking table th,
+    .index-main-ranking table td { padding: .6rem .45rem; overflow-wrap: anywhere; }
+    .index-main-ranking table th:first-child,
+    .index-main-ranking table td:first-child { width: 13%; }
+    .index-main-ranking table th:nth-child(2),
+    .index-main-ranking table td:nth-child(2) { width: 27%; }
+    .index-main-ranking table th:nth-child(3),
+    .index-main-ranking table td:nth-child(3) { width: 30%; }
+    .index-main-ranking table th:nth-child(4),
+    .index-main-ranking table td:nth-child(4) { width: 30%; }
   }
 

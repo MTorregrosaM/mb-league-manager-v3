@@ -41,6 +41,21 @@ class controllerLiga {
 
     /* MÉTODOS PÚBLICOS */
 
+    public function existeLigaConNombre($fNombre, $fIdLigaExcluir = null) {
+      $queryDB = 'SELECT idLiga FROM mb_ligas WHERE UPPER(TRIM(nombre)) = UPPER(TRIM(?))';
+      $tipos = 's';
+      $parametros = array($fNombre);
+
+      if ($fIdLigaExcluir !== null) {
+        $queryDB .= ' AND idLiga <> ?';
+        $tipos .= 'i';
+        $parametros[] = (int) $fIdLigaExcluir;
+      }
+
+      $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, $tipos, $parametros);
+      return is_array($resultadoBD) && count($resultadoBD) > 0;
+    }
+
     /* datos de liga */
     public function recuperarDatosLiga( $idLiga ){
     try {
@@ -171,6 +186,9 @@ class controllerLiga {
 
       // comprobamos los campos que han cambiado
       $this->oLiga = $this->recuperarDatosLiga ( $fIdLiga );
+      if ($fNombre != $this->oLiga->nombre && $this->existeLigaConNombre($fNombre, $fIdLiga)) {
+        return 4;
+      }
         
       $aux = 0; 
       $auxLogo = 0; 
@@ -289,10 +307,22 @@ class controllerLiga {
       if ( $fNombre == null || $fNumFases == null || $fNumRondas == null ) {
         return 2;
       }
+      if (filter_var($fNumFases, FILTER_VALIDATE_INT) === false || filter_var($fNumRondas, FILTER_VALIDATE_INT) === false || (int) $fNumFases < 1 || (int) $fNumRondas < 1) {
+        return 5;
+      }
+      if ($this->existeLigaConNombre($fNombre)) {
+        return 4;
+      }
+
+      $fechaLigaInicio = $this->formatoFecha($fFecIni, true);
+      $fechaLigaFin = $this->formatoFecha($fFecFin, true);
+      if ($fechaLigaInicio > $fechaLigaFin) {
+        return 3;
+      }
 
       // insertamos el nuevo registro
         $queryDB = "INSERT INTO mb_ligas ( nombre, numFases, numRondas, fecIni, fecFin, indActivo, idJuego, audAlta )
-              VALUES ('" . $fNombre . "', " . $fNumFases . ", " . $fNumRondas . ",'" . $this->formatoFecha( $fFecIni, true) . "' , '" . $this->formatoFecha( $fFecFin, true) . "' , 
+              VALUES ('" . $fNombre . "', " . $fNumFases . ", " . $fNumRondas . ", '" . $fechaLigaInicio . "' , '" . $fechaLigaFin . "' , 
                 '" . $fIndActivo . "', ". $fIdJuego . ",'" . Date('Y-m-d H:i:s') . "' )";
       
       $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
@@ -317,18 +347,22 @@ class controllerLiga {
             $resultadoBDaux2 = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
             
-            // generamos la tabla de fases y rondas
+            $fechaInicio = new DateTime($fechaLigaInicio);
+            $fechaFin = new DateTime($fechaLigaFin);
+            $diasCalendario = (int) $fechaInicio->diff($fechaFin)->format('%a') + 1;
+
+            // generamos las fases y repartimos proporcionalmente los días de la liga
             for ($i=1; $i<=$fNumFases; $i++){           
+              $offsetInicio = (int) floor(($diasCalendario * ($i - 1)) / $fNumFases);
+              $offsetFin = (int) floor(($diasCalendario * $i) / $fNumFases) - 1;
+              $fechaFaseInicio = clone $fechaInicio;
+              $fechaFaseFin = clone $fechaInicio;
+              $fechaFaseInicio->modify("+" . $offsetInicio . " days");
+              $fechaFaseFin->modify("+" . $offsetFin . " days");
+              $fecIniAux = $fechaFaseInicio->format('Y-m-d');
+              $fecFinAux = $fechaFaseFin->format('Y-m-d');
+
               for($j=1; $j<=$fNumRondas; $j++){
-                $fecIniAux = "";
-                $fecFinAux = "";
-                if ($i== 1) { 
-                  $fecIniAux = $this->formatoFecha( $fFecIni, true);
-                }else if($i == $fNumFases) { 
-                  $fecFinAux = $this->formatoFecha( $fFecFin, true);
-                }               
-
-
                 $queryDBFases = "INSERT INTO mb_fases( idLiga, numFase, numRonda, fecIni, fecFin )
                       VALUES (" . $fila[0] . ", " . $i . ", " . $j . ",'" . $fecIniAux . "', '" . $fecFinAux . "')";
                       
@@ -338,10 +372,7 @@ class controllerLiga {
             }   
 
 
-            if ($resultadoBDaux2 > 0 && $resultadoBDaux3 > 0){
-
-              return 1; 
-            }
+            return 1;
           }
         }
       }else{
@@ -571,7 +602,7 @@ class controllerLiga {
               WHERE idLiga = " . $fIdLiga ;
 
       // GESTIONAMOS FILTROS
-     if ( $faseActiva != null) { $queryDB .= " AND fecIni <= '" . Date('Y-m-d') . "' AND fecFin >= '" . Date('Y-m-d') . "'"; }
+    if ((int) $faseActiva === 1) { $queryDB .= " AND (fecIni IS NULL OR fecIni <= '" . Date('Y-m-d') . "') AND (fecFin IS NULL OR fecFin >= '" . Date('Y-m-d') . "')"; }
 
       $queryDB .= " ORDER BY 1";
 

@@ -11,8 +11,8 @@ class controllerJuego {
 
     public function recuperarDatosJuego($idJuego) {
         try {
-            $queryDB = "SELECT idJuego, descJuego, indActivo, audAlta FROM mb_juegos WHERE idJuego = " . (int) $idJuego;
-            $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+            $queryDB = "SELECT idJuego, descJuego, indActivo, audAlta FROM mb_juegos WHERE idJuego = ?";
+            $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'i', array((int) $idJuego));
             if ($resultadoBD != null) {
                 foreach ($resultadoBD as $fila) {
                     return new Juego($fila[0], $fila[1], $fila[3]);
@@ -27,19 +27,27 @@ class controllerJuego {
     public function recuperarListadoJuegos($descJuego = null, $numPag = 0, $indActivo = null, $fFecIni = null) {
         try {
             $queryDB = "SELECT idJuego, descJuego, indActivo, DATE_FORMAT(audAlta, '%d-%m-%Y %H:%i:%s') FROM mb_juegos WHERE 1 = 1";
+            $tipos = '';
+            $parametros = array();
             if ($descJuego != null && $descJuego !== '') {
-                $descJuego = addslashes($descJuego);
-                $queryDB .= " AND UPPER(descJuego) LIKE UPPER('%" . $descJuego . "%')";
+                $queryDB .= " AND UPPER(descJuego) LIKE UPPER(?)";
+                $tipos .= 's';
+                $parametros[] = '%' . $descJuego . '%';
             }
             if ($indActivo !== null && $indActivo !== '') {
-                $queryDB .= " AND indActivo = " . ((int) $indActivo === 1 ? 1 : 0);
+                $queryDB .= " AND indActivo = ?";
+                $tipos .= 'i';
+                $parametros[] = (int) $indActivo === 1 ? 1 : 0;
             }
             $rangoFecha = $this->rangoFechaAlta($fFecIni);
             if ($rangoFecha !== null) {
-                $queryDB .= " AND audAlta >= '" . $rangoFecha[0] . "' AND audAlta < '" . $rangoFecha[1] . "'";
+                $queryDB .= " AND audAlta >= ? AND audAlta < ?";
+                $tipos .= 'ss';
+                $parametros[] = $rangoFecha[0];
+                $parametros[] = $rangoFecha[1];
             }
             $queryDB .= " ORDER BY descJuego ASC LIMIT " . max(0, (int) $numPag) . ", 10";
-            $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+            $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, $tipos, $parametros);
             $arrResultados = array();
             if ($resultadoBD != null) {
                 foreach ($resultadoBD as $fila) {
@@ -55,17 +63,26 @@ class controllerJuego {
     public function paginadorJuegos($descJuego = null, $indActivo = null, $fFecIni = null) {
         try {
             $queryDB = "SELECT COUNT(1) FROM mb_juegos WHERE 1 = 1";
+            $tipos = '';
+            $parametros = array();
             if ($descJuego != null && $descJuego !== '') {
-                $queryDB .= " AND UPPER(descJuego) LIKE UPPER('%" . addslashes($descJuego) . "%')";
+                $queryDB .= " AND UPPER(descJuego) LIKE UPPER(?)";
+                $tipos .= 's';
+                $parametros[] = '%' . $descJuego . '%';
             }
             if ($indActivo !== null && $indActivo !== '') {
-                $queryDB .= " AND indActivo = " . ((int) $indActivo === 1 ? 1 : 0);
+                $queryDB .= " AND indActivo = ?";
+                $tipos .= 'i';
+                $parametros[] = (int) $indActivo === 1 ? 1 : 0;
             }
             $rangoFecha = $this->rangoFechaAlta($fFecIni);
             if ($rangoFecha !== null) {
-                $queryDB .= " AND audAlta >= '" . $rangoFecha[0] . "' AND audAlta < '" . $rangoFecha[1] . "'";
+                $queryDB .= " AND audAlta >= ? AND audAlta < ?";
+                $tipos .= 'ss';
+                $parametros[] = $rangoFecha[0];
+                $parametros[] = $rangoFecha[1];
             }
-            $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+            $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, $tipos, $parametros);
             return ($resultadoBD != null) ? (int) $resultadoBD[0][0] : 0;
         } catch (Exception $e) {
             return 0;
@@ -90,12 +107,11 @@ class controllerJuego {
             return 2;
         }
         try {
-            $valor = addslashes($descJuego);
-            $existe = $this->oConexBD->ejecutarConsulta("SELECT idJuego FROM mb_juegos WHERE descJuego = '" . $valor . "'");
+            $existe = $this->oConexBD->ejecutarConsultaPreparada("SELECT idJuego FROM mb_juegos WHERE descJuego = ?", 's', array($descJuego));
             if ($existe != null && count($existe) > 0) {
                 return 2;
             }
-            return $this->oConexBD->ejecutarConsulta("INSERT INTO mb_juegos (descJuego, indActivo, audAlta) VALUES ('" . $valor . "', " . ((int) $indActivo === 1 ? 1 : 0) . ", NOW())", 1) > 0 ? 1 : 0;
+            return $this->oConexBD->ejecutarConsultaPreparada("INSERT INTO mb_juegos (descJuego, indActivo, audAlta) VALUES (?, ?, NOW())", 'si', array($descJuego, (int) $indActivo === 1 ? 1 : 0), 1) > 0 ? 1 : 0;
         } catch (Exception $e) {
             return 0;
         }
@@ -107,9 +123,8 @@ class controllerJuego {
             return 2;
         }
         try {
-            $valor = addslashes($descJuego);
-            $queryDB = "UPDATE mb_juegos SET descJuego = '" . $valor . "', indActivo = " . ((int) $indActivo === 1 ? 1 : 0) . " WHERE idJuego = " . (int) $idJuego;
-            return $this->oConexBD->ejecutarConsulta($queryDB, 1) > 0 ? 1 : 3;
+            $queryDB = "UPDATE mb_juegos SET descJuego = ?, indActivo = ? WHERE idJuego = ?";
+            return $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'sii', array($descJuego, (int) $indActivo === 1 ? 1 : 0, (int) $idJuego), 1) > 0 ? 1 : 3;
         } catch (Exception $e) {
             return 0;
         }
@@ -120,11 +135,11 @@ class controllerJuego {
             return false;
         }
         try {
-            $enUso = $this->oConexBD->ejecutarConsulta("SELECT idLiga FROM mb_ligas WHERE idJuego = " . (int) $idJuego);
+            $enUso = $this->oConexBD->ejecutarConsultaPreparada("SELECT idLiga FROM mb_ligas WHERE idJuego = ?", 'i', array((int) $idJuego));
             if ($enUso != null && count($enUso) > 0) {
                 return false;
             }
-            return $this->oConexBD->ejecutarConsulta("DELETE FROM mb_juegos WHERE idJuego = " . (int) $idJuego, 1) > 0;
+            return $this->oConexBD->ejecutarConsultaPreparada("DELETE FROM mb_juegos WHERE idJuego = ?", 'i', array((int) $idJuego), 1) > 0;
         } catch (Exception $e) {
             return false;
         }

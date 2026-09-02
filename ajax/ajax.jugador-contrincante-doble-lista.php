@@ -16,7 +16,7 @@
 		// options para los select de los formularios
 		// FASES
 		if ($fIdJugador1 == null) {
-			echo "\n<input type=\"text\" id=\"fIdJugador2Nick\" name=\"fIdJugador2Nick\" value=\"Jugador 2\" style=\"background: red !important; color: white !important\" style=\"background: #EEE\" readonly/>";
+			echo "\n<input type=\"text\" id=\"fIdJugador2Nick\" name=\"fIdJugador2Nick\" value=\"Jugador 2\" class=\"input-contrincante\" readonly/>";
 		}else{
 
 			$arrJugadores =  $oControllerJugador->recuperarJugadoresContrincante( $fIdLiga, $fIdJugador1, $fNumFase );

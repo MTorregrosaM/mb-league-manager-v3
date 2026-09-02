@@ -150,7 +150,8 @@
 	          $grid .= "<td class=\"align-center td-acciones\">";
 
 
-	          $grid .= "  <form name=\"form-listas-".$fila[0]."\" id=\"form-listas-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\" action=\"gestion-listas.php\">
+            $grid .= "  
+              <form name=\"form-listas-".$fila[0]."\" id=\"form-listas-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\" action=\"gestion-listas.php\">
 	                <input type=\"hidden\" name=\"fIdJugador\" id=\"fIdJugador\" value=\"".$fila[0]."\"/>
 	                <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
 	                <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>

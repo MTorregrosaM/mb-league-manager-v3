@@ -156,9 +156,31 @@ class controllerFase {
     public function altaFase( $fIdLiga, $fNumFase, $fFecIni, $fFecFin, $fClaveCifrada ){
         
         try {
+
+            if (filter_var($fIdLiga, FILTER_VALIDATE_INT) === false || (int) $fIdLiga < 1 ||
+                filter_var($fNumFase, FILTER_VALIDATE_INT) === false || (int) $fNumFase < 1 ||
+                trim((string) $fFecIni) === '' || trim((string) $fFecFin) === '') {
+                return 2;
+            }
+
+            $fechaInicio = $this->formatoFecha(true, $fFecIni);
+            $fechaFin = $this->formatoFecha(true, $fFecFin);
+            if ($fechaInicio > $fechaFin) {
+                return 5;
+            }
+
+            $queryCalendarioLiga = "SELECT DATE_FORMAT(fecIni, '%Y-%m-%d'), DATE_FORMAT(fecFin, '%Y-%m-%d')
+                                    FROM mb_ligas WHERE idLiga = " . (int) $fIdLiga;
+            $calendarioLiga = $this->oConexBD->ejecutarConsulta($queryCalendarioLiga);
+            if ($calendarioLiga == null || empty($calendarioLiga[0][0]) || empty($calendarioLiga[0][1]) ||
+                $fechaInicio < $calendarioLiga[0][0] || $fechaFin > $calendarioLiga[0][1]) {
+                return 6;
+            }
         
             // COMPROBAMOS SI YA HAY UNA FASE CON EL NÚMERO ASIGNADO
-            $queryBD = "SELECT count(1) as CONTADOR from mb_fases WHERE idLiga = " . $fIdLiga . " AND numFase = " . $fNumFase;
+            $queryBD = "SELECT count(distinct numFase) as CONTADOR FROM mb_fases
+                        WHERE idLiga = " . (int) $fIdLiga . "
+                        AND CAST(numFase AS UNSIGNED) = " . (int) $fNumFase;
 
             $resultadoBD = $this->oConexBD->ejecutarConsulta($queryBD);
 
@@ -169,6 +191,15 @@ class controllerFase {
                       } 
 
                 }
+            }
+
+            $querySolapamiento = "SELECT count(distinct numFase) FROM mb_fases
+                                  WHERE idLiga = " . (int) $fIdLiga . "
+                                  AND fecIni <= '" . $fechaFin . "'
+                                  AND fecFin >= '" . $fechaInicio . "'";
+            $resultadoSolapamiento = $this->oConexBD->ejecutarConsulta($querySolapamiento);
+            if ($resultadoSolapamiento != null && (int) $resultadoSolapamiento[0][0] > 0) {
+                return 5;
             }
 
 
@@ -184,17 +215,25 @@ class controllerFase {
                 }
             }
 
+            if ($numRondas < 1) {
+                return 2;
+            }
+
             // insertar una fila por cada ronda
+            $rondasInsertadas = 0;
             for ($i = 1; $i<= $numRondas; $i++ ){
                
                 $queryDBFases = "INSERT INTO mb_fases( idLiga, numFase, numRonda, fecIni, fecFin, claveCifrada )
                       VALUES (" . $fIdLiga . ", " . $fNumFase . ", " . $i . ",'" . $this->formatoFecha(true, $fFecIni) . "', '" . $this->formatoFecha(true, $fFecFin) . "', '" . $fClaveCifrada . "')";                             
 
                 $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDBFases, 1);
+                if ($resultadoBD >= 1) {
+                    $rondasInsertadas++;
+                }
             }
 
                         
-            if ($resultadoBD >= 1){
+            if ($rondasInsertadas == $numRondas){
                 return 1;   
             }else{
                 return 2;
@@ -213,6 +252,36 @@ class controllerFase {
     public function modificarDatosFase( $fIdLiga, $fNumFase, $fFecIni, $fFecFin, $fClaveCifrada ){
         
         try {
+
+            if (filter_var($fIdLiga, FILTER_VALIDATE_INT) === false || (int) $fIdLiga < 1 ||
+                filter_var($fNumFase, FILTER_VALIDATE_INT) === false || (int) $fNumFase < 1 ||
+                trim((string) $fFecIni) === '' || trim((string) $fFecFin) === '') {
+                return 2;
+            }
+
+            $fechaInicio = $this->formatoFecha(true, $fFecIni);
+            $fechaFin = $this->formatoFecha(true, $fFecFin);
+            if ($fechaInicio > $fechaFin) {
+                return 3;
+            }
+
+            $queryCalendarioLiga = "SELECT DATE_FORMAT(fecIni, '%Y-%m-%d'), DATE_FORMAT(fecFin, '%Y-%m-%d')
+                                    FROM mb_ligas WHERE idLiga = " . (int) $fIdLiga;
+            $calendarioLiga = $this->oConexBD->ejecutarConsulta($queryCalendarioLiga);
+            if ($calendarioLiga == null || empty($calendarioLiga[0][0]) || empty($calendarioLiga[0][1]) ||
+                $fechaInicio < $calendarioLiga[0][0] || $fechaFin > $calendarioLiga[0][1]) {
+                return 6;
+            }
+
+            $querySolapamiento = "SELECT count(distinct numFase) FROM mb_fases
+                                  WHERE idLiga = " . (int) $fIdLiga . "
+                                  AND numFase <> " . (int) $fNumFase . "
+                                  AND fecIni <= '" . $fechaFin . "'
+                                  AND fecFin >= '" . $fechaInicio . "'";
+            $resultadoSolapamiento = $this->oConexBD->ejecutarConsulta($querySolapamiento);
+            if ($resultadoSolapamiento != null && (int) $resultadoSolapamiento[0][0] > 0) {
+                return 4;
+            }
 
 
             $queryDB = "UPDATE mb_fases SET 

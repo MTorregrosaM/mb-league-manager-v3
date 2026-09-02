@@ -10,8 +10,8 @@ class controllerFaccion {
 
     public function recuperarDatosFaccion($idFaccion) {
         try {
-            $queryDB = "SELECT idFaccion, idJuego, descFaccion, indActivo FROM mb_facciones WHERE idFaccion = " . (int) $idFaccion;
-            $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+            $queryDB = "SELECT idFaccion, idJuego, descFaccion, indActivo FROM mb_facciones WHERE idFaccion = ?";
+            $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'i', array((int) $idFaccion));
             if ($resultadoBD != null) {
                 foreach ($resultadoBD as $fila) {
                     return new Faccion($fila[0], $fila[1], $fila[2], $fila[3]);
@@ -25,12 +25,16 @@ class controllerFaccion {
 
     public function recuperarListadoFacciones($idJuego, $descFaccion = null) {
         try {
-            $queryDB = "SELECT idFaccion, idJuego, descFaccion, indActivo FROM mb_facciones WHERE idJuego = " . (int) $idJuego;
+            $queryDB = "SELECT idFaccion, idJuego, descFaccion, indActivo FROM mb_facciones WHERE idJuego = ?";
+            $tipos = 'i';
+            $parametros = array((int) $idJuego);
             if ($descFaccion != null && $descFaccion !== '') {
-                $queryDB .= " AND UPPER(descFaccion) LIKE UPPER('%" . addslashes($descFaccion) . "%')";
+                $queryDB .= " AND UPPER(descFaccion) LIKE UPPER(?)";
+                $tipos .= 's';
+                $parametros[] = '%' . $descFaccion . '%';
             }
             $queryDB .= " ORDER BY descFaccion ASC";
-            $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+            $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, $tipos, $parametros);
             $arrResultados = array();
             if ($resultadoBD != null) {
                 foreach ($resultadoBD as $fila) {
@@ -49,12 +53,11 @@ class controllerFaccion {
             return 2;
         }
         try {
-            $valor = addslashes($descFaccion);
-            $existe = $this->oConexBD->ejecutarConsulta("SELECT idFaccion FROM mb_facciones WHERE idJuego = " . (int) $idJuego . " AND UPPER(TRIM(descFaccion)) = UPPER('" . $valor . "')");
+            $existe = $this->oConexBD->ejecutarConsultaPreparada("SELECT idFaccion FROM mb_facciones WHERE idJuego = ? AND UPPER(TRIM(descFaccion)) = UPPER(?)", 'is', array((int) $idJuego, $descFaccion));
             if ($existe != null && count($existe) > 0) {
                 return 2;
             }
-            return $this->oConexBD->ejecutarConsulta("INSERT INTO mb_facciones (idJuego, descFaccion, indActivo) VALUES (" . (int) $idJuego . ", '" . $valor . "', 1)", 1) > 0 ? 1 : 0;
+            return $this->oConexBD->ejecutarConsultaPreparada("INSERT INTO mb_facciones (idJuego, descFaccion, indActivo) VALUES (?, ?, 1)", 'is', array((int) $idJuego, $descFaccion), 1) > 0 ? 1 : 0;
         } catch (Exception $e) {
             return 0;
         }
@@ -66,8 +69,8 @@ class controllerFaccion {
             return 2;
         }
         try {
-            $queryDB = "UPDATE mb_facciones SET descFaccion = '" . addslashes($descFaccion) . "', indActivo = " . ((int) $indActivo === 1 ? 1 : 0) . " WHERE idFaccion = " . (int) $idFaccion;
-            return $this->oConexBD->ejecutarConsulta($queryDB, 1) > 0 ? 1 : 3;
+            $queryDB = "UPDATE mb_facciones SET descFaccion = ?, indActivo = ? WHERE idFaccion = ?";
+            return $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'sii', array($descFaccion, (int) $indActivo === 1 ? 1 : 0, (int) $idFaccion), 1) > 0 ? 1 : 3;
         } catch (Exception $e) {
             return 0;
         }
@@ -78,11 +81,11 @@ class controllerFaccion {
             return false;
         }
         try {
-            $enUso = $this->oConexBD->ejecutarConsulta("SELECT idJugador FROM mb_jugadores WHERE bando = " . (int) $idFaccion . " LIMIT 1");
+            $enUso = $this->oConexBD->ejecutarConsultaPreparada("SELECT idJugador FROM mb_jugadores WHERE bando = ? LIMIT 1", 'i', array((int) $idFaccion));
             if ($enUso != null && count($enUso) > 0) {
                 return false;
             }
-            return $this->oConexBD->ejecutarConsulta("DELETE FROM mb_facciones WHERE idFaccion = " . (int) $idFaccion, 1) > 0;
+            return $this->oConexBD->ejecutarConsultaPreparada("DELETE FROM mb_facciones WHERE idFaccion = ?", 'i', array((int) $idFaccion), 1) > 0;
         } catch (Exception $e) {
             return false;
         }

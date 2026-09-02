@@ -44,12 +44,10 @@ class controllerUsuario {
     /* datos de usuario */
     public function recuperarDatosUsuario( $fIdUsuario ){
     try {
-         $queryDB = "SELECT nick, pass, rol
+            $queryDB = "SELECT nick, pass, rol
               FROM mb_usuarios
-              WHERE 1=1 ";
-        $queryDB .= "AND idUsuario = '". $fIdUsuario . "' ";
-      
-      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+              WHERE idUsuario = ?";
+         $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, 'i', array((int) $fIdUsuario));
 
       if ($resultadoBD != null){
         foreach ($resultadoBD as $fila) {
@@ -111,10 +109,12 @@ class controllerUsuario {
         $queryDB = "SELECT  idUsuario, nick, pass, rol, DATE_FORMAT(ult_acceso, '%d-%m-%Y %H:%i:%s' )
               FROM mb_usuarios
               WHERE 1=1 ";
+      $tipos = '';
+      $parametros = array();
             
       // GESTIONAMOS FILTROS
-      if ( $fNick != null) { $queryDB .= " AND UPPER(nick) LIKE UPPER('%" . $fNick  . "%') ";  }   
-      if ( $fRol != null) { $queryDB .= " AND UPPER(rol) LIKE UPPER('%" . $fRol  . "%') ";  }     
+      if ( $fNick != null) { $queryDB .= " AND UPPER(nick) LIKE UPPER(?) "; $tipos .= 's'; $parametros[] = '%' . $fNick . '%'; }
+      if ( $fRol != null) { $queryDB .= " AND UPPER(rol) LIKE UPPER(?) "; $tipos .= 's'; $parametros[] = '%' . $fRol . '%'; }
 
       // ORDENAMOS
         $queryDB .= " ORDER BY idUsuario ASC ";
@@ -122,7 +122,7 @@ class controllerUsuario {
       // PAGINAMOS
       $queryDB .= " LIMIT " . $numPag . ", 10 ";
 
-      $resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
+      $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada($queryDB, $tipos, $parametros);
 
       $arrResultados = array ();
 
