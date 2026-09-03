@@ -75,7 +75,7 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Lekton:wght@400;700&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="recursos/css/estilos.css?v=20260905" type="text/css" media="screen, projection"/>
+	<link rel="stylesheet" href="recursos/css/estilos.css?v=20260906" type="text/css" media="screen, projection"/>
 	<link rel="stylesheet" type="text/css" href="recursos/js/css/jquery-ui.min.css" />
 	<link rel="stylesheet" type="text/css" href="recursos/js/css/jquery.raty.css" />
 	<link rel="stylesheet" type="text/css" href="recursos/css/style-drag.css" />
