@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $dbCredentials = require __DIR__ . '/../config/db.credentials.php';
 $servidor = $dbCredentials['servidor'];

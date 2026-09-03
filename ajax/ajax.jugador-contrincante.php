@@ -40,7 +40,7 @@
             if (is_array($arrJugadores) && count($arrJugadores) >= 1 ){
                 // calculamos el contrincante
                 $idJugador2 = ($arrJugadores[2] == $fIdJugador1)? $arrJugadores[1] : $arrJugadores[2]; 
-                echo "\n<input type=\"hidden\" id=\"fIdEnfrentamiento\" name=\"fIdEnfrentamiento\" value=\"" . $arrJugadores[0] . "\" />";
+                echo "\n<input type=\"hidden\" id=\"fIdResultado\" name=\"fIdResultado\" value=\"" . $arrJugadores[0] . "\" />";
                 echo "\n<input type=\"hidden\" id=\"fIdJugador2\" name=\"fIdJugador2\" value=\"" . $idJugador2 . "\"  />";
                 echo "\n<input type=\"text\" id=\"fIdJugador2Nick\" name=\"fIdJugador2Nick\" value=\"" . $arrJugadores[3] . "\" class=\"input-contrincante\" readonly/>";
                 echo "\n<input type=\"hidden\" id=\"fResultadoJugador1Aux\" name=\"fResultadoJugador1Aux\" value=\"" . (($arrJugadores[4] != null)? $arrJugadores[4] : $minResultado) . "\"  />";

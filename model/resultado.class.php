@@ -1,6 +1,6 @@
 <?php
 
-/* Descripcion: POJO de Enfrentamiento
+/* Descripcion: POJO de Resultado
  * Autor: Marcos Torregrosa
  * e-mail: hola@marcostorregrosa.com
  * Fecha: 29-09-2015
@@ -10,7 +10,7 @@
  * Autor:  | e-mail:| Fecha:
  * -- 
  */
-class Enfrentamiento {
+class Resultado {
 
 	private $idLiga;
 	private $idEnfrentamiento;
@@ -28,10 +28,10 @@ class Enfrentamiento {
 	private $valDeportividadJug1;
 	private $valDeportividadJug2;
 
-	public function __construct($fIdEnfrentamiento, $fIdLiga, $fIdFase, $fNumRonda, $fIdJugador1,  $fIdJugador2, $fResultadoJugador1, $fResultadoJugador2, $fValPinturaJug1, $fValPinturaJug2, $fIdJugVictoriaConcedida, $fFechaBatalla, $fIndValidado, $valDeportividadJug1, $valDeportividadJug2 ) 
+	public function __construct($fIdResultado, $fIdLiga, $fIdFase, $fNumRonda, $fIdJugador1,  $fIdJugador2, $fResultadoJugador1, $fResultadoJugador2, $fValPinturaJug1, $fValPinturaJug2, $fIdJugVictoriaConcedida, $fFechaBatalla, $fIndValidado, $valDeportividadJug1, $valDeportividadJug2 ) 
 	{ 
 
-	    $this->idEnfrentamiento = $fIdEnfrentamiento;
+	    $this->idEnfrentamiento = $fIdResultado;
 	    $this->idLiga = $fIdLiga;
 	    $this->idFase = $fIdFase;
 	    $this->numRonda = $fNumRonda;

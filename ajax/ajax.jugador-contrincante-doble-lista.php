@@ -30,7 +30,7 @@
 					
 				}
 			}else{
-				$selectJugadores .= "\n<option value=\"0\" selected>No hay enfrentamientos</option>";
+				$selectJugadores .= "\n<option value=\"0\" selected>No hay resultados</option>";
 			}
 			$selectJugadores .= "</select>";
 

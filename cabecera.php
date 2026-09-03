@@ -65,7 +65,7 @@
     <script>window.responsiveNav = function () { return null; };</script>
 
     <!-- css  -->
-    <link rel="stylesheet" href="recursos/css/estilos.css?v=20260908" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="recursos/css/estilos.css?v=20260913" type="text/css" media="screen, projection"/>
     <link rel="stylesheet" type="text/css" href="recursos/js/css/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="recursos/js/css/jquery.raty.css" />
     <link rel="stylesheet" type="text/css" href="recursos/css/style-drag.css" />

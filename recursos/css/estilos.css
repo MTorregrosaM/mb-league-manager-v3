@@ -417,11 +417,11 @@
     margin: 1.25rem 0 .35rem;
     border: 0;
     border-radius: 99px;
-    background: rgba(255,255,255,.14) !important;
+    background: var(--app-accent) !important;
   }
 
   #altaResultado .ui-slider .ui-slider-range,
-  #modEnfrentamiento .ui-slider .ui-slider-range { background: var(--app-accent); }
+  #modEnfrentamiento .ui-slider .ui-slider-range { background: #3a414a; }
   #altaResultado .ui-slider .ui-slider-handle,
   #modEnfrentamiento .ui-slider .ui-slider-handle {
     top: 50%;
@@ -431,14 +431,14 @@
     margin-left: -11px;
     border: 2px solid #fff;
     border-radius: 50%;
-    background: var(--app-accent);
+    background: var(--app-muted);
   }
 
   #altaResultado .ui-slider .ui-slider-handle:hover,
   #altaResultado .ui-slider .ui-slider-handle:focus,
   #modEnfrentamiento .ui-slider .ui-slider-handle:hover,
   #modEnfrentamiento .ui-slider .ui-slider-handle:focus {
-    background: var(--app-accent-hover);
+    background: var(--app-accent);
   }
 
   #altaResultado .resultados-radio {
@@ -625,6 +625,47 @@
   .resultado-validado {display: flex; align-items: center; justify-content: flex-start; gap: 4px;}
   .resultado-validado .span-radio-button {float: none; flex: 0 0 150px; margin-top: 0;}
   .resultado-validado-opciones {display: inline-flex; align-items: center; gap: 2px;}
+  #form p.resultado-validado {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    margin: 10px 0 !important;
+    padding: 0;
+  }
+  #form p.resultado-validado > .span-radio-button {
+    width: 150px;
+    flex: 0 0 150px;
+    float: none;
+    margin: 0;
+    padding-right: 15px;
+    box-sizing: border-box;
+    text-align: right;
+  }
+  #form .resultado-validado-opciones {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  #form .resultado-validado-opciones .radio-button {
+    width: auto !important;
+    max-width: none !important;
+    margin: 0;
+    float: none !important;
+    vertical-align: middle;
+  }
+  #form .resultado-validado-opciones .label-radio-button {
+    width: auto !important;
+    margin: 0 8px 0 0;
+    padding: 0;
+    float: none !important;
+    display: inline-block !important;
+    line-height: 1.2;
+    vertical-align: middle;
+  }
   .spinner{margin-right: 0px !Important;}
   #login{display: block; margin:35px auto 0 auto; width: 300px; text-align: center}
   #login fieldset { padding: 20px; border: 1px solid #CCC; }
@@ -976,6 +1017,12 @@
     background: var(--app-surface);
   }
   .ranking-card h3 { margin: 0 0 1rem; padding-bottom: .65rem; border-bottom: 1px solid var(--app-border); }
+  .test-generador { width: 100%; max-width: none; box-sizing: border-box; margin: 0; }
+  .test-generador > p:first-child { color: var(--app-muted); }
+  .test-generador #form p { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .test-generador #form label { min-width: 190px; color: var(--app-muted); }
+  .test-generador #form input, .test-generador #form select { flex: 1 1 220px; }
+  .test-generador #form .button { float: none; margin-top: .5rem; }
   .ranking-league-title { margin: 0 0 1rem !important; }
   .ranking-progress-wrap { width: 100%; height: 18px; margin: .75rem 0 .5rem; overflow: hidden; border-radius: .4rem; background: var(--app-surface-raised); }
   .ranking-progress-bar { height: 100%; background: var(--app-accent); }
@@ -1147,6 +1194,13 @@
     filter: brightness(0) saturate(100%) invert(87%) sepia(8%) saturate(400%) hue-rotate(175deg) brightness(93%);
     vertical-align: middle;
   }
+  #contenedor-principal table .resultado-pendiente {
+    display: inline-block;
+    padding: .1rem .35rem;
+    border-radius: .25rem;
+    background: #dc3545 !important;
+    color: #fff !important;
+  }
   #contenedor-principal .form-btn-acciones {
     vertical-align: middle;
     margin: 0 .15rem;
@@ -1160,13 +1214,13 @@
     content: url("../img/trash.svg");
   }
   #contenedor-principal .form-btn-acciones .btn-editar-reg {
-    content: url("../img/check.svg");
+    content: url("../img/cog.svg");
   }
   #contenedor-principal .btn-validar-resultado {
     width: 24px !important;
     height: 24px !important;
     vertical-align: middle;
-    content: url("../img/ok.svg");
+    content: url("../img/check.svg");
   }
   #contenedor-principal td.td-acciones > .acciones-menu {
     position: relative;
@@ -1855,6 +1909,24 @@
     #selectLiga select { min-width: 0; width: 100%; }
     .app-navbar { border-radius: .5rem; }
     #form label { width: auto; float: none; display: block; margin: .75rem 0 .25rem; text-align: left; }
+    #form p.resultado-validado {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .35rem;
+      margin: 10px 0;
+    }
+    #form p.resultado-validado > .span-radio-button {
+      flex: 0 0 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      text-align: left;
+    }
+    #form p.resultado-validado > .resultado-validado-opciones {
+      margin: 0;
+      justify-content: flex-start;
+    }
     #form input, #form select, #form textarea { width: 100% !important; max-width: none !important; margin: 0; }
     #form .submit-button { margin: 1rem 0 0; width: 100% !important; }
     #buscador form { display: grid; gap: .35rem; }

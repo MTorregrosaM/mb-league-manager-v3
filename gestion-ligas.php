@@ -130,7 +130,8 @@
                 <img src=\"recursos/img/cog.svg\" title=\"Ver fases de la liga\" alt=\"form-fases-".$fila[0]."\" class=\"btn-fases\"/>
               </form>";
 
-          $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
+              $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" action=\"gestion-ligas.php\" class=\"form-btn-acciones\">
+                <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\"/>
                 <input type=\"hidden\" name=\"fIdLigaBorrar\" id=\"fIdLigaBorrar\" value=\"".$fila[0]."\"/>
                 <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
                 <input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />

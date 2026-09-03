@@ -1,4 +1,4 @@
-﻿<?php 
+<?php
 		require_once __DIR__ . "/config/auth.php";
 		require_once __DIR__ . "/config/mailer.php";
 ?>
@@ -19,7 +19,7 @@
 	try {
 
 		/* variables */
-		$oControllerEnfrentamiento = new controllerEnfrentamiento();
+		$oControllerResultado = new controllerResultado();
 		$oControllerLiga = new controllerLiga();
 		$oControllerJugador = new controllerJugador();
 
@@ -63,7 +63,7 @@
 
 			// NUEVO 2016 - COMPROBAMOS SI YA SE HA GRABADO
 
-			$arrBandosAsignados = $oControllerEnfrentamiento->validarBandoAsignado( $fIdLiga, $fNumFase, $fIdJugador1, $fIdJugador2 ) ;
+			$arrBandosAsignados = $oControllerResultado->validarBandoAsignado( $fIdLiga, $fNumFase, $fIdJugador1, $fIdJugador2 ) ;
 
 			$hayDosBandosAsignados = is_array($arrBandosAsignados) && count($arrBandosAsignados) >= 2;
 			if (!$hayDosBandosAsignados || $arrBandosAsignados[0][1] == 'DOBLE' || $arrBandosAsignados[1][1] == 'DOBLE'){
@@ -77,7 +77,7 @@
 				$banderaBandoJug2 = ($bandoRandom == 0)? "allies_icon_grande.png" : "axis_icon_grande.png";
 
 				// NUEVO 2016 - GRABAMOS EN BD EL BANDO ASIGNADO
-				$oControllerEnfrentamiento->grabarBandoAleatorio( $fIdLiga, $fNumFase, $fIdJugador1, $fIdJugador2, $bandoJug1, $bandoJug2 ) ;
+				$oControllerResultado->grabarBandoAleatorio( $fIdLiga, $fNumFase, $fIdJugador1, $fIdJugador2, $bandoJug1, $bandoJug2 ) ;
 
 			}else{
 			 	$banderaBandoJug1 = ($arrBandosAsignados[0][1] == 'EJE')? "axis_icon_grande.png" : "allies_icon_grande.png";
@@ -94,7 +94,7 @@
 
 			$_SESSION['tockenEnvio'] = 3;
 			$_SESSION['fIdJugador2'] = $fIdJugador2;
-			$body = "<p>Hola,</p><p>Se han generado aleatoriamente los bandos del enfrentamiento de la " . $fNumFase . "&ordf; fase de la <i>" . htmlspecialchars($fNombreLiga, ENT_QUOTES, 'UTF-8') . "</i>.</p>";
+			$body = "<p>Hola,</p><p>Se han generado aleatoriamente los bandos del resultado de la " . $fNumFase . "&ordf; fase de la <i>" . htmlspecialchars($fNombreLiga, ENT_QUOTES, 'UTF-8') . "</i>.</p>";
 			$body .= "<p>" . htmlspecialchars($jug1->nick, ENT_QUOTES, 'UTF-8') . ": " . htmlspecialchars($bandoJug1, ENT_QUOTES, 'UTF-8') . "</p>";
 			$body .= "<p>" . htmlspecialchars($jug2->nick, ENT_QUOTES, 'UTF-8') . ": " . htmlspecialchars($bandoJug2, ENT_QUOTES, 'UTF-8') . "</p>";
 			$body .= "<p>Cualquier duda, pod&eacute;is contactar con <a href=\"mailto:hola@modelbrush.com\">hola@modelbrush.com</a>.</p>";
@@ -111,7 +111,7 @@
 
 	}catch(Exception $e){
 		$oLog = Log::getInstance();
-		$oLog->trazaLog ($e, "gestion-enfrentamientos.php");	
+			   $oLog->trazaLog ($e, "gestion-resultados.php");
 		return null;	 
 	}
 
@@ -119,7 +119,7 @@
 <div id="contenedor-principal">
 	<?php require_once("menu.php"); ?>
 	<div>
-		<h2 class="h2"><span>Generar bando aleatorio para enfrentamiento con doble lista</span></h2>
+		<h2 class="h2"><span>Generar bando aleatorio para resultado con doble lista</span></h2>
 	
 
 			<div id="buscador">

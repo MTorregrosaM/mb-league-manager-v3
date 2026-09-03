@@ -1,5 +1,6 @@
 <?php
 	require_once __DIR__ . '/../config/auth.php';
+	require_once __DIR__ . '/../inc/puntuacion-fow.php';
 
 
 		// importamos librerias
@@ -8,7 +9,7 @@
 		require_once ("../config/db.class.php");
 		require_once ("../model/class.php");
 
-		$fIdEnfrentamiento = (isset( $_POST["fIdEnfrentamiento"]))? $_POST["fIdEnfrentamiento"] : null;
+		$fIdResultado = (isset( $_POST["fIdResultado"]))? $_POST["fIdResultado"] : null;
 		$fIdLiga = (isset( $_POST["fIdLiga"]))? $_POST["fIdLiga"] : null;
 		$fIdJugador1 = (isset( $_POST["fIdJugador1"]))? $_POST["fIdJugador1"] : 0;
 		$fFechaBatalla = (isset( $_POST["fFechaBatalla"]))? $_POST["fFechaBatalla"] : null;
@@ -16,26 +17,26 @@
      	$pagActual = (isset($_POST["pagActual"]))? $_POST["pagActual"] : 1;
 		$csrfToken = htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8');
 
-		$oControllerEnfrentamiento = new controllerEnfrentamiento();
+		$oControllerResultado = new controllerResultado();
 		$oControllerLiga = new controllerLiga();
 		$oControllerJugador = new controllerJugador();
 
 		// actualizamos la marca de validacion
-		$resultadoValidacion = $oControllerEnfrentamiento->validarResultado ( $fIdLiga, $fIdEnfrentamiento );
+		$resultadoValidacion = $oControllerResultado->validarResultado ( $fIdLiga, $fIdResultado );
 		if ($resultadoValidacion !== 1) {
 			http_response_code(500);
-			exit('No se pudo validar el enfrentamiento');
+			exit('No se pudo validar el resultado');
 		}
 
 
 		// generamos de nuevo el grid
-		$arrEnfrentamientos = $oControllerEnfrentamiento->recuperarListadoEnfrentamientosCompleto ( $fIdLiga, $fIdJugador1, $fFechaBatalla, $fIndValidado, ($pagActual-1));
+		$arrResultados = $oControllerResultado->recuperarListadoResultadosCompleto ( $fIdLiga, $fIdJugador1, $fFechaBatalla, $fIndValidado, ($pagActual-1));
 
 		$grid="";
 
 			// comprobamos que haya datos
-			if (is_array($arrEnfrentamientos) && count($arrEnfrentamientos) >= 1){
-				$grid  = "<table class=\"table-6\">\n
+			if (is_array($arrResultados) && count($arrResultados) >= 1){
+				$grid  = "<div class=\"tabla-grid-wrap\"><table class=\"table-6\">\n
 							<tr>
 							<th>Fase </th>
 							<th>Fecha</th>
@@ -45,15 +46,15 @@
 							<th class=\"td-acciones\"></th>
 							</tr>\n";
 
-				foreach($arrEnfrentamientos as $fila){
+				foreach($arrResultados as $fila){
 					// gestion de correos
 					$oJugador1 = $oControllerJugador->recuperarDatosJugador( $fila[4] );
 					$oJugador2 = $oControllerJugador->recuperarDatosJugador( $fila[5]  );
 
 
 					// misiones secundarias
-					$arrMisionesSecJug1BD = $oControllerEnfrentamiento->recuperarMisionesSecJugador( $fila[0], $fila[4] );
-					$arrMisionesSecJug2BD = $oControllerEnfrentamiento->recuperarMisionesSecJugador( $fila[0], $fila[5] );
+					$arrMisionesSecJug1BD = $oControllerResultado->recuperarMisionesSecJugador( $fila[0], $fila[4] );
+					$arrMisionesSecJug2BD = $oControllerResultado->recuperarMisionesSecJugador( $fila[0], $fila[5] );
 
 					$fIdMisionSecJug11 = (isset($arrMisionesSecJug1BD[0]))? $arrMisionesSecJug1BD[0] : 0;
 					$fIdMisionSecJug12 = (isset($arrMisionesSecJug1BD[1]))? $arrMisionesSecJug1BD[1] : 0;
@@ -96,24 +97,26 @@
 						$grid .= "<strong>?</strong>";
 					}
 
-					$grid .= ")</td><td class=\"align-center\">" .  $fila[6]. " - " . $fila[7] . "</td>";
+					$claseResultado = ($fila[11] == 1) ? "" : " class=\"resultado-pendiente\"";
+					$grid .= ")</td><td class=\"align-center\"><span" . $claseResultado . ">" .  $fila[6]. " - " . $fila[7] . "</span></td>";
 
 
 					$grid .= "<td class=\"align-center td-acciones\">";
 					$grid .= "<form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
 						<input type=\"hidden\" name=\"csrf_token\" value=\"".$csrfToken."\"/>
 						<input type=\"hidden\" name=\"csrf_token\" value=\"".$csrfToken."\"/>
-						<input type=\"hidden\" name=\"fIdEnfrentamientoReset\" value=\"".$fila[0]."\"/>
+						<input type=\"hidden\" name=\"fIdResultadoReset\" value=\"".$fila[0]."\"/>
 						<input type=\"hidden\" name=\"accionForm\" value=\"3\"/>
 						<input type=\"hidden\" name=\"pagActual\" value=\"".$pagActual."\" />
-						<input type=\"hidden\" name=\"fIdEnfrentamiento\" value=\"".$fila[0]."\" />
-						<img src=\"recursos/img/trash.svg\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+						<input type=\"hidden\" name=\"fIdResultado\" value=\"".$fila[0]."\" />
+						<img src=\"recursos/img/trash.svg\" title=\"Resetear resultado\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
 					</form>";
 
 
-					if($fila[11] == 0) {
-						$grid .= "<img src=\"recursos/img/ok.svg\"  alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\"/ onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\">";
-					}else{
+					if ($fila[11] != 1) {
+					$grid .= "<img src=\"recursos/img/check.svg\" width=\"24\" height=\"24\" title=\"Validar resultado\" alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\" onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\"/>";
+					}
+					{
 						$icon = "";
 						 if ( ($fila[10] != null && $fila[8]  == 0) || ($fila[10] != null && $fila[9] == 0) || $fila[10] == null ){
 							$icon = "icon_info_pend_jugador";
@@ -125,7 +128,7 @@
 									<input type=\"hidden\" name=\"csrf_token\" value=\"".$csrfToken."\"/>
 									<input type=\"hidden\" name=\"csrf_token\" value=\"".$csrfToken."\"/>
 									<input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
-									<input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
+									<input type=\"hidden\" name=\"fIdResultado\" id=\"fIdResultado\" value=\"". $fila[0] ."\" />
 									<input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
 									<input type=\"hidden\" name=\"fNumFase\" id=\"fNumFase\" value=\"". $fila[2] ."\" />
 									<input type=\"hidden\" name=\"fNumRonda\" id=\"fNumRonda\" value=\"". $fila[3] ."\" />
@@ -133,6 +136,7 @@
 									<input type=\"hidden\" name=\"fIdJugador2\" id=\"fIdJugador2\" value=\"". $fila[5] ."\" />
 									<input type=\"hidden\" name=\"fResultadoJugador1\" id=\"fResultadoJugador1\" value=\"". $fila[6] ."\" />
 									<input type=\"hidden\" name=\"fResultadoJugador2\" id=\"fResultadoJugador2\" value=\"". $fila[7] ."\" />
+									<input type=\"hidden\" name=\"fResultadoRadio\" id=\"fResultadoRadio\" value='". resultadoRadioDesdePuntuacionFow($fila[6], $fila[7]) ."' />
 									<input type=\"hidden\" name=\"fValPinturaJug1\" id=\"fValPinturaJug1\" value=\"". $fila[8] ."\" />
 									<input type=\"hidden\" name=\"fValPinturaJug2\" id=\"fValPinturaJug2\" value=\"". $fila[9] ."\" />
 									<input type=\"hidden\" name=\"fFechaBatalla\" id=\"fFechaBatalla\" value=\"". $fila[10] ."\" />
@@ -148,21 +152,21 @@
 									<input type=\"hidden\" name=\"fIdMisionSecJug22\" id=\"fIdMisionSecJug22\" value=\"". $fIdMisionSecJug22 ."\" />
 									<input type=\"hidden\" name=\"fIdMisionSecJug23\" id=\"fIdMisionSecJug23\" value=\"". $fIdMisionSecJug23 ."\" />
 									<input type=\"hidden\" name=\"fIdMisionSecJug24\" id=\"fIdMisionSecJug24\" value=\"". $fIdMisionSecJug24 ."\" />
-									<img src=\"recursos/img/check.svg\" width=\"24\" height=\"24\" title=\"Editar o validar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+									<img src=\"recursos/img/cog.svg\" width=\"24\" height=\"24\" title=\"Editar resultado\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
 								</form>\n";
 					}
 					if (false) {
 					$grid .= "  <form style=\"display:none\" name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
-								<input type=\"hidden\" name=\"fIdEnfrentamientoReset\" id=\"fIdEnfrentamientoReset\" value=\"".$fila[0]."\"/>
+								<input type=\"hidden\" name=\"fIdResultadoReset\" id=\"fIdResultadoReset\" value=\"".$fila[0]."\"/>
 								<input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
 								<input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
-								<input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
-								<img src=\"recursos/img/icon_reset.png\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+								<input type=\"hidden\" name=\"fIdResultado\" id=\"fIdResultado\" value=\"". $fila[0] ."\" />
+								<img src=\"recursos/img/icon_reset.png\" title=\"Resetear resultado\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
 							</form>";
 
 					$grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
 								<input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
-								<input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
+								<input type=\"hidden\" name=\"fIdResultado\" id=\"fIdResultado\" value=\"". $fila[0] ."\" />
 								<input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
 								<input type=\"hidden\" name=\"fNumFase\" id=\"fNumFase\" value=\"". $fila[2] ."\" />
 								<input type=\"hidden\" name=\"fNumRonda\" id=\"fNumRonda\" value=\"". $fila[3] ."\" />
@@ -185,25 +189,25 @@
 								<input type=\"hidden\" name=\"fIdMisionSecJug22\" id=\"fIdMisionSecJug22\" value=\"". $fIdMisionSecJug22 ."\" />
 								<input type=\"hidden\" name=\"fIdMisionSecJug23\" id=\"fIdMisionSecJug23\" value=\"". $fIdMisionSecJug23 ."\" />
 								<input type=\"hidden\" name=\"fIdMisionSecJug24\" id=\"fIdMisionSecJug24\" value=\"". $fIdMisionSecJug24 ."\" />
-									<img src=\"recursos/img/check.svg\" title=\"Editar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+									<img src=\"recursos/img/cog.svg\" title=\"Editar resultado\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
 							</form>\n";
 					}
 					if (false) {
 					$grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
-								<input type=\"hidden\" name=\"fIdEnfrentamientoReset\" value=\"".$fila[0]."\"/>
+								<input type=\"hidden\" name=\"fIdResultadoReset\" value=\"".$fila[0]."\"/>
 								<input type=\"hidden\" name=\"accionForm\" value=\"3\"/>
 								<input type=\"hidden\" name=\"pagActual\" value=\"".$pagActual."\" />
-								<img src=\"recursos/img/trash.svg\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+								<img src=\"recursos/img/trash.svg\" title=\"Resetear resultado\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
 							</form>";
 					}
 				}
 
-			$grid .= "</tr>\n</table>";
+			$grid .= "</tr>\n</table></div>";
 			}else{
 				$grid  =  "<p>No hay resultados</p>";
 			}
 
-			$grid = "<div id=\"mensaje-ok\">Enfrentamiento validado correctamente.</div>" . $grid;
+			$grid = "<div id=\"mensaje-accion\" class=\"mensaje-ok\">Resultado validado correctamente.</div>" . $grid;
 			echo $grid;
 
 ?>
@@ -229,14 +233,14 @@
 
 		// borrar registro
 	 	$(".btn-borrar").click( function() {
-			var formularioBorrar = $(this).attr('alt');
+			var formularioBorrar = $(this).closest("form");
 
 
 			$('#dialog-modal').dialog({
 				autoFocus: false,
 		        buttons : {
 			        "Confirmar" : function() {
-			 		  $("#" + formularioBorrar).submit();
+					  formularioBorrar.submit();
 		       	 	},
 			        "Cancelar" : function() {
 			          $(this).dialog("close");
@@ -294,10 +298,10 @@
 
 
 	// select de jugadores
-	function validarResultado( fIdEnfrentamiento, fIdLiga, fIdJugador1, fFechaBatalla, fIndValidado, pagActual )	{
+	function validarResultado( fIdResultado, fIdLiga, fIdJugador1, fFechaBatalla, fIndValidado, pagActual )	{
 
 	        var parametros = {
-	                "fIdEnfrentamiento" : fIdEnfrentamiento,
+	                "fIdResultado" : fIdResultado,
 	                "fIdLiga" : fIdLiga,
 	                "fIdJugador1" : fIdJugador1,
 	                "fFechaBatalla" : fFechaBatalla,

@@ -71,7 +71,7 @@ class controllerJugador {
 
 
     /* método para recuperar el listado de registros. */
-    public function recuperarListadoJugadores ( $fIdLiga = null, $fNick = null,  $fEmail = null, $fTelefono = null, $numPag = 0, $numLim = 10, $validarEnfrentamientos = false, $fNumFase = null, $fNumRonda = null ) {
+    public function recuperarListadoJugadores ( $fIdLiga = null, $fNick = null,  $fEmail = null, $fTelefono = null, $numPag = 0, $numLim = 10, $validarResultados = false, $fNumFase = null, $fNumRonda = null ) {
   
     try {
 
@@ -90,7 +90,7 @@ class controllerJugador {
       if ( $fNick != null ) { $queryDB .= " AND UPPER(nick) LIKE UPPER(?) "; $tipos .= 's'; $parametros[] = '%' . $fNick . '%'; }
       if ( $fEmail != null ) { $queryDB .= " AND UPPER(email) LIKE UPPER(?)"; $tipos .= 's'; $parametros[] = '%' . $fEmail . '%'; }
       if ( $fTelefono != null ) { $queryDB .= " AND telefono LIKE ?"; $tipos .= 's'; $parametros[] = '%' . $fTelefono . '%'; }
-      if ( $validarEnfrentamientos ) { $queryDB .= " AND (idJugador NOT IN (SELECT DISTINCT idJugador1 FROM mb_enfrentamientos WHERE numFase = ? AND numRonda = ?)
+      if ( $validarResultados ) { $queryDB .= " AND (idJugador NOT IN (SELECT DISTINCT idJugador1 FROM mb_enfrentamientos WHERE numFase = ? AND numRonda = ?)
                                AND idJugador NOT IN (SELECT DISTINCT idJugador2 FROM mb_enfrentamientos WHERE numFase = ? AND numRonda = ?))";
         $tipos .= 'iiii';
         $parametros[] = (int) $fNumFase;
@@ -134,7 +134,7 @@ class controllerJugador {
 
 
     /* método para recuperar el listado de registros. */
-    public function recuperarSelectJugadores ( $fIdLiga = null, $fNumFase = null, $fNumRonda = null, $validarGrabEnfrentamiento = false, $validarDobleLista = false ) {
+    public function recuperarSelectJugadores ( $fIdLiga = null, $fNumFase = null, $fNumRonda = null, $validarGrabResultado = false, $validarDobleLista = false ) {
 
     try {
       // VALIDAMOS NUMFASE
@@ -144,7 +144,7 @@ class controllerJugador {
               join mb_fases t2 
               on t1.idLiga = t2.idLiga";
       
-      if ($validarGrabEnfrentamiento) {
+      if ($validarGrabResultado) {
         $queryDB .= " left join mb_enfrentamientos t3
               on t1.idJugador = t3.idJugador1 AND t1.idLiga = t3.idLiga
               left join mb_enfrentamientos t4
@@ -158,7 +158,7 @@ class controllerJugador {
         if ( $fIdLiga != null ) { $queryDB .= " AND t1.idLiga = " . $fIdLiga ;  }
         //if ( $fNumFase != null ) { $queryDB .= " AND numFase = " . $fNumFase ;  }
         //if ( $fNumRonda != null ) { $queryDB .= " AND t3.numRonda = " . $fNumRonda ;  }
-        if ( $validarGrabEnfrentamiento ) { $queryDB .= " AND (( t3.numFase = " . $fNumFase . " AND t1.idJugador = t3.idJugador1  AND t3.valPinturaJug2 IS NULL) 
+        if ( $validarGrabResultado ) { $queryDB .= " AND (( t3.numFase = " . $fNumFase . " AND t1.idJugador = t3.idJugador1  AND t3.valPinturaJug2 IS NULL)
                                   OR ( t4.numFase = " . $fNumFase . " AND t1.idJugador = t4.idJugador2   AND t4.valPinturaJug1 IS NULL)) ";  }
 
       // ORDENAMOS

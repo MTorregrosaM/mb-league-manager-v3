@@ -573,6 +573,9 @@ class controllerLiga {
             FROM mb_ligas WHERE 1 = 1 ";
         $queryDB .= (!$mostrarInactivos)? " AND indActivo = 1 " : ""; 
         $queryDB .= ($idLigas !== null)? " AND idLiga in (" . $idLigas . ")" : "";
+      if ($selectorPublico && (!isset($_SESSION["rol"]) || strtoupper(trim((string) $_SESSION["rol"])) !== "ADMIN")) {
+        $queryDB .= " AND nombre NOT LIKE 'Test - %' ";
+      }
       $queryDB .="  ORDER BY fecIni DESC, nombre";
 
       $arrResultados = array ();

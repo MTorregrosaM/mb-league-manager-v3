@@ -24,7 +24,7 @@
     /* variables */
     $oControllerLiga = new controllerLiga();
     $oControllerJugador = new controllerJugador();
-    $oControllerEnfrentamiento = new controllerEnfrentamiento();
+    $oControllerResultado = new controllerResultado();
     $oControllerFase = new controllerFase();
 
     $paginaActiva = "alta-resultados.php";
@@ -49,7 +49,7 @@
     $fIdJugador2Nick = (isset( $_POST["fIdJugador2Nick"]))? $_POST["fIdJugador2Nick"] : "";
     $fClaveCifrada = (isset( $_POST["fClaveCifrada"]))? $_POST["fClaveCifrada"] : "";
     $fFechaBatalla = (isset( $_POST["fFechaBatalla"]))? $_POST["fFechaBatalla"] : "";
-    $fIdEnfrentamiento = (isset( $_POST["fIdEnfrentamiento"]))? $_POST["fIdEnfrentamiento"] : "";
+    $fIdResultado = (isset( $_POST["fIdResultado"]))? $_POST["fIdResultado"] : "";
     $fValPintura = (isset( $_POST["fValPintura"]))? $_POST["fValPintura"] : 1;
     $fValDeportividad = (isset( $_POST["fValDeportividad"]))? $_POST["fValDeportividad"] : 1;
     $fResultadoRadio = estadoResultadoFow((isset( $_POST["fResultadoRadio"]))? $_POST["fResultadoRadio"] : 1);
@@ -119,8 +119,8 @@
 
     $selectLigas = "";
     $poolJugadores = "";
-    $poolEnfrentamientos = "";
-    $numVentanasEnfrentamiento = 0;
+    $poolResultados = "";
+    $numVentanasResultado = 0;
     $oFase = null;
     
     // options para los select de los formularios
@@ -195,7 +195,7 @@
 
     // options para los select de los formularios
     // MISIONES SECUNDARIAS 1S
-    $arrMisionesSec =  $oControllerEnfrentamiento->recuperarSelectMisionesSec( $fIdLiga );
+    $arrMisionesSec =  $oControllerResultado->recuperarSelectMisionesSec( $fIdLiga );
     $selectMisSec1 = ($fIdMisionSec1 != null ) ? $fIdMisionSec1 : 0;
     $selectMisSec2 = ($fIdMisionSec2 != null ) ? $fIdMisionSec2 : 0;
     $selectMisSec3 = ($fIdMisionSec3 != null ) ? $fIdMisionSec3 : 0;
@@ -229,10 +229,13 @@
       }
     }
 
-    // ALTA DE NUEVO ENFRENTAMIENTO 
+    // ALTA DE NUEVO RESULTADO
     if ($accionForm == 1 && $tockenEnvio == 0 && $oLiga !== null && $oLiga->idJuego <= 2) {
-      $resultadoValido = validarPuntosFow($fResultadoJugador1, $fResultadoRadio)
-        && validarPuntosFow($fResultadoJugador2, $fResultadoRadio === 3 ? 0 : ($fResultadoRadio === 0 ? 3 : 1));
+      $resultadoValido = validarPuntosFow($fResultadoJugador1, $fResultadoRadio);
+      if ($fResultadoRadio === 1) {
+        $resultadoValido = $resultadoValido && validarPuntosFow($fResultadoJugador2, 1)
+          && (int) $fResultadoJugador1 === (int) $fResultadoJugador2;
+      }
       if (!$resultadoValido) {
         $mensajeAltaMod .= '<div id="mensaje-error">Los puntos de victoria no son válidos para el resultado seleccionado.</div>';
       }
@@ -254,7 +257,7 @@
       } 
 
          
-      $comprobarAlta = $oControllerEnfrentamiento->altaResultadoEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador1, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector, $fResultadoRadio );
+      $comprobarAlta = $oControllerResultado->altaResultadoResultado( $fIdLiga, $fIdResultado, $fIdJugador1, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector, $fResultadoRadio );
       /*  1. OK
         2. ERROR
         3. AVISO 
@@ -275,16 +278,16 @@
       // todo OK
       if ($comprobarAlta == 1 && $oJugador1 != null && $oJugador2 != null){
         $body = "<p>Hola, <br/><br/>El jugador <strong>" . $oJugador1->nick . "</strong> ha registrado a las " . Date('H:i') . " el resultado de la batalla contra <strong>" . $oJugador2->nick . "</strong> 
-            con un resultado de <strong>" . $fResultadoJugador1 . " - " . $fResultadoJugador2 . "</strong>. Para validar el enfrentamiento es necesario que <u>ambos jugadores registren el resultado del mismo</u>.</p>";
+            con un resultado de <strong>" . $fResultadoJugador1 . " - " . $fResultadoJugador2 . "</strong>. Para validar el resultado es necesario que <u>ambos jugadores registren el resultado del mismo</u>.</p>";
         
         if ($oLiga->idJuego <= 2 ) {// SOLO FLAMES OF WAR 
           if (is_array($arrMisionesSec) && count($arrMisionesSec) >= 1){
-            $body .= "<p>Las <strong>Misiones secundarias</strong> completas durante el enfrentamiento han sido: <ul>";
+            $body .= "<p>Las <strong>Misiones secundarias</strong> completas durante el resultado han sido: <ul>";
             // recuperamos los titulos de las misiones
             foreach($arrMisionesSec as $idMision){
-              $oEnfrentamiento = array();
-              $oEnfrentamiento = $oControllerEnfrentamiento->recuperarMisionSec($idMision);
-              $body .= "<li> " . $oEnfrentamiento[0] . "(Medallas: " . $oEnfrentamiento[2] . ")</li>";
+              $oResultado = array();
+              $oResultado = $oControllerResultado->recuperarMisionSec($idMision);
+              $body .= "<li> " . $oResultado[0] . "(Medallas: " . $oResultado[2] . ")</li>";
             }
             $body .= "</ul></p>";
           }else{
@@ -297,11 +300,11 @@
 
       // resultados no coincidentes
       }else if ($comprobarAlta == 4 && $oJugador1 != null && $oJugador2 != null){
-        $oEnfrentamiento = $oControllerEnfrentamiento->recuperarEnfrentamiento($fIdEnfrentamiento);
+        $oResultado = $oControllerResultado->recuperarResultado($fIdResultado);
         $body = "<p>Hola, los resultados introducidos por ambos jugadores no coinciden, por favor, confirmadnos el resultado correcto de la batalla enviandonos un correo a 
               <a href='hola@modelbrush.com'>hola@modelbrush.com</a>. Los resultados que hemos recibido son: ";
         $body .= "<ul><li><strong>" .  $oJugador1->nick  . " vs " .  $oJugador2->nick  . "</strong>: " . $fResultadoJugador1 . " - " .  $fResultadoJugador2 . "</li>";
-        $body .= "<li><strong>" .  $oJugador2->nick  . " vs " .  $oJugador1->nick  . "</strong> : " . $oEnfrentamiento->resultadoJugador1 . " - " .  $oEnfrentamiento->resultadoJugador2  . "</li></ul>";
+        $body .= "<li><strong>" .  $oJugador2->nick  . " vs " .  $oJugador1->nick  . "</strong> : " . $oResultado->resultadoJugador1 . " - " .  $oResultado->resultadoJugador2  . "</li></ul>";
         $body .= "<p>Un saludo</p>";
         $body .= "<a href=\"http://www.modelbrush.com\"><img src=\"http://wiki.modelbrush.com/images/6/67/FIRMA-FOROS.jpg\" border=\"0\"/></a>";
       }
@@ -348,7 +351,7 @@
     </div>
   <?php } ?>
 
-    <h2 class="h2"><span>Registrar enfrentamiento  <?php if(isset($oLiga) and $oLiga != null) { printf(" en " . $oLiga->nombre); } ?></span></h2>
+    <h2 class="h2"><span>Registrar resultado  <?php if(isset($oLiga) and $oLiga != null) { printf(" en " . $oLiga->nombre); } ?></span></h2>
 
   <?php if($fClaveCifrada == null || !$auxClaveCorrecta){ ?>
     <div id="buscador">
@@ -384,17 +387,17 @@
 
         <form name="altaResultado" id="altaResultado" method="POST" action="" enctype="multipart/form-data">
         
-          <p>Introduce los resultados del enfrentamiento:</p>
+          <p>Introduce los resultados del resultado:</p>
           
           <?php printf ($mensajeAltaMod);  ?>
           
           <input type="hidden" name="accionForm" id="accionForm" value="1"/>
           
           
-          <?php if ($accionForm == 4){ ?> <input type="hidden" name="fIdEnfrentamientoEditar" id="fIdEnfrentamientoEditar" value="1"/>  <?php } ?>
+          <?php if ($accionForm == 4){ ?> <input type="hidden" name="fIdResultadoEditar" id="fIdResultadoEditar" value="1"/>  <?php } ?>
         
           <input type="hidden" name="fClaveCifrada" id="fClaveCifrada"  value="<?php printf($fClaveCifrada);?>"  />
-          <input type="hidden" name="fIdEnfrentamiento" id="fIdEnfrentamiento" value="<?php printf($fIdEnfrentamiento);?>"/>
+          <input type="hidden" name="fIdResultado" id="fIdResultado" value="<?php printf($fIdResultado);?>"/>
           <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
           <input type="hidden" name="fNumFase" id="fNumFase" value="<?php printf($fNumFase);?>"/>
           <input type="hidden" name="tockenEnvio" id="tockenEnvio" value="<?php printf($tockenEnvio);?>"/>
@@ -436,7 +439,7 @@
                     </label>
                   </div>
                   <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>">
-                <p id="enfrentamientoJug1" > </p>
+                <p id="resultadoJug1" > </p>
                   <div id="slider-resultado-1"></div>
                 </div>
 
@@ -517,16 +520,16 @@
       <?php if($fClaveCifrada != null && $auxClaveCorrecta == true){ ?>
 
 
-                $("#enfrentamientoJug1").text( $('#fIdJugador1 option:selected').text());
+                $("#resultadoJug1").text( $('#fIdJugador1 option:selected').text());
                 
                 $("#fIdJugador1").change(function(){ 
                   $("#p-sectores").hide();
                   if ($('#fIdJugador1 option:selected').val() != null && $('#fIdJugador1 option:selected').val() != 0){
                     actualizarRadioRondas (<?php printf($fIdLiga); ?> , $('#fIdJugador1 option:selected').val(), <?php printf($fNumFase); ?>  );
                     if ( $('#fIdJugador1 option:selected').val() > 0){
-                      $("#enfrentamientoJug1").text( $('#fIdJugador1 option:selected').text());
+                      $("#resultadoJug1").text( $('#fIdJugador1 option:selected').text());
                     }else{
-                      $("#enfrentamientoJug1").text( "Jugador 1");
+                      $("#resultadoJug1").text( "Jugador 1");
                     }
                   }
                   
@@ -561,7 +564,7 @@
                   function actualizarResultadoFow() {
                     var estado = parseInt($("input[name=fResultadoRadio]:checked").val(), 10);
                     var maximo = maximoPuntosFowPorResultado(estado);
-                    var puntos = Math.min(parseInt($("#fResultadoJugador1").val(), 10) || 0, maximo);
+                    var puntos = Math.max(1, Math.min(parseInt($("#fResultadoJugador1").val(), 10) || 1, maximo));
                     if (estado === 3) { puntos = 5; }
                     if (estado === 0) { puntos = 4; }
                     $("#slider-resultado-1").slider("option", "max", maximo);
@@ -572,7 +575,7 @@
 
                   $( "#slider-resultado-1" ).slider({
                     range: "max",
-                    min: 0,
+                    min: 1,
                     max: maximoPuntosFowPorResultado(<?php echo $fResultadoRadio; ?>),
                     value: <?php printf($fResultadoJugador1);?>,
                     slide: function( event, ui ) {
@@ -635,7 +638,7 @@
           $.ajax({
               async: true,
                   data:  parametros,
-                  url:   'ajax/ajax.rondas-enfrentamiento.php',
+                  url:   'ajax/ajax.rondas-resultado.php',
                   type:  'post',
                   beforeSend: function () {
                           $("#selectRondas").html("<div class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></div>");
@@ -668,12 +671,10 @@
                   },
                   success:  function (response) {
                           $("#selectJugador2").html(response);
-                          $("#enfrentamientoJug2").text( $('#fIdJugador2Nick').val() );
+                          $("#resultadoJug2").text( $('#fIdJugador2Nick').val() );
                           $("#fResultadoJugador1").val( $('#fResultadoJugador1Aux').val() );
                           $("#slider-resultado-1").slider( "option", "value", $('#fResultadoJugador1Aux').val() );
-                          var totalResultado = $("#slider-resultado-1").slider("option", "max") + 1;
-                          $("#fResultadoJugador2").val( totalResultado - $('#fResultadoJugador1Aux').val() );
-                          $("#slider-resultado-2").slider( "option", "value", totalResultado - $('#fResultadoJugador1Aux').val() );
+                          actualizarResultadoFow();
                           $("#fFechaBatalla").val( $('#fFechaBatallaAux').val() );
                           $('#estrellasPintura').raty({ score: 1, click: function(score, evt) { $("#fValPintura").val(score);} });
                           $('#estrellasDeportividad').raty({ score: 1, click: function(score, evt) { $("#fValDeportividad").val(score);} });

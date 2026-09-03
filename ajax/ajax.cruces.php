@@ -13,11 +13,11 @@
 		$cruces = (isset($_POST['cruces'])? $_POST["cruces"] : null);
 
 		$oControllerLiga = new controllerLiga();
-		$oControllerEnfrentamiento = new controllerEnfrentamiento();
+		$oControllerResultado = new controllerResultado();
 		$oControllerJugador = new controllerJugador();
 
-		// primero borramos los enfrentamientos de la liga-fase-ronda
-		$oControllerEnfrentamiento->borrarEnfrentamientosFaseRonda($fIdLiga, $fNumFase, $fNumRonda);
+		// primero borramos los resultados de la liga-fase-ronda
+		$oControllerResultado->borrarResultadosFaseRonda($fIdLiga, $fNumFase, $fNumRonda);
 
 
 
@@ -25,7 +25,7 @@
 		$arrCruces = array();
 		$arrCruces = explode("#", $cruces);
 
-		// luego registramos los nuevos enfrentamientos
+		// luego registramos los nuevos resultados
 		foreach($arrCruces as $cruce){
 			$jugadores = explode("-", $cruce);
 			
@@ -33,13 +33,13 @@
 			$jug1 = $oControllerJugador->recuperarDatosJugador( $jugadores[0] );
 			$jug2 = $oControllerJugador->recuperarDatosJugador( $jugadores[1] );
 
-			$oControllerEnfrentamiento->altaEnfrentamiento( $fIdLiga, $fNumFase, $fNumRonda, $jugadores[0], $jugadores[1], $jug1->bando, $jug2->bando );
+			$oControllerResultado->altaResultado( $fIdLiga, $fNumFase, $fNumRonda, $jugadores[0], $jugadores[1], $jug1->bando, $jug2->bando );
 		}
 
 
 
 		echo "<div id=\"mensaje-ok\">Cruces grabados correctamente.</div>";
-		echo "<form action=\"gestion-enfrentamientos.php\" id=\"form-volver\" name=\"form-volver\" method=\"POST\"><input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\"/><input type=\"hidden\" id=\"fIdLiga\" name=\"fIdLiga\" value=\"".$fIdLiga."\"/>";
+		echo "<form action=\"gestion-resultados.php\" id=\"form-volver\" name=\"form-volver\" method=\"POST\"><input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\"/><input type=\"hidden\" id=\"fIdLiga\" name=\"fIdLiga\" value=\"".$fIdLiga."\"/>";
 		echo "<input type=\"hidden\" id=\"fNumFase\" name=\"fNumFase\" value=\"".$fNumFase."\"/>";
 		echo "<input type=\"hidden\" id=\"accionForm\" name=\"accionForm\" value=\"1\"/>";
 		echo "<input type=\"hidden\" id=\"fNumRonda\" name=\"fNumRonda\" value=\"".$fNumRonda."\"/></form>";

@@ -18,7 +18,27 @@ function validarPuntosFow($puntos, $resultadoRadio) {
     }
 
     $puntos = (int) $puntos;
-    return $puntos >= 0 && $puntos <= maximoPuntosFowPorResultado($resultadoRadio);
+    return $puntos >= 1 && $puntos <= maximoPuntosFowPorResultado($resultadoRadio);
+}
+
+function validarMarcadorFow($puntosJugador1, $puntosJugador2) {
+    if (filter_var($puntosJugador1, FILTER_VALIDATE_INT) === false
+        || filter_var($puntosJugador2, FILTER_VALIDATE_INT) === false) {
+        return false;
+    }
+
+    $puntosJugador1 = (int) $puntosJugador1;
+    $puntosJugador2 = (int) $puntosJugador2;
+
+    if ($puntosJugador1 < 1 || $puntosJugador1 > 8 || $puntosJugador2 < 1 || $puntosJugador2 > 8) {
+        return false;
+    }
+
+    if ($puntosJugador1 > 4 || $puntosJugador2 > 4) {
+        return $puntosJugador1 + $puntosJugador2 === 9;
+    }
+
+    return $puntosJugador1 <= 3 && $puntosJugador2 <= 3;
 }
 
 function estadoResultadoFow($resultadoRadio) {

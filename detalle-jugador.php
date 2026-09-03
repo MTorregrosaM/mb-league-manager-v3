@@ -32,7 +32,7 @@ if (!$idJugador || $idJugador < 1) {
 }
 
 $oControllerJugador = new controllerJugador();
-$oControllerEnfrentamiento = new controllerEnfrentamiento();
+$oControllerResultado = new controllerResultado();
 $oControllerLiga = new controllerLiga();
 $oJugador = $oControllerJugador->recuperarDatosJugador((int) $idJugador);
 
@@ -43,8 +43,8 @@ if ($oJugador === null) {
 
 $idLiga = (int) $oJugador->idLiga;
 $oLiga = $oControllerLiga->recuperarDatosLiga($idLiga);
-$arrEnfrentamientos = $oControllerEnfrentamiento->recuperarDetalleEnfrentamientosJugador($idLiga, (int) $idJugador);
-$arrEnfrentamientos = is_array($arrEnfrentamientos) ? $arrEnfrentamientos : array();
+$arrResultados = $oControllerResultado->recuperarDetalleResultadosJugador($idLiga, (int) $idJugador);
+$arrResultados = is_array($arrResultados) ? $arrResultados : array();
 $arrListas = $oControllerJugador->recuperarListadoListas((int) $idJugador, $idLiga);
 $arrListas = is_array($arrListas) ? $arrListas : array();
 $nombreJugador = nombreJugadorDetalle($oJugador, $idJugador);
@@ -65,7 +65,7 @@ $nombreLiga = $oLiga !== null ? (string) $oLiga->nombre : "";
   </div>
 
   <section class="detalle-jugador-bloque">
-    <h3>Enfrentamientos</h3>
+    <h3>Resultados</h3>
     <div class="detalle-jugador-tabla-wrap">
       <table class="detalle-jugador-tabla">
         <thead>
@@ -81,24 +81,24 @@ $nombreLiga = $oLiga !== null ? (string) $oLiga->nombre : "";
           </tr>
         </thead>
         <tbody>
-        <?php if (count($arrEnfrentamientos) === 0) { ?>
-          <tr><td colspan="8">No hay enfrentamientos.</td></tr>
+        <?php if (count($arrResultados) === 0) { ?>
+          <tr><td colspan="8">No hay resultados.</td></tr>
         <?php } else { ?>
-          <?php foreach ($arrEnfrentamientos as $enfrentamiento) {
-              $esJugador1 = (int) $enfrentamiento[4] === (int) $idJugador;
-              $idContrincante = $esJugador1 ? (int) $enfrentamiento[5] : (int) $enfrentamiento[4];
+          <?php foreach ($arrResultados as $resultado) {
+              $esJugador1 = (int) $resultado[4] === (int) $idJugador;
+              $idContrincante = $esJugador1 ? (int) $resultado[5] : (int) $resultado[4];
               $oContrincante = $oControllerJugador->recuperarDatosJugador($idContrincante);
-              $resultadoJugador = $esJugador1 ? $enfrentamiento[6] : $enfrentamiento[7];
-              $resultadoContrincante = $esJugador1 ? $enfrentamiento[7] : $enfrentamiento[6];
+              $resultadoJugador = $esJugador1 ? $resultado[6] : $resultado[7];
+              $resultadoContrincante = $esJugador1 ? $resultado[7] : $resultado[6];
               $claseResultado = ((int) $resultadoJugador > (int) $resultadoContrincante) ? "resultado-victoria" : (((int) $resultadoJugador < (int) $resultadoContrincante) ? "resultado-derrota" : "");
-              $victoriaConcedida = (int) $enfrentamiento[14] === (int) $idJugador ? "Sí" : "No";
-              $victoriaSector = $enfrentamiento[15] === null || $enfrentamiento[15] === "" ? "-" : $enfrentamiento[15];
-              $estado = (int) $enfrentamiento[11] === 1 ? "Validado" : "Pendiente";
+              $victoriaConcedida = (int) $resultado[14] === (int) $idJugador ? "Sí" : "No";
+              $victoriaSector = $resultado[15] === null || $resultado[15] === "" ? "-" : $resultado[15];
+              $estado = (int) $resultado[11] === 1 ? "Validado" : "Pendiente";
           ?>
           <tr>
-            <td><?php echo (int) $enfrentamiento[2]; ?></td>
-            <td><?php echo (int) $enfrentamiento[3]; ?></td>
-            <td><?php echo escaparDetalle($enfrentamiento[10]); ?></td>
+            <td><?php echo (int) $resultado[2]; ?></td>
+            <td><?php echo (int) $resultado[3]; ?></td>
+            <td><?php echo escaparDetalle($resultado[10]); ?></td>
             <td><?php echo escaparDetalle(nombreJugadorDetalle($oContrincante, $idContrincante)); ?></td>
             <td class="<?php echo $claseResultado; ?>"><span class="<?php echo $claseResultado; ?>"><?php echo escaparDetalle($resultadoJugador); ?></span>-<span class="<?php echo $claseResultado; ?>"><?php echo escaparDetalle($resultadoContrincante); ?></span></td>
             <td><?php echo $estado; ?></td>

@@ -12,10 +12,10 @@ require_once __DIR__ . '/../inc/puntuacion-fow.php';
  * -- 
  */
 
-class controllerEnfrentamiento {
+class controllerResultado {
 
 	private $oConexBD;
-	private $oEnfrentamiento;
+	private $oResultado;
 
 	public function __construct( ) 
 	{ 
@@ -43,7 +43,7 @@ class controllerEnfrentamiento {
   	/* MÉTODOS PÚBLICOS */
 
   	/* método para ALTA NUEVA */
-  	public function altaEnfrentamiento( $fIdLiga, $fNumFase, $fNumRonda, $fIdJugador1, $fIdJugador2, $fBandoJug1, $fBandoJug2 ){
+  	public function altaResultado( $fIdLiga, $fNumFase, $fNumRonda, $fIdJugador1, $fIdJugador2, $fBandoJug1, $fBandoJug2 ){
 
 		try {
 
@@ -62,14 +62,14 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "altaEnfrentamiento - liga.controller.php");	
+			$oLog->trazaLog ($e, "altaResultado - liga.controller.php");	
 			return null;	 
 		}
   	}
 
 
   	/* método para RESULTADO */
-	public function altaResultadoEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector, $fResultadoRadio = null ){
+	public function altaResultadoResultado( $fIdLiga, $fIdResultado, $fIdJugador, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector, $fResultadoRadio = null ){
 
 		try {
 			//$fValDeportividad = 0;
@@ -77,11 +77,11 @@ class controllerEnfrentamiento {
 
 
 			// validamos que recibimos todos los datos
-			if ( $fIdEnfrentamiento == null || $fFechaBatalla == null || $fIdJugador == null || $fResultadoJugador1 == null ||  $fValPintura == null ) {
+			if ( $fIdResultado == null || $fFechaBatalla == null || $fIdJugador == null || $fResultadoJugador1 == null ||  $fValPintura == null ) {
 			/*	echo  $fResultadoJugador2;
-				echo 'fIdEnfrentamiento: ' . $fIdEnfrentamiento . '<br>fFechaBatalla: ' . $fFechaBatalla . '<br>fIdJugador: ' . $fIdJugador . '<br>fResultadoJugador1: ' . $fResultadoJugador1 . '<br>fResultadoJugador2: ' . $fResultadoJugador2 . '<br>fValPintura: ' . $fValPintura;
+				echo 'fIdResultado: ' . $fIdResultado . '<br>fFechaBatalla: ' . $fFechaBatalla . '<br>fIdJugador: ' . $fIdJugador . '<br>fResultadoJugador1: ' . $fResultadoJugador1 . '<br>fResultadoJugador2: ' . $fResultadoJugador2 . '<br>fValPintura: ' . $fValPintura;
 
-				if( $fIdEnfrentamiento == null ) echo 'fIdEnfrentamiento';
+				if( $fIdResultado == null ) echo 'fIdResultado';
 				if( $fFechaBatalla == null ) echo 'fFechaBatalla';
 				if( $fIdJugador == null ) echo 'fIdJugador';
 				if( $fResultadoJugador1 == null ) echo 'fResultadoJugador1';
@@ -93,14 +93,15 @@ class controllerEnfrentamiento {
 			$errorDatos  = false;
 			$errorPrincipal  = false;
 
-			// validamos si ya se han actualizado los datos del enfrentamiento
-			$oEnfrentamiento = $this->recuperarEnfrentamiento($fIdEnfrentamiento);
+			// validamos si ya se han actualizado los datos del resultado
+			$oResultado = $this->recuperarResultado($fIdResultado);
 			$tipoJuegoLiga = $this->oConexBD->ejecutarConsulta("SELECT idJuego FROM mb_ligas WHERE idLiga = " . (int) $fIdLiga);
-			if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2 && (!validarPuntosFow($fResultadoJugador1, 3) || !validarPuntosFow($fResultadoJugador2, 3))) {
+			if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2
+				&& !validarMarcadorFow($fResultadoJugador1, $fResultadoJugador2)) {
 				return 3;
 			}
 	
-			if ($oEnfrentamiento->indValidado == null &&  $oEnfrentamiento->resultadoJugador1 == null && $oEnfrentamiento->resultadoJugador2 == null) {
+			if ($oResultado->indValidado == null &&  $oResultado->resultadoJugador1 == null && $oResultado->resultadoJugador2 == null) {
 				if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2) {
 					if ($fResultadoRadio !== null && (int) $fResultadoRadio === 3) {
 						$marcadorFow = array(5, 4);
@@ -116,28 +117,28 @@ class controllerEnfrentamiento {
 					$fResultadoJugador2 = $marcadorFow[1];
 				}
 
-				// actualizamos los resultados de los enfrentamientos
+				// actualizamos los resultados de los resultados
 				$queryDB = "UPDATE mb_enfrentamientos SET
 							fechaBatalla = '" . $this->formatoFecha(true,$fFechaBatalla) . "' 
 							,indValidado = 0
 							,audAlta = '" .  Date('Y-m-d H:i:s')  . "' 
-							WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+							WHERE idEnfrentamiento = " . $fIdResultado;
 				
 				$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
-				// actualizamos los resultados de los enfrentamientos
+				// actualizamos los resultados de los resultados
 				$queryDB = "UPDATE mb_enfrentamientos SET
 							resultadoJugador1 = " . $fResultadoJugador1 . " 
 							,resultadoJugador2 = " . $fResultadoJugador2 . "
-							WHERE idEnfrentamiento = " . $fIdEnfrentamiento . "
+							WHERE idEnfrentamiento = " . $fIdResultado . "
 							AND idJugador1 = " . $fIdJugador;				
 				$resultadoBD1 = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
-				// actualizamos los resultados de los enfrentamientos
+				// actualizamos los resultados de los resultados
 				$queryDB = "UPDATE mb_enfrentamientos SET
 							resultadoJugador1 = " . $fResultadoJugador2 . " 
 							,resultadoJugador2 = " . $fResultadoJugador1 . "
-							WHERE idEnfrentamiento = " . $fIdEnfrentamiento . "
+							WHERE idEnfrentamiento = " . $fIdResultado . "
 							AND idJugador2 = " . $fIdJugador;				
 				$resultadoBD2 = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
@@ -147,12 +148,12 @@ class controllerEnfrentamiento {
 
 			}else{
 			
-				if ( $oEnfrentamiento->idJugador1 == $fIdJugador &&  ($oEnfrentamiento->resultadoJugador1 != $fResultadoJugador1 || ($oEnfrentamiento->resultadoJugador2 != $fResultadoJugador2))) { 
+				if ( $oResultado->idJugador1 == $fIdJugador &&  ($oResultado->resultadoJugador1 != $fResultadoJugador1 || ($oResultado->resultadoJugador2 != $fResultadoJugador2))) { 
 					$errorDatos = true;
 				}
 
 				
-				if ( $oEnfrentamiento->idJugador2 == $fIdJugador &&  ($oEnfrentamiento->resultadoJugador2 != $fResultadoJugador1 || ($oEnfrentamiento->resultadoJugador1 != $fResultadoJugador2 ))) {
+				if ( $oResultado->idJugador2 == $fIdJugador &&  ($oResultado->resultadoJugador2 != $fResultadoJugador1 || ($oResultado->resultadoJugador1 != $fResultadoJugador2 ))) {
 					$errorDatos = true;
 				}
 
@@ -164,26 +165,26 @@ class controllerEnfrentamiento {
 			// actualizamos la pintura del jugador 
 			$queryDB = "UPDATE mb_enfrentamientos SET
 						valPinturaJug2 = '" . $fValPintura . "' 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento . " 
+						WHERE idEnfrentamiento = " . $fIdResultado . " 
 						AND idJugador1 = " . $fIdJugador;
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
 			$queryDB = "UPDATE mb_enfrentamientos SET
 						valPinturaJug1 = '" . $fValPintura . "' 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento . " 
+						WHERE idEnfrentamiento = " . $fIdResultado . " 
 						AND idJugador2 = " . $fIdJugador;
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
 			// actualizamos la deportividad del jugador 
 			$queryDB = "UPDATE mb_enfrentamientos SET
 						valDeportividadJug2 = '" . $fValDeportividad . "' 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento . " 
+						WHERE idEnfrentamiento = " . $fIdResultado . " 
 						AND idJugador1 = " . $fIdJugador;
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
 			$queryDB = "UPDATE mb_enfrentamientos SET
 						valDeportividadJug1 = '" . $fValDeportividad . "' 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento . " 
+						WHERE idEnfrentamiento = " . $fIdResultado . " 
 						AND idJugador2 = " . $fIdJugador;
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
@@ -191,7 +192,7 @@ class controllerEnfrentamiento {
 				// actualizamos la pintura del jugador 
 				$queryDB = "UPDATE mb_enfrentamientos SET
 						victoriaSector = '" . $fVictoriaSector . "' 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+						WHERE idEnfrentamiento = " . $fIdResultado;
 				$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 			}
 			
@@ -203,7 +204,7 @@ class controllerEnfrentamiento {
 					// comprobamos que no exista
 					$queryDB = "SELECT count(1) as contador
 						FROM mb_enfren_misiones_sec 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento ." 
+						WHERE idEnfrentamiento = " . $fIdResultado ." 
 						AND idJugador1 = " . $fIdJugador ."						
 						AND idMisionSecundaria = " . $idMision ;
 
@@ -211,7 +212,7 @@ class controllerEnfrentamiento {
 
 					if ($resultadoBD[0][0] == 0){
 						 $queryDB = "INSERT INTO mb_enfren_misiones_sec (idEnfrentamiento, idJugador1, idMisionSecundaria)
-									VALUES (" . $fIdEnfrentamiento . ", " . $fIdJugador . ", " . $idMision . ")";
+									VALUES (" . $fIdResultado . ", " . $fIdJugador . ", " . $idMision . ")";
 						
 						$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);		
 					}		
@@ -226,7 +227,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "altaResultadoEnfrentamiento - liga.controller.php");	
+			$oLog->trazaLog ($e, "altaResultadoResultado - liga.controller.php");	
 			return null;	 
 		}
   	}
@@ -234,7 +235,7 @@ class controllerEnfrentamiento {
 
 
   	/* método para RESULTADO */
-  	public function altaResultadoEnfrentamientoResumido( $fIdLiga, $fIdJugador1, $fIdJugador2, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura,  $fValDeportividad, $fNumFase ){
+  	public function altaResultadoResultadoResumido( $fIdLiga, $fIdJugador1, $fIdJugador2, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura,  $fValDeportividad, $fNumFase ){
 
 		try {
 			//$fValDeportividad = 0;
@@ -242,7 +243,7 @@ class controllerEnfrentamiento {
 
 
 			// validamos que recibimos todos los datos
-			if ( $fIdEnfrentamiento == null || $fFechaBatalla == null || $fIdJugador1 == null || $fIdJugador2 == null || $fResultadoJugador1 == null ||  $fResultadoJugador2 == null || $fValPintura == null ) {
+			if ( $fIdResultado == null || $fFechaBatalla == null || $fIdJugador1 == null || $fIdJugador2 == null || $fResultadoJugador1 == null ||  $fResultadoJugador2 == null || $fValPintura == null ) {
 
 				return 3;
 			}
@@ -250,7 +251,7 @@ class controllerEnfrentamiento {
 			$errorPrincipal  = false;
 
 	
-			if ($oEnfrentamiento->indValidado == null &&  $oEnfrentamiento->resultadoJugador1 == null && $oEnfrentamiento->resultadoJugador2 == null) {
+			if ($oResultado->indValidado == null &&  $oResultado->resultadoJugador1 == null && $oResultado->resultadoJugador2 == null) {
 
 				
 				// insertamos el nuevo registro
@@ -276,7 +277,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "altaResultadoEnfrentamientoResumido - liga.controller.php");	
+			$oLog->trazaLog ($e, "altaResultadoResultadoResumido - liga.controller.php");	
 			return null;	 
 		}
   	}
@@ -284,15 +285,16 @@ class controllerEnfrentamiento {
 
 
   	/* método para MODIFICAR los datos de un registro. Previamente debemos comprobar cuáles han cambiado */
-  	public function modificarDatosEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador1, $fIdJugador2, $fResultadoJugador1, $fResultadoJugador2, $fValPinturaJug1, $fValPinturaJug2, $fFechaBatalla, $fIndValidado, 
+  	public function modificarDatosResultado( $fIdLiga, $fIdResultado, $fIdJugador1, $fIdJugador2, $fResultadoJugador1, $fResultadoJugador2, $fValPinturaJug1, $fValPinturaJug2, $fFechaBatalla, $fIndValidado, 
   				$arrMisionesSecJug1, $arrMisionesSecJug2, $fValDeportividadJug1, $fValDeportividadJug2, $fIdJugVictoriaConcedida, $fVictoriaSector ){
   		
 		try {
 		
 			// comprobamos los campos que han cambiado
-			$this->oEnfrentamiento = $this->recuperarEnfrentamiento ( $fIdEnfrentamiento );
+			$this->oResultado = $this->recuperarResultado ( $fIdResultado );
 			$tipoJuegoLiga = $this->oConexBD->ejecutarConsulta("SELECT idJuego FROM mb_ligas WHERE idLiga = " . (int) $fIdLiga);
-			if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2 && (!validarPuntosFow($fResultadoJugador1, 3) || !validarPuntosFow($fResultadoJugador2, 3))) {
+			if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2
+				&& !validarMarcadorFow($fResultadoJugador1, $fResultadoJugador2)) {
 				return 2;
 			}
 			
@@ -326,58 +328,58 @@ class controllerEnfrentamiento {
 				$queryDB .= "idJugVictoriaConcedida = " . $fIdJugVictoriaConcedida . ", valPinturaJug1 = 0, valPinturaJug2 = 0, valDeportividadJug1 = 0, valDeportividadJug2 = 0, fechaBatalla = '" . $fFechaBatalla . "', audAlta = '" .  Date('Y-m-d H:i:s')  . "' ";
 
 				$queryDBDelete = "DELETE from mb_enfren_misiones_sec 
-							WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+							WHERE idEnfrentamiento = " . $fIdResultado;
 				
 				$resultadoBDDelete = $this->oConexBD->ejecutarConsulta($queryDBDelete, 1);
 
-				if ($fIndValidado != $this->oEnfrentamiento->indValidado){
+				if ($fIndValidado != $this->oResultado->indValidado){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " , indValidado = ". $fIndValidado ." ";
 		  			$aux = 1;
 		  		}
 
-		  	  	$queryDB .= " WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+		  	  	$queryDB .= " WHERE idEnfrentamiento = " . $fIdResultado;
 		  		$aux = 1;
 
 			}else{
 
-		  		if ($fResultadoJugador1 != $this->oEnfrentamiento->resultadoJugador1){
+		  		if ($fResultadoJugador1 != $this->oResultado->resultadoJugador1){
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " resultadoJugador1 = ". $fResultadoJugador1 ." ";
 		  			$aux = 1;
 		  		}
-		  		if ($fResultadoJugador1 != $this->oEnfrentamiento->resultadoJugador1){
+		  		if ($fResultadoJugador1 != $this->oResultado->resultadoJugador1){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " resultadoJugador2 = ". $fResultadoJugador2 ." ";
 		  			$aux = 1;
 		  		}
-		  		if ($fValPinturaJug1 != $this->oEnfrentamiento->valPinturaJug1){
+		  		if ($fValPinturaJug1 != $this->oResultado->valPinturaJug1){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " valPinturaJug1 = ". $fValPinturaJug1 ." ";
 		  			$aux = 1;
 		  		}
-		  		if ($fValPinturaJug2 != $this->oEnfrentamiento->valPinturaJug2){
+		  		if ($fValPinturaJug2 != $this->oResultado->valPinturaJug2){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " valPinturaJug2 = ". $fValPinturaJug2 ." ";
 		  			$aux = 1;
 		  		}
-		  		if ($fValDeportividadJug1 != $this->oEnfrentamiento->valDeportividadJug1){
+		  		if ($fValDeportividadJug1 != $this->oResultado->valDeportividadJug1){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " valDeportividadJug1 = ". $fValDeportividadJug1 ." ";
 		  			$aux = 1;
 		  		}
-		  		if ($fValDeportividadJug2 != $this->oEnfrentamiento->valDeportividadJug2){
+		  		if ($fValDeportividadJug2 != $this->oResultado->valDeportividadJug2){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " valDeportividadJug2 = ". $fValDeportividadJug2 ." ";
 		  			$aux = 1;
 		  		}
-		  		if ($fVictoriaSector!= $this->oEnfrentamiento->victoriaSector){
+		  		if ($fVictoriaSector!= $this->oResultado->victoriaSector){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " victoriaSector = ". $fVictoriaSector ." ";
@@ -385,30 +387,30 @@ class controllerEnfrentamiento {
 		  		}
 		  		// partimos la fecha a formato USA
 		  		$fFechaBatalla = substr($fFechaBatalla,6,4) . "-" .substr($fFechaBatalla, 3,2)."-".substr($fFechaBatalla,0,2);
-		  		if ($fFechaBatalla != $this->oEnfrentamiento->fechaBatalla){
+		  		if ($fFechaBatalla != $this->oResultado->fechaBatalla){
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " fechaBatalla = '". $fFechaBatalla  ."' ";
 		  			$aux = 1;
 		  		}
-		  		if ($fIndValidado != $this->oEnfrentamiento->indValidado){
+		  		if ($fIndValidado != $this->oResultado->indValidado){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " indValidado = ". $fIndValidado ." ";
 		  			$aux = 1;
 		  		}
-		  		if ($fIdJugVictoriaConcedida != $this->oEnfrentamiento->idJugVictoriaConcedida){
+		  		if ($fIdJugVictoriaConcedida != $this->oResultado->idJugVictoriaConcedida){
 
 		  			$queryDB .= ($aux > 0)? " , " : "";
 		  			$queryDB .= " idJugVictoriaConcedida = ". $fIdJugVictoriaConcedida ." , valDeportividadJug1 = 0, valDeportividadJug2 = 0";
 		  			$aux = 1;
 		  		}
-		  	 	$queryDB .= " WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+		  	 	$queryDB .= " WHERE idEnfrentamiento = " . $fIdResultado;
 
 
 				// MISIONES SECUNDARIAS
 				$auxMis = 0;
-		  		$arrMisionesJug1 = $this->recuperarMisionesSecJugador( $fIdEnfrentamiento, $fIdJugador1 );
-		  		$arrMisionesJug2 = $this->recuperarMisionesSecJugador( $fIdEnfrentamiento, $fIdJugador2 );
+		  		$arrMisionesJug1 = $this->recuperarMisionesSecJugador( $fIdResultado, $fIdJugador1 );
+		  		$arrMisionesJug2 = $this->recuperarMisionesSecJugador( $fIdResultado, $fIdJugador2 );
 		  		if (is_array($arrMisionesJug1) && is_array($arrMisionesSecJug1)) {
 					if (is_array($arrMisionesJug1) && is_array($arrMisionesSecJug1) && count($arrMisionesJug1) != count($arrMisionesSecJug1)) {
 						$auxMis = 1;
@@ -416,7 +418,7 @@ class controllerEnfrentamiento {
 				}
 
 				$queryDBDelete = "DELETE from mb_enfren_misiones_sec 
-							WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+							WHERE idEnfrentamiento = " . $fIdResultado;
 				
 				$resultadoBDDelete = $this->oConexBD->ejecutarConsulta($queryDBDelete, 1);
 
@@ -427,7 +429,7 @@ class controllerEnfrentamiento {
 					foreach ( $arrMisionesSecJug1 as $idMision ){
 							if ($idMision > 0){
 								$queryDBMis1 = "INSERT INTO mb_enfren_misiones_sec (idEnfrentamiento, idJugador1, idMisionSecundaria)
-											VALUES (" . $fIdEnfrentamiento . ", " . $fIdJugador1 . ", " . $idMision . ")";
+											VALUES (" . $fIdResultado . ", " . $fIdJugador1 . ", " . $idMision . ")";
 								$resultadoBDMisSec1 = $this->oConexBD->ejecutarConsulta($queryDBMis1, 1);
 							}
 									
@@ -440,7 +442,7 @@ class controllerEnfrentamiento {
 					foreach ( $arrMisionesSecJug2 as $idMision ){
 							if ($idMision > 0){
 							$queryDBMis2 = "INSERT INTO mb_enfren_misiones_sec (idEnfrentamiento, idJugador1, idMisionSecundaria)
-										VALUES (" . $fIdEnfrentamiento . ", " . $fIdJugador2 . ", " . $idMision . ")";
+										VALUES (" . $fIdResultado . ", " . $fIdJugador2 . ", " . $idMision . ")";
 								$resultadoBDMisSec2 = $this->oConexBD->ejecutarConsulta($queryDBMis2, 1);
 							}		
 					}
@@ -467,7 +469,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "modificarDatosEnfrentamiento - jugador.controller.php");	
+			$oLog->trazaLog ($e, "modificarDatosResultado - jugador.controller.php");	
 			return null;	 
 		}
  
@@ -475,8 +477,8 @@ class controllerEnfrentamiento {
 
 
 
-  	/* método para borrar todos los enfrentamientos */
-  	public function borrarEnfrentamientosFaseRonda( $fIdLiga, $fNumFase, $fNumRonda  ){
+  	/* método para borrar todos los resultados */
+  	public function borrarResultadosFaseRonda( $fIdLiga, $fNumFase, $fNumRonda  ){
 
 		try {
 
@@ -497,20 +499,20 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "borrarEnfrentamientosFaseRonda - liga.controller.php");	
+			$oLog->trazaLog ($e, "borrarResultadosFaseRonda - liga.controller.php");	
 			return null;	 
 		}
   	}  	
 
 
-	/* método para recuperar todos los enfrentamientos de un jugador. */
-	public function recuperarDetalleEnfrentamientosJugador($fIdLiga, $fIdJugador) {
-		return $this->recuperarListadoEnfrentamientosCompleto($fIdLiga, $fIdJugador, null, null, 0, null);
+	/* método para recuperar todos los resultados de un jugador. */
+	public function recuperarDetalleResultadosJugador($fIdLiga, $fIdJugador) {
+		return $this->recuperarListadoResultadosCompleto($fIdLiga, $fIdJugador, null, null, 0, null);
 	}
 
 
   	/* método para recuperar el listado de registros. */
-  	public function recuperarListadoEnfrentamientos ( $fIdLiga, $fNumFase, $fNumRonda) {
+  	public function recuperarListadoResultados ( $fIdLiga, $fNumFase, $fNumRonda) {
 
 		try {
 
@@ -549,14 +551,14 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarListadoEnfrentamientos - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarListadoResultados - resultado.controller.php");	
 			return null;	 
 		}
   	}
 
 
   	/* método para recuperar el listado de registros. */
-  	public function recuperarListadoEnfrentamientosCompleto ( $fIdLiga = NULL, $fIdJugador1 = NULL, $fFechaBatalla = NULL, $fIndValidado  = NULL, $numPag = 0, $numLim = 10) {
+  	public function recuperarListadoResultadosCompleto ( $fIdLiga = NULL, $fIdJugador1 = NULL, $fFechaBatalla = NULL, $fIndValidado  = NULL, $numPag = 0, $numLim = 10) {
 
 		try {
  
@@ -602,14 +604,14 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarListadoEnfrentamientosCompleto - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarListadoResultadosCompleto - resultado.controller.php");	
 			return null;	 
 		}
   	}
 
 
   	/* método para recuperar el listado de registros. */
-  	public function paginadorEnfrentamientos ($fIdLiga = NULL, $fIdJugador1 = NULL,  $fIndValidado = NULL, $fFechaBatalla = NULL) {
+  	public function paginadorResultados ($fIdLiga = NULL, $fIdJugador1 = NULL,  $fIndValidado = NULL, $fFechaBatalla = NULL) {
 
 		try {
 
@@ -636,20 +638,20 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "paginadorEnfrentamientos - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "paginadorResultados - resultado.controller.php");	
 			return null;	 
 		}
   	}
 
   	/* método para recuperar el listado de registros. */
-  	public function recuperarEnfrentamiento ( $fIdEnfrentamiento ) {
+  	public function recuperarResultado ( $fIdResultado ) {
 
 		try {
 
 	  		$queryDB = "SELECT idLiga, numFase, numRonda, idJugador1, idJugador2, resultadoJugador1, resultadoJugador2, valPinturaJug1, valPinturaJug2, idJugVictoriaConcedida, fechaBatalla, 
 	  							indValidado, valDeportividadJug1, valDeportividadJug2, bandoJugador1, bandoJugador2, victoriaSector
 						FROM mb_enfrentamientos 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+						WHERE idEnfrentamiento = " . $fIdResultado;
 
 
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
@@ -658,9 +660,9 @@ class controllerEnfrentamiento {
 
 				foreach ($resultadoBD as $fila) {
 					
-					$this->oEnfrentamiento = new Enfrentamiento( $fIdEnfrentamiento, $fila[0], $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8], $fila[9], $fila[10], $fila[11] , $fila[12], $fila[13], $fila[14], $fila[15] , $fila[16] ) ;
+					$this->oResultado = new Resultado( $fIdResultado, $fila[0], $fila[1], $fila[2], $fila[3], $fila[4], $fila[5], $fila[6], $fila[7], $fila[8], $fila[9], $fila[10], $fila[11] , $fila[12], $fila[13], $fila[14], $fila[15] , $fila[16] ) ;
 
-					return 	$this->oEnfrentamiento;	
+					return 	$this->oResultado;	
 				
 				}
 			}else{
@@ -669,15 +671,15 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarEnfrentamiento - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarResultado - resultado.controller.php");	
 			return null;	 
 		}
   	}
 
 
 
-  	/* validar enfrentamiento  */
-  	public function validarResultado( $fIdLiga, $fIdEnfrentamiento  ){
+  	/* validar resultado  */
+  	public function validarResultado( $fIdLiga, $fIdResultado  ){
 
 		try {
 
@@ -685,7 +687,7 @@ class controllerEnfrentamiento {
 			$queryDB = "UPDATE mb_enfrentamientos SET
 						indValidado = 1
 						WHERE idLiga = " . $fIdLiga . " 
-						AND idEnfrentamiento = " . $fIdEnfrentamiento;
+						AND idEnfrentamiento = " . $fIdResultado;
 			
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
@@ -706,27 +708,28 @@ class controllerEnfrentamiento {
 
 
 
-  	/* resetear enfrentamiento  */
-  	public function resetearEnfrentamiento( $fIdEnfrentamiento  ){
+  	/* resetear resultado  */
+  	public function resetearResultado( $fIdResultado  ){
 
 		try {
+			$fIdResultado = (int) $fIdResultado;
+			if ($fIdResultado <= 0) {
+				return 2;
+			}
 
-			// insertamos el nuevo registro
 			 $queryDB = "UPDATE mb_enfrentamientos SET
-						indValidado = null, resultadoJugador1 = null, resultadoJugador2 = null, valPinturaJug1 = null, valPinturaJug2  = null, idJugVictoriaConcedida = null, fechaBatalla = null, audAlta = null, valDeportividadJug1 = null, valDeportividadJug2 = null, victoriaSector = null
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
+						indValidado = 0
+						WHERE idEnfrentamiento = " . $fIdResultado;
 			
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
-
-			// insertamos el nuevo registro
-			$queryDB = "DELETE from mb_enfren_misiones_sec 
-						WHERE idEnfrentamiento = " . $fIdEnfrentamiento;
-			
-			$resultadoBDDelete = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+			$estadoReset = $this->oConexBD->ejecutarConsulta(
+				"SELECT indValidado FROM mb_enfrentamientos WHERE idEnfrentamiento = " . $fIdResultado
+			);
 
 			
-			if ($resultadoBD >= 1 && $resultadoBDDelete >= 1){
+			if ($resultadoBD !== null
+				&& isset($estadoReset[0][0]) && (int) $estadoReset[0][0] === 0){
 				return 1;				
 			}else{
 				return 2;
@@ -734,7 +737,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "resetearEnfrentamiento - liga.controller.php");	
+			$oLog->trazaLog ($e, "resetearResultado - liga.controller.php");	
 			return null;	 
 		}
   	}
@@ -769,7 +772,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarMisionSec - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarMisionSec - resultado.controller.php");	
 			return null;	 
 		}
   	}
@@ -805,7 +808,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarSelectMisionesSec - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarSelectMisionesSec - resultado.controller.php");	
 			return null;	 
 		}
   	}
@@ -814,14 +817,14 @@ class controllerEnfrentamiento {
 
 
   	/* método para recuperar el listado de registros. */
-  	public function recuperarMisionesSecJugador( $fIdEnfrentamiento, $fIdJugador1 ) {
+  	public function recuperarMisionesSecJugador( $fIdResultado, $fIdJugador1 ) {
 
 		try {
 
 	  		$queryDB = "SELECT idMisionSecundaria
 	  					FROM mb_enfren_misiones_sec
 						where idJugador1 = " . $fIdJugador1 . "
-						and idEnfrentamiento = " . $fIdEnfrentamiento . " ORDER BY 1";
+						and idEnfrentamiento = " . $fIdResultado . " ORDER BY 1";
 
 
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
@@ -841,7 +844,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarMisionesSecJugador - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarMisionesSecJugador - resultado.controller.php");	
 			return null;	 
 		}
   	}
@@ -850,7 +853,7 @@ class controllerEnfrentamiento {
 
 
   	/* método para recuperar el listado de registros. */
-  	public function recuperarRondasEnfrentamientos( $fIdLiga, $fIdJugador, $fNumFase ) {
+  	public function recuperarRondasResultados( $fIdLiga, $fIdJugador, $fNumFase ) {
 
 		try {
 
@@ -879,7 +882,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarRondasEnfrentamientos - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarRondasResultados - resultado.controller.php");	
 			return null;	 
 		}
   	}
@@ -918,7 +921,7 @@ class controllerEnfrentamiento {
 
 			}catch(Exception $e){
 				$oLog = Log::getInstance();
-				$oLog->trazaLog ($e, "recuperarRankingResultados - enfrentamiento.controller.php");
+				$oLog->trazaLog ($e, "recuperarRankingResultados - resultado.controller.php");
 				return null;
 			}
 		}
@@ -967,7 +970,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarRankingPuntosPintura - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarRankingPuntosPintura - resultado.controller.php");	
 			return null;	 
 		}
   	}
@@ -1014,7 +1017,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarRankingPuntosMisionesSec - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarRankingPuntosMisionesSec - resultado.controller.php");	
 			return null;	 
 		}
   	}
@@ -1080,7 +1083,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarRankingPuntosDeportividad - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarRankingPuntosDeportividad - resultado.controller.php");	
 			return null;	 
 		}
   	}
@@ -1110,7 +1113,7 @@ class controllerEnfrentamiento {
 	public function grabarBandoAleatorio ( $fIdLiga, $fNumFase, $idJugador1, $idJugador2, $bandoJug1, $bandoJug2  ){
 		try {
 
-				// 1. BUSCAMOS EL ENFRENTAMIENTO POR LOS JUGADORES INVOLUCRADOS
+				// 1. BUSCAMOS EL RESULTADO POR LOS JUGADORES INVOLUCRADOS
 				 $queryDB = "SELECT idEnfrentamiento, idJugador1, idJugador2 FROM mb_enfrentamientos
 							where idLiga = " . $fIdLiga . " and numFase = " . $fNumFase . " 
 							and (  (idJugador2 = " . $idJugador2 . " and idJugador1 = " . $idJugador1 . ") or  (idJugador2 = " . $idJugador1 . " and idJugador1 = " . $idJugador2 . ") )";  
@@ -1164,7 +1167,7 @@ class controllerEnfrentamiento {
 		try {
 
 
-				// 1. BUSCAMOS EL ENFRENTAMIENTO POR LOS JUGADORES INVOLUCRADOS
+				// 1. BUSCAMOS EL RESULTADO POR LOS JUGADORES INVOLUCRADOS
 				$queryDB = "SELECT idJugador1, bandoJugador1, idJugador2, bandoJugador2 FROM mb_enfrentamientos
 							where idLiga = " . $fIdLiga . " and numFase = " . $fNumFase . " 
 							and (  (idJugador2 = " . $idJugador2 . " and idJugador1 = " . $idJugador1 . ") or  (idJugador2 = " . $idJugador1 . " and idJugador1 = " . $idJugador2 . ") )";  
@@ -1209,11 +1212,11 @@ class controllerEnfrentamiento {
 
 
 
-	// grabamos bando en los enfrentamientos
-	public function grabarBandoEnfrentamientos ( $fIdLiga, $fNumFase ){
+	// grabamos bando en los resultados
+	public function grabarBandoResultados ( $fIdLiga, $fNumFase ){
 			try {
 
-				// 1. BUSCAMOS EL ENFRENTAMIENTO POR LOS JUGADORES INVOLUCRADOS
+				// 1. BUSCAMOS EL RESULTADO POR LOS JUGADORES INVOLUCRADOS
 				 $queryDB = "SELECT idJugador, bando FROM mb_jugadores
 							where idLiga = " . $fIdLiga . " and numFase = " . $fNumFase . " AND bando <> 'DOBLE'";  
 
@@ -1250,7 +1253,7 @@ class controllerEnfrentamiento {
 
 			}catch(Exception $e){
 				$oLog = Log::getInstance();
-				$oLog->trazaLog ($e, "grabarBandoEnfrentamientos - liga.controller.php");	
+				$oLog->trazaLog ($e, "grabarBandoResultados - liga.controller.php");	
 				return null;	 
 			}
 	}
@@ -1353,7 +1356,7 @@ class controllerEnfrentamiento {
 
 		}catch(Exception $e){
 			$oLog = Log::getInstance();
-			$oLog->trazaLog ($e, "recuperarRankingSectores - enfrentamiento.controller.php");	
+			$oLog->trazaLog ($e, "recuperarRankingSectores - resultado.controller.php");	
 			return null;	 
 		}
   	}

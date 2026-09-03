@@ -17,7 +17,7 @@
   try {
 
     /* variables */
-    $oControllerEnfrentamiento = new controllerEnfrentamiento();
+    $oControllerResultado = new controllerResultado();
     $oControllerLiga = new controllerLiga();
     $oControllerJugador = new controllerJugador();
 
@@ -48,7 +48,7 @@
     $fIdJugador2Nick = (isset( $_POST["fIdJugador2Nick"]))? $_POST["fIdJugador2Nick"] : "";
     $fClaveCifrada = (isset( $_POST["fClaveCifrada"]))? $_POST["fClaveCifrada"] : "";
     $fFechaBatalla = (isset( $_POST["fFechaBatalla"]))? $_POST["fFechaBatalla"] : "";
-    $fIdEnfrentamiento = (isset( $_POST["fIdEnfrentamiento"]))? $_POST["fIdEnfrentamiento"] : "";
+    $fIdResultado = (isset( $_POST["fIdResultado"]))? $_POST["fIdResultado"] : "";
     $fValPinturaJug1 = (isset( $_POST["fValPinturaJug1"]))? $_POST["fValPinturaJug1"] : 0;
     $fValPinturaJug2 = (isset( $_POST["fValPinturaJug2"]))? $_POST["fValPinturaJug2"] : 0;
     $fValDeportividadJug1 = (isset( $_POST["fValDeportividadJug1"]))? $_POST["fValDeportividadJug1"] : 1;
@@ -129,8 +129,8 @@
     $ligasUsuario = $oControllerUsuario->recuperarLigasUsuario( $_SESSION["usuario"] );
 
       $pagActual = (isset($_POST["pagActual"]))? $_POST["pagActual"] : 1;
-    $fIdEnfrentamientoReset = (isset($_POST["fIdEnfrentamientoReset"]))? $_POST["fIdEnfrentamientoReset"] : "";
-    $fIdEnfrentamientoEditar = (isset($_POST["fIdEnfrentamientoEditar"]))? $_POST["fIdEnfrentamientoEditar"] : "";
+    $fIdResultadoReset = (isset($_POST["fIdResultadoReset"]))? $_POST["fIdResultadoReset"] : "";
+    $fIdResultadoEditar = (isset($_POST["fIdResultadoEditar"]))? $_POST["fIdResultadoEditar"] : "";
 
     if ( $fIdJugador1 > 0 ){
       $oJugador1 = $oControllerJugador->recuperarDatosJugador( $fIdJugador1 );
@@ -221,9 +221,9 @@
       /* DEBE EJECUTARSE ANTES QUE EL BUSCADOR, PARA MOSTRAR LUEGO EL GRID ACTUALIZADO
       /********************************/
       if ( $accionForm == 3 ){
-        $comprobarBorrado = $oControllerEnfrentamiento->resetearEnfrentamiento( $fIdEnfrentamiento );
+        $comprobarBorrado = $oControllerResultado->resetearResultado( (int) $fIdResultadoReset );
     
-        $mensajeBorrado .= "<div id=\"". (($comprobarBorrado)? "mensaje-ok" : "mensaje-error") ."\">". (($comprobarBorrado)? "Enfrentamiento reseteado correctamente." : "Se ha producido un error en su solicitud.") ."</div>";
+        $mensajeBorrado .= "<div id=\"mensaje-accion\" class=\"". (($comprobarBorrado)? "mensaje-ok" : "mensaje-error") ."\">". (($comprobarBorrado)? "Resultado reseteado correctamente." : "Se ha producido un error en su solicitud.") ."</div>";
       
       }
 
@@ -235,7 +235,7 @@
         /********************************/
         /* PAGINADOR */
         /********************************/
-        $numRegs = $oControllerEnfrentamiento->paginadorEnfrentamientos ($fIdLiga, $fIdJugador1, $fIndValidado, $fFechaBatalla);
+        $numRegs = $oControllerResultado->paginadorResultados ($fIdLiga, $fIdJugador1, $fIndValidado, $fFechaBatalla);
         $numPags = ceil( $numRegs / 10) ;
         require_once("paginador.inc");
 
@@ -244,37 +244,37 @@
         /* GRID DATOS */
         /********************************/
         /* SI SE ENVIA EL FORMULARIO DE BÚSQUEDA, MANDAMOS PARÁMETROS PARA FILTRAR */
-		$arrEnfrentamientos = array();
+		$arrResultados = array();
         if (isset ($_POST["accionForm"]) && ($_POST["accionForm"] == 1 || $_POST["accionForm"] == 3)){    
-          $arrEnfrentamientos = $oControllerEnfrentamiento->recuperarListadoEnfrentamientosCompleto ( $fIdLiga, $fIdJugador1,  $fFechaBatalla,  $fIndValidado, ($pagActual-1)); 
+          $arrResultados = $oControllerResultado->recuperarListadoResultadosCompleto ( $fIdLiga, $fIdJugador1,  $fFechaBatalla,  $fIndValidado, ($pagActual-1));
 
         }else{
-          $arrEnfrentamientos = $oControllerEnfrentamiento->recuperarListadoEnfrentamientosCompleto( $fIdLiga, null, null,  NULL, 0);
+          $arrResultados = $oControllerResultado->recuperarListadoResultadosCompleto( $fIdLiga, null, null,  NULL, 0);
         }
 
         $grid="";
         // comprobamos que haya datos 
-        if (!empty($arrEnfrentamientos) >= 1){
+        if (!empty($arrResultados) >= 1){
  
-          $grid  = "<table class=\"table-6\">\n
+          $grid  = "<div class=\"tabla-grid-wrap\"><table class=\"table-6\">\n
                 <tr>
                 <th>Fase </th>
                 <th>Fecha</th>
-                <th>Jugador1</th>
-                <th>Jugador2</th>
+                <th>Jugador</th>
+                <th>Contrincante</th>
                 <th>Resultado</th>
                 <th class=\"td-acciones\"></th>
                 </tr>\n";
 
-          foreach($arrEnfrentamientos as $fila){
+          foreach($arrResultados as $fila){
             // gestion de correos
             $oJugador1 = $oControllerJugador->recuperarDatosJugador( $fila[4] );
             $oJugador2 = $oControllerJugador->recuperarDatosJugador( $fila[5]  );
           
 
             // misiones secundarias
-            $arrMisionesSecJug1BD = $oControllerEnfrentamiento->recuperarMisionesSecJugador( $fila[0], $fila[4] );
-            $arrMisionesSecJug2BD = $oControllerEnfrentamiento->recuperarMisionesSecJugador( $fila[0], $fila[5] );
+            $arrMisionesSecJug1BD = $oControllerResultado->recuperarMisionesSecJugador( $fila[0], $fila[4] );
+            $arrMisionesSecJug2BD = $oControllerResultado->recuperarMisionesSecJugador( $fila[0], $fila[5] );
 
             $fIdMisionSecJug11 = (isset($arrMisionesSecJug1BD[0]))? $arrMisionesSecJug1BD[0] : 0;
             $fIdMisionSecJug12 = (isset($arrMisionesSecJug1BD[1]))? $arrMisionesSecJug1BD[1] : 0;
@@ -322,31 +322,25 @@
             }
 
             $grid .= ")</td>";
-            $grid .= "<td class=\"align-center\">" .  $fila[6]. " - " . $fila[7] . "</td>";
+            $claseResultado = ($fila[11] == 1) ? "" : " class=\"resultado-pendiente\"";
+            $grid .= "<td class=\"align-center\"><span" . $claseResultado . ">" .  $fila[6]. " - " . $fila[7] . "</span></td>";
             $grid .= "<td class=\"align-center td-acciones\">";
+            if ($fila[11] != 1) {
 
             
-            if($fila[11] == 0) {
-              $grid .= "<img src=\"recursos/img/ok.svg\"  alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\"/ onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\">";
-            }else{
-              $icon = "";
-               if ( ($fila[10] != null && $fila[8]  == 0) || ($fila[10] != null && $fila[9] == 0) || $fila[10] == null ){
-                $icon = "icon_info_pend_jugador";
-              }else{
-                $icon =  "icon_info" ;
-              }
-
-              $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
+            $grid .= "<img src=\"recursos/img/check.svg\" width=\"24\" height=\"24\" title=\"Validar resultado\" alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\" onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\"/>";
+            }
+            $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
                   <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\" />
                     <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"4\"/>
-                    <input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
+                    <input type=\"hidden\" name=\"fIdResultado\" id=\"fIdResultado\" value=\"". $fila[0] ."\" />
                     <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
                     <input type=\"hidden\" name=\"fNumFase\" id=\"fNumFase\" value=\"". $fila[2] ."\" />
                     <input type=\"hidden\" name=\"fNumRonda\" id=\"fNumRonda\" value=\"". $fila[3] ."\" />
                     <input type=\"hidden\" name=\"fIdJugador1\" id=\"fIdJugador1\" value=\"". $fila[4] ."\" />
                     <input type=\"hidden\" name=\"fIdJugador2\" id=\"fIdJugador2\" value=\"". $fila[5] ."\" />
                     <input type=\"hidden\" name=\"fResultadoJugador1\" id=\"fResultadoJugador1\" value=\"". $fila[6] ."\" />
-                    <input type=\"hidden\" name=\"fResultadoRadio\" id=\"fResultadoRadio\" value=\"". $fila[6] ."\" />                    
+                    <input type=\"hidden\" name=\"fResultadoRadio\" id=\"fResultadoRadio\" value=\"". resultadoRadioDesdePuntuacionFow($fila[6], $fila[7]) ."\" />
                     <input type=\"hidden\" name=\"fResultadoJugador2\" id=\"fResultadoJugador2\" value=\"". $fila[7] ."\" />
                     <input type=\"hidden\" name=\"fValPinturaJug1\" id=\"fValPinturaJug1\" value=\"". $fila[8] ."\" />
                     <input type=\"hidden\" name=\"fValPinturaJug2\" id=\"fValPinturaJug2\" value=\"". $fila[9] ."\" />
@@ -365,21 +359,22 @@
                     <input type=\"hidden\" name=\"fIdMisionSecJug23\" id=\"fIdMisionSecJug23\" value=\"". $fIdMisionSecJug23 ."\" />
                     <input type=\"hidden\" name=\"fIdMisionSecJug24\" id=\"fIdMisionSecJug24\" value=\"". $fIdMisionSecJug24 ."\" />
 
-                    <img src=\"recursos/img/check.svg\" width=\"24\" height=\"24\" title=\"Editar o validar enfrentamiento\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+                    <img src=\"recursos/img/cog.svg\" width=\"24\" height=\"24\" title=\"Editar resultado\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
                   </form>\n";
-            }
+            if ($fila[11] == 1) {
             $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
               <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\" />
-                  <input type=\"hidden\" name=\"fIdEnfrentamientoReset\" id=\"fIdEnfrentamientoReset\" value=\"".$fila[0]."\"/>
+                  <input type=\"hidden\" name=\"fIdResultadoReset\" id=\"fIdResultadoReset\" value=\"".$fila[0]."\"/>
                   <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
                   <input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
-                  <input type=\"hidden\" name=\"fIdEnfrentamiento\" id=\"fIdEnfrentamiento\" value=\"". $fila[0] ."\" />
-                    <img src=\"recursos/img/trash.svg\" title=\"Eliminar enfrentamiento\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>                
+                  <input type=\"hidden\" name=\"fIdResultado\" id=\"fIdResultado\" value=\"". $fila[0] ."\" />
+                    <img src=\"recursos/img/trash.svg\" title=\"Resetear resultado\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
                 </form>";
+            }
             
           }
         
-        $grid .= "</tr>\n</table>";
+        $grid .= "</tr>\n</table></div>";
         }else{
           $grid  =  "<p>No hay resultados</p>";
         }
@@ -390,11 +385,11 @@
       }else if ( $accionForm == 4  ){
 
         $txtAltaModBoton = "Modificar datos";
-        $txtAltaModH3 = "Modificar enfrentamiento";
+        $txtAltaModH3 = "Modificar resultado";
 
           
         if($oLiga->idJuego <= 2 ){ 
-            $arrMisionesSec =  $oControllerEnfrentamiento->recuperarSelectMisionesSec( $fIdLiga );
+            $arrMisionesSec =  $oControllerResultado->recuperarSelectMisionesSec( $fIdLiga );
             $selectMisSecJug11 = ($fIdMisionSecJug11 != null ) ? $fIdMisionSecJug11 : 0;
             $selectMisSecJug12 = ($fIdMisionSecJug12 != null ) ? $fIdMisionSecJug12 : 0;
             $selectMisSecJug13 = ($fIdMisionSecJug13 != null ) ? $fIdMisionSecJug13 : 0;
@@ -433,7 +428,7 @@
 
 
 
-        if ($fIdEnfrentamientoEditar != null){
+        if ($fIdResultadoEditar != null){
           
           // MISIONES SECUNDARIAS
           $arrMisionesSecJug1 =  array();
@@ -466,15 +461,14 @@
               } 
          }
           if ($oLiga->idJuego <= 2) {
-            $resultadoValido = validarPuntosFow($fResultadoJugador1, $fResultadoRadio)
-              && validarPuntosFow($fResultadoJugador2, $fResultadoRadio === 3 ? 0 : ($fResultadoRadio === 0 ? 3 : 1));
+            $resultadoValido = validarMarcadorFow($fResultadoJugador1, $fResultadoJugador2);
           }
           if (!$resultadoValido) {
             $comprobarAltaMod = 2;
             $mensajeAltaMod .= '<div id="mensaje-error">Los puntos de victoria no son válidos para el resultado seleccionado.</div>';
           }
           if ($resultadoValido) {
-            $comprobarAltaMod = $oControllerEnfrentamiento->modificarDatosEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador1, $fIdJugador2, $fResultadoJugador1, $fResultadoJugador2,
+            $comprobarAltaMod = $oControllerResultado->modificarDatosResultado( $fIdLiga, $fIdResultado, $fIdJugador1, $fIdJugador2, $fResultadoJugador1, $fResultadoJugador2,
                       $fValPinturaJug1, $fValPinturaJug2, $fFechaBatalla, $fIndValidado, $arrMisionesSecJug1, $arrMisionesSecJug2, $fValDeportividadJug1, $fValDeportividadJug2, $fIdJugVictoriaConcedida, $fVictoriaSector );
           }
 
@@ -484,21 +478,23 @@
             4. ERROR DUPLICADO
           */ 
         
-          $mensajeAltaMod .= "<div id=\"". ( ($comprobarAltaMod == 1)? "mensaje-ok" : (($comprobarAltaMod == 3)? "mensaje-aviso" : "mensaje-error")) ."\">". 
-                  ( ($comprobarAltaMod == 1)? "Enfrentamiento modificado correctamente. <a href=\"". $paginaActiva  ."\">Volver</a>" : 
-                    (($comprobarAltaMod == 2)? "Se ha producido un error en su solicitud." : "AVISO: debe modificar al menos un campo.") ) ."</div>";
+          if ($comprobarAltaMod != 2 || $resultadoValido) {
+                $mensajeAltaMod .= "<div id=\"". ( ($comprobarAltaMod == 1)? "mensaje-ok" : (($comprobarAltaMod == 3)? "mensaje-aviso" : "mensaje-error")) ."\">".
+                  ( ($comprobarAltaMod == 1)? "Resultado modificado correctamente. <a href=\"". $paginaActiva  ."\">Volver</a>" :
+                      (($comprobarAltaMod == 2)? "Se ha producido un error en su solicitud." : "AVISO: debe modificar al menos un campo.") ) ."</div>";
+          }
 
-          // actualizamos datos de enfrentamiento
-          $oEnfrentamiento = $oControllerEnfrentamiento->recuperarEnfrentamiento ( $fIdEnfrentamiento );
+          // actualizamos datos de resultado
+          $oResultado = $oControllerResultado->recuperarResultado ( $fIdResultado );
 
-          $fValPinturaJug1 = $oEnfrentamiento->valPinturaJug1;
-          $fValPinturaJug2 =  $oEnfrentamiento->valPinturaJug2;
-          $fValDeportividadJug1 =  $oEnfrentamiento->valDeportividadJug1;
-          $fValDeportividadJug2 =  $oEnfrentamiento->valDeportividadJug2;
-          $fResultadoJugador1 = $oEnfrentamiento->resultadoJugador1;
-          $fResultadoJugador2 = $oEnfrentamiento->resultadoJugador2;
+          $fValPinturaJug1 = $oResultado->valPinturaJug1;
+          $fValPinturaJug2 =  $oResultado->valPinturaJug2;
+          $fValDeportividadJug1 =  $oResultado->valDeportividadJug1;
+          $fValDeportividadJug2 =  $oResultado->valDeportividadJug2;
+          $fResultadoJugador1 = $oResultado->resultadoJugador1;
+          $fResultadoJugador2 = $oResultado->resultadoJugador2;
           $fResultadoRadio = resultadoRadioDesdePuntuacionFow($fResultadoJugador1, $fResultadoJugador2);
-          $fIdJugVictoriaConcedida = $oEnfrentamiento->idJugVictoriaConcedida;
+          $fIdJugVictoriaConcedida = $oResultado->idJugVictoriaConcedida;
         }
 
       }
@@ -524,7 +520,7 @@
   $(function(){
       
 
-      <?php if ( $accionForm  < 2){ ?>
+      <?php if ( $accionForm != 4){ ?>
           /*PAGINADOR - ASIGNAMOS NUM DE PÁGINA AL HIDDEN DEL FORMULARIO */
           $(".btn-paginador").click( function() {
             var pagActual = $(this).attr('id')
@@ -540,14 +536,13 @@
 
           // borrar registro
           $(".btn-borrar").click( function() {  
-            var formularioBorrar = $(this).attr('alt');
-          
-           
+            var formularioBorrar = $(this).closest("form");
             $('#dialog-modal').dialog({
               autoFocus: false,
                   buttons : {
                     "Confirmar" : function() {
-                  $("#" + formularioBorrar).submit();
+                  $(this).dialog("close");
+                  formularioBorrar.submit();
                     },
                     "Cancelar" : function() {
                       $(this).dialog("close");
@@ -648,43 +643,33 @@
                   }
                 });
 
-                  function maximoPuntosFowPorResultado(estado) {
-                    return estado === 3 ? 5 : (estado === 0 ? 4 : 3);
-                  }
-
-                  function actualizarLimitesResultadoFow() {
-                    var estado = parseInt($("input[name=fResultadoRadio]:checked").val(), 10);
-                    var maximoJugador1 = maximoPuntosFowPorResultado(estado);
-                    var maximoJugador2 = maximoPuntosFowPorResultado(estado === 3 ? 0 : (estado === 0 ? 3 : 1));
-                    var minimoJugador1 = 0;
-                    var minimoJugador2 = 0;
-                    var puntosJugador1 = Math.max(minimoJugador1, Math.min(parseInt($("#fResultadoJugador1").val(), 10) || 0, maximoJugador1));
-                    var puntosJugador2 = Math.max(minimoJugador2, Math.min(parseInt($("#fResultadoJugador2").val(), 10) || 0, maximoJugador2));
-                    if (estado === 3) { puntosJugador1 = 5; puntosJugador2 = 4; }
-                    if (estado === 0) { puntosJugador1 = 4; puntosJugador2 = 5; }
-                    if (estado === 1) { puntosJugador2 = puntosJugador1; }
-                    $("#slider-resultado-1").slider("option", "min", minimoJugador1).slider("option", "max", maximoJugador1).slider("option", "value", puntosJugador1);
-                    $("#slider-resultado-2").slider("option", "min", minimoJugador2).slider("option", "max", maximoJugador2).slider("option", "value", puntosJugador2);
-                    $("#fResultadoJugador1").val(puntosJugador1);
-                    $("#fResultadoJugador2").val(puntosJugador2);
+                  function actualizarMarcadorFow(jugador, puntos) {
+                    var otroJugador = jugador === 1 ? 2 : 1;
+                    var puntosOtroJugador = parseInt($("#fResultadoJugador" + otroJugador).val(), 10) || 1;
+                    puntos = Math.max(1, Math.min(puntos, 8));
+                    if (puntos === 4) { puntos = 3; }
+                    puntosOtroJugador = puntos > 4 ? 9 - puntos : Math.max(1, Math.min(puntosOtroJugador, 3));
+                    $("#fResultadoJugador" + jugador).val(puntos);
+                    $("#fResultadoJugador" + otroJugador).val(puntosOtroJugador);
+                    if ($("#slider-resultado-" + otroJugador).slider("value") !== puntosOtroJugador) {
+                      $("#slider-resultado-" + otroJugador).slider("value", puntosOtroJugador);
+                    }
                   }
 
                   $( "#slider-resultado-1" ).slider({
                     range: "max",
-                    min: 0,
-                    max: maximoPuntosFowPorResultado(<?php echo $fResultadoRadio; ?>),
+                    min: 1,
+                    max: 8,
                     value: <?php printf($fResultadoJugador1);?>,
-                    slide: function(event, ui) { $("#fResultadoJugador1").val(ui.value); }
+                    slide: function(event, ui) { actualizarMarcadorFow(1, ui.value); }
                   });
                   $( "#slider-resultado-2" ).slider({
                     range: "max",
-                    min: 0,
-                    max: maximoPuntosFowPorResultado(<?php echo $fResultadoRadio == 3 ? 0 : ($fResultadoRadio == 0 ? 3 : 1); ?>),
+                    min: 1,
+                    max: 8,
                     value: <?php printf($fResultadoJugador2);?>,
-                    slide: function(event, ui) { $("#fResultadoJugador2").val(ui.value); }
+                    slide: function(event, ui) { actualizarMarcadorFow(2, ui.value); }
                   });
-                  $("input[name=fResultadoRadio]").on("change", actualizarLimitesResultadoFow);
-                  actualizarLimitesResultadoFow();
         <?php } ?>
   });
 
@@ -693,10 +678,10 @@
 
 
         // select de jugadores
-        function validarResultado( fIdEnfrentamiento, fIdLiga, fIdJugador1, fFechaBatalla, fIndValidado, pagActual )  {
+        function validarResultado( fIdResultado, fIdLiga, fIdJugador1, fFechaBatalla, fIndValidado, pagActual )  {
 
                 var parametros = {
-                        "fIdEnfrentamiento" : fIdEnfrentamiento,
+                        "fIdResultado" : fIdResultado,
                         "fIdLiga" : fIdLiga,
                         "fIdJugador1" : fIdJugador1,
                         "fFechaBatalla" : fFechaBatalla,
@@ -714,6 +699,7 @@
                                 $("#grid").html("<div style=\"text-align: center\"><img src=\"recursos/img/loader-blanco.gif\" alt=\"Cargando...\" /></div>");
                         },
                         success:  function (response) {
+                        $("#mensaje-accion").remove();
                                 $("#grid").html(response);
                         }
                 });
@@ -765,13 +751,13 @@
   
   <div id="form">
     <h3><?php printf($txtAltaModH3);?></h3>
-    <form name="modEnfrentamiento" id="modEnfrentamiento" method="POST" action="" enctype="multipart/form-data">
+    <form name="modResultado" id="modResultado" method="POST" action="" enctype="multipart/form-data">
       
       <br/>
       <?php printf ($mensajeAltaMod);  ?>
       <input type="hidden" name="accionForm" id="accionForm" value="<?php printf($accionForm);?>"/>
-      <input type="hidden" name="fIdEnfrentamiento" id="fIdEnfrentamiento" value="<?php printf($fIdEnfrentamiento);?>"/>        
-      <input type="hidden" name="fIdEnfrentamientoEditar" id="fIdEnfrentamientoEditar" value="1"/>
+      <input type="hidden" name="fIdResultado" id="fIdResultado" value="<?php printf($fIdResultado);?>"/>
+      <input type="hidden" name="fIdResultadoEditar" id="fIdResultadoEditar" value="1"/>
       <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
       <input type="hidden" name="fNumFase" id="fNumFase" value="<?php printf($fNumFase);?>"/>
       <input type="hidden" name="fNumRonda" id="fNumRonda" value="<?php printf($fNumRonda);?>"/>
@@ -781,8 +767,8 @@
       <p><label for="fIdLiga">Liga: </label> <span id="selectLigas"><select name="fIdLiga" id="fIdLiga" data-validation="required " disabled><?php printf($selectLigas); ?> </select></span></p>
       <p><label for="fNumFase">Fase:</label> <span id="selectFases"><select name="fNumFase" id="fNumFase" data-validation="required " disabled><?php printf($selectFases); ?> </select></span></p>
       <p><label for="fNumRonda">Ronda:</label> <span id="selectRondas"><select name="fNumRonda" id="fNumRonda" data-validation="required " disabled><?php printf($selectRondas); ?> </select></span></p>
-      <p><label for="fFechaBatalla">Fecha batalla: </label>  
-      <input type="text" class="fFechaBatallaForm" name="fFechaBatalla" id="fFechaBatalla" maxlength="10" 
+      <p><label for="fFechaBatalla">Fecha: </label>
+      <input type="text" class="fFechaBatallaForm" name="fFechaBatalla" id="fFechaBatalla" maxlength="10"
         value="<?php printf($fFechaBatalla);?>" data-validation="required date" 
         data-validation-format="dd-mm-yyyy"></p>
 
@@ -796,24 +782,20 @@
 
           <!-- RESULTADOS - FLAMES OF WAR Y GUILD BALL -->
           <?php if ($oLiga->idJuego <= 2 || $oLiga->idJuego == 5) {?>
-            <p><label for="resultadoJugador1">Resultado:</label></p>
+            <p><label for="resultadoJugador1">Puntos de victoria:</label></p>
             <?php if ($oLiga->idJuego <= 2) { ?>
-              <div class="resultados-radio">
-                <label><input type="radio" name="fResultadoRadio" value="3" <?php if ($fResultadoRadio == 3){ printf("checked"); } ?>/><img src="images/icono-victoria.png" alt="Victoria"></label>
-                <label><input type="radio" name="fResultadoRadio" value="1" <?php if ($fResultadoRadio == 1){ printf("checked"); } ?>/><img src="images/icono-empate.png" alt="Empate"></label>
-                <label><input type="radio" name="fResultadoRadio" value="0" <?php if ($fResultadoRadio == 0){ printf("checked"); } ?>/><img src="images/icono-derrota.png" alt="Derrota"></label>
-              </div>
+              <input type="hidden" name="fResultadoRadio" value="<?php echo $fResultadoRadio; ?>" />
             <?php } ?>
             <div class="resultados-izq">                          
                 <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>" >            
-              <p id="enfrentamientoJug1" > </p>
+              <p id="resultadoJug1" > </p>
                 <div id="slider-resultado-1">
                 </div>
               </div>
 
             <div class="resultados-dec">
                 <input class="input-resultado" type="text" id="fResultadoJugador2" name="fResultadoJugador2" value="<?php printf($fResultadoJugador2); ?>" >
-              <p id="enfrentamientoJug2" ><?php printf($fIdJugador2Nick);?></p>
+              <p id="resultadoJug2" ><?php printf($fIdJugador2Nick);?></p>
                 <div id="slider-resultado-2"></div>
               </div>
             <?php } ?>    
@@ -822,20 +804,7 @@
           <!-- RESULTADOS - RESTO DE JUEGOS -->
           <?php if ($oLiga->idJuego > 2 &&  $oLiga->idJuego != 5) {?>
             <p><label for="resultadoJugador1">Resultado <strong><?php echo $oJugador1->nick; ?></strong>:</label></p>
-            <div class=" resultados-radio">                         
-                  <label>
-                    <input type="radio" name="fResultadoRadio" value="3" <?php if ($fResultadoRadio == 3){ printf("checked"); } ?>/>
-                    <img src="images/icono-victoria.png">
-                  </label>                
-                  <label>
-                    <input type="radio" name="fResultadoRadio" value="1" <?php if ($fResultadoRadio == 1){ printf("checked"); } ?>/>
-                    <img src="images/icono-empate.png">
-                  </label>                    
-                  <label>
-                    <input id="fb3" type="radio" name="fResultadoRadio" value="0"  <?php if ($fResultadoRadio == 0){ printf("checked"); } ?>/>
-                    <img src="images/icono-derrota.png">
-                  </label>
-              </div>
+            <input type="hidden" name="fResultadoRadio" value="<?php echo $fResultadoRadio; ?>" />
 
           
           <?php } ?>  
@@ -880,12 +849,11 @@
         <label for="DeportividadJugador2">Deportividad <strong><?php echo $oJugador2->nick; ?></strong>:</label><div id="estrellasDeportividad2" name="estrellasDeportividad2"></div></p>
       </div>
     
-
       <p class="resultado-validado"><span class="span-radio-button">Resultado validado:</span><span class="resultado-validado-opciones">
         <input type="radio" name="fIndValidado" id="fIndValidado1" value="1" <?php printf(($fIndValidado == 1)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndValidado1">S&iacute;</label>
-        <input type="radio" name="fIndValidado" id="fIndValidado0" value="0" <?php printf(($fIndValidado == 0)? "checked" : "");?> class="radio-button"><label class="label-radio-button" for="fIndValidado0">No</label>
+        <input type="radio" name="fIndValidado" id="fIndValidado0" value="0" <?php printf(($fIndValidado == 1)? "" : "checked");?> class="radio-button"><label class="label-radio-button" for="fIndValidado0">No</label>
       </span></p>
-
+      <div class="box-resultados">
       <p><span class="span-radio-button">Victoria concedida a: </span>
         <select name="fIdJugVictoriaConcedida" id="fIdJugVictoriaConcedida" data-validation="required " >
           <option value="0"></option>
@@ -893,7 +861,7 @@
           <option value="<?php echo $fIdJugador2 ?>" <?php echo (($fIdJugVictoriaConcedida == $fIdJugador2)? "selected" : ""); ?> ><?php echo $oJugador2->nick; ?></option>
         </select>       
       </p>  
-
+</div>
       <?PHP 
       // FLAMES OF WAR
       if($oLiga->idJuego <= 2 ){ ?>
@@ -922,7 +890,7 @@
     </form>
     <script>
       $.validate( { 
-          form : '#modEnfrentamiento',
+          form : '#modResultado',
           modules : 'file',
           decimalSeparator : ',',
           language : spanish,
@@ -943,7 +911,7 @@
 
       /* BUSCADOR */ ?>
 
-      <p>Desde este panel puede dar editar los resultados de los enfrentamientos.</p>
+      <p>Desde este panel puede dar editar los resultados de los resultados.</p>
 
       <div id="buscador">
         <form name="buscadorligas" id="buscadorligas" method="POST" action="">
@@ -954,9 +922,9 @@
           <label for="fIdJugador1">Jugador:</label> <span id="divSelectJugadores" class="divSelectJugadores"><select name="fIdJugador1" id="fIdJugador1" data-validation="required " ><option value="0"></option><?php printf($selectJugadores); ?> </select></span>  
           <label for="fIndValidado">Validado: </label>   
           <select name="fIndValidado" id="fIndValidado">
-            <option value="2" ></option>
-            <option value="1" <?php printf( ( ($fIndValidado == 1)? 'selected': '' ) ); ?>>S&iacute;</option>
-            <option value="0" <?php printf( ( ($fIndValidado == 0)? 'selected': '' ) ); ?>>No</option>
+            <option value="2" <?php printf(($fIndValidado == 2 || $fIndValidado === '') ? 'selected' : ''); ?>></option>
+            <option value="1" <?php printf(($fIndValidado == 1) ? 'selected' : ''); ?>>S&iacute;</option>
+            <option value="0" <?php printf(($fIndValidado === 0 || $fIndValidado === '0') ? 'selected' : ''); ?>>No</option>
           </select>
         <label for="fFechaBatalla">Fecha: </label>   <input type="text" name="fFechaBatalla" id="fFechaBatalla" class="fFechaBatallaForm" value="<?php printf($fFechaBatalla);?>" class="input-fecha" />
           <input type="submit" value="Buscar" id="formButton" class="submit-button"/>

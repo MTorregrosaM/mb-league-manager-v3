@@ -11,7 +11,7 @@
 		$fNumFase = (isset($_POST['fNumFase'])? $_POST["fNumFase"] : null);
 		$fNumRonda = (isset($_POST['fNumRonda'])? $_POST["fNumRonda"] : null);
 		$fIdJugador = (isset($_POST['fIdJugador'])? $_POST["fIdJugador"] : null);
-		$validarGrabEnfrentamiento = (isset($_POST['validarGrabEnfrentamiento'])? $_POST["validarGrabEnfrentamiento"] : null);
+		$validarGrabResultado = (isset($_POST['validarGrabResultado'])? $_POST["validarGrabResultado"] : null);
 
 		$oControllerLiga = new controllerLiga();
 		$oControllerJugador = new controllerJugador();
@@ -20,7 +20,7 @@
 		// FASES
 		$selectJugadores = "<select name=\"fIdJugador\" id=\"fIdJugador\" data-validation=\"required\" > ";
 
-		if($validarGrabEnfrentamiento){
+		if($validarGrabResultado){
 			$arrJugadores =  $oControllerJugador->recuperarSelectJugadores( $fIdLiga, null, $fNumRonda, true);
 		}else{
 			$arrJugadores =  $oControllerJugador->recuperarSelectJugadores( $fIdLiga, null, $fNumRonda, false);
@@ -31,7 +31,7 @@
 				$selectJugadores .= "\n<option value=\"" . $fila[0] . "\" " .(($fIdJugador <> null && $fIdJugador == $fila[0])? "selected" : "" ). "\">" .$fila[1]  . "</option>";
 			}
 		}else{
-			$selectJugadores .= "\n<option value=\"0\" selected>No hay enfrentamientos</option>";
+			$selectJugadores .= "\n<option value=\"0\" selected>No hay resultados</option>";
 		}
 		$selectJugadores .= "</select>";
 

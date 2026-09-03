@@ -1,4 +1,4 @@
-﻿<link rel='stylesheet' id='divi-fonts-css'  href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,800italic,400,300,700,800&#038;subset=latin,latin-ext' type='text/css' media='all' />
+<link rel='stylesheet' id='divi-fonts-css'  href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,800italic,400,300,700,800&#038;subset=latin,latin-ext' type='text/css' media='all' />
 <link rel='stylesheet' id='divi-style-css'  href='http://modelbrush.com/wp-content/themes/modelbrush/style.css?ver=2.1.2' type='text/css' media='all' />
 
 

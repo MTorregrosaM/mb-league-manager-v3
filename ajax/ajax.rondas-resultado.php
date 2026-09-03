@@ -14,11 +14,11 @@
 		$fNumFase = (isset($_POST['fNumFase'])? $_POST["fNumFase"] : null);
 		exigirLigaActivaPublica($fIdLiga);
 
-		$oControllerEnfrentamiento = new controllerEnfrentamiento();
+		$oControllerResultado = new controllerResultado();
 
 		// options para los select de los formularios
 		// RONDAS
-		$arrRondas =  $oControllerEnfrentamiento->recuperarRondasEnfrentamientos( $fIdLiga, $fIdJugador, $fNumFase );
+		$arrRondas =  $oControllerResultado->recuperarRondasResultados( $fIdLiga, $fIdJugador, $fNumFase );
 		$selectRondas = "";
 		/*$aux = 1;
 		if (is_array($arrRondas) && count($arrRondas) >= 1 ){
@@ -79,7 +79,7 @@
 	                },
 	                success:  function (response) {
 	                        $("#selectJugador2").html(response);
-							$("#enfrentamientoJug2").text( $('#fIdJugador2Nick').val() );
+							$("#resultadoJug2").text( $('#fIdJugador2Nick').val() );
 							$("#fResultadoJugador1").val( $('#fResultadoJugador1Aux').val() );
 			        		$("#slider-resultado-1").slider( "option", "value", $('#fResultadoJugador1Aux').val() );
 							$("#fResultadoJugador2").val( $("#slider-resultado-1").slider("option", "max") + 1 - $('#fResultadoJugador1Aux').val() );

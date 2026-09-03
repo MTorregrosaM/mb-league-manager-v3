@@ -68,7 +68,7 @@ function pintarRanking($filas, $columnas, $orden, $columnasDatos) {
     }
   }
 
-$oControllerEnfrentamiento = new controllerEnfrentamiento();
+$oControllerResultado = new controllerResultado();
 $oControllerLiga = new controllerLiga();
 $oControllerUsuario = new controllerUsuario();
 $ligasUsuario = $oControllerUsuario->recuperarLigasUsuario($_SESSION["usuario"] ?? "");
@@ -113,6 +113,10 @@ function pintarSectores($filas) {
   }
 }
 $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
+if ($oLiga !== null && strtoupper(trim((string) ($_SESSION["rol"] ?? ""))) !== "ADMIN" && stripos((string) $oLiga->nombre, "Test - ") === 0) {
+  http_response_code(403);
+  exit("Esta liga de prueba solo es visible para administradores.");
+}
 ?>
 <html lang="es" data-bs-theme="dark">
 <head><title>Competiciones - MB League</title></head>
@@ -134,16 +138,16 @@ $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
   <?php if ($oLiga !== null) { ?>
     <section class="index-main-ranking">
       <h2>Ranking de resultados</h2>
-      <table><tr><th>Nº</th><th>Nick</th><th>Partidas</th><?php if (in_array((int) $oLiga->idJuego, array(1, 2), true)) { ?><th>Victorias</th><?php } ?><th>VPs</th></tr><?php pintarRankingResultados($oControllerEnfrentamiento->recuperarRankingResultados($fIdLiga), in_array((int) $oLiga->idJuego, array(1, 2), true)); ?></table>
+      <table><tr><th>Nº</th><th>Nick</th><th>Partidas</th><?php if (in_array((int) $oLiga->idJuego, array(1, 2), true)) { ?><th>Victorias</th><?php } ?><th>VPs</th></tr><?php pintarRankingResultados($oControllerResultado->recuperarRankingResultados($fIdLiga), in_array((int) $oLiga->idJuego, array(1, 2), true)); ?></table>
     </section>
     <section class="index-ranking-grid">
-      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "dch" : "izq"; ?>"><h2>Top Puntuación Pintura</h2><table><tr><th>Nick</th><th>Media</th></tr><?php pintarRanking($oControllerEnfrentamiento->recuperarRankingPuntosPintura($fIdLiga), 2, "ordenarRanking", array(0, 2)); ?></table></div>
-      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "izq" : "dch"; ?> ranking-deportividad"><h2>Top Deportividad</h2><table><tr><th>Nick</th><th>Puntos</th><th>Puntos</th><th>Partidas</th></tr><?php pintarDeportividad($oControllerEnfrentamiento->recuperarRankingPuntosDeportividad($fIdLiga), $fIdLiga); ?></table></div>
+      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "dch" : "izq"; ?>"><h2>Top Puntuación Pintura</h2><table><tr><th>Nick</th><th>Media</th></tr><?php pintarRanking($oControllerResultado->recuperarRankingPuntosPintura($fIdLiga), 2, "ordenarRanking", array(0, 2)); ?></table></div>
+      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "izq" : "dch"; ?> ranking-deportividad"><h2>Top Deportividad</h2><table><tr><th>Nick</th><th>Puntos</th><th>Puntos</th><th>Partidas</th></tr><?php pintarDeportividad($oControllerResultado->recuperarRankingPuntosDeportividad($fIdLiga), $fIdLiga); ?></table></div>
       <?php if (in_array((int) $oLiga->idJuego, array(1, 2), true)) { ?>
-        <div class="div-ranking-dch"><h2>Campaña por sectores</h2><table><tr><th>Fase</th><th>Sector</th><th>Bando dominante</th></tr><?php pintarSectores($oControllerEnfrentamiento->recuperarRankingSectores($fIdLiga, $oLiga->idJuego)); ?></table></div>
+        <div class="div-ranking-dch"><h2>Campaña por sectores</h2><table><tr><th>Fase</th><th>Sector</th><th>Bando dominante</th></tr><?php pintarSectores($oControllerResultado->recuperarRankingSectores($fIdLiga, $oLiga->idJuego)); ?></table></div>
       <?php } ?>
       <?php if (in_array((int) $oLiga->idJuego, array(1, 2), true)) { ?>
-        <div class="div-ranking-izq"><h2>Top Misiones Secundarias</h2><table><tr><th>Nick</th><th>Medallas</th></tr><?php pintarRanking($oControllerEnfrentamiento->recuperarRankingPuntosMisionesSec($fIdLiga), 2, "ordenarRanking", array(0, 1)); ?></table></div>
+        <div class="div-ranking-izq"><h2>Top Misiones Secundarias</h2><table><tr><th>Nick</th><th>Medallas</th></tr><?php pintarRanking($oControllerResultado->recuperarRankingPuntosMisionesSec($fIdLiga), 2, "ordenarRanking", array(0, 1)); ?></table></div>
       <?php } ?>
     </section>
   <?php } elseif (count($arrLigas) === 0) { ?>

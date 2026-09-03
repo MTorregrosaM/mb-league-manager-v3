@@ -18,10 +18,10 @@
         /* variables */
         $oControllerLiga = new controllerLiga();
         $oControllerJugador = new controllerJugador();
-        $oControllerEnfrentamiento = new controllerEnfrentamiento();
+        $oControllerResultado = new controllerResultado();
         $oControllerFase = new controllerFase();
 
-        $paginaActiva = "gestion-enfrentamientos.php";
+        $paginaActiva = "gestion-resultados.php";
         $grid = "";
         $comprobarBorrado = false;
         $mensajeBorrado = "";
@@ -37,8 +37,8 @@
 
         $selectLigas = "<option value=''></option>\n";
         $poolJugadores = "";
-        $poolEnfrentamientos = "";
-        $numVentanasEnfrentamiento = 0;
+        $poolResultados = "";
+        $numVentanasResultado = 0;
          
         // USUARIO
         $oControllerUsuario = new controllerUsuario();
@@ -100,28 +100,28 @@
                     }
                 }
             } 
-            // calculamos el numero de ventanas de enfrentamiento
+            // calculamos el numero de ventanas de resultado
     
-            $numVentanasEnfrentamiento = round($numJugadores/2);
+            $numVentanasResultado = round($numJugadores/2);
 
    
 
             // primero sacamos un array con los cruces
-			 $arrEnfrentamientos  = null;
-            $arrEnfrentamientos = $oControllerEnfrentamiento->recuperarListadoEnfrentamientos($fIdLiga, $fNumFase, $fNumRonda);
+			 $arrResultados  = null;
+            $arrResultados = $oControllerResultado->recuperarListadoResultados($fIdLiga, $fNumFase, $fNumRonda);
 
-            if ($arrEnfrentamientos != null && count($arrEnfrentamientos) >= 1 ){
-                foreach ($arrEnfrentamientos as $fila){
-                    $poolEnfrentamientos .= "<div class=\"column left\">\n<ul class=\"sortable-list ventana-enfrentamiento\">\n";
-                    $poolEnfrentamientos .= "<li class=\"sortable-item ". $fila[3] . "\" id=\"" . $fila[1] . "\">" . $fila[2] . "</li>\n";
-                    $poolEnfrentamientos .= "<li class=\"sortable-item ". $fila[6] . "\" id=\"" . $fila[4] . "\">" . $fila[5] . "</li>\n";
-                    $poolEnfrentamientos .= "</ul>\n</div>\n";
+            if ($arrResultados != null && count($arrResultados) >= 1 ){
+                foreach ($arrResultados as $fila){
+                    $poolResultados .= "<div class=\"column left\">\n<ul class=\"sortable-list ventana-resultado\">\n";
+                    $poolResultados .= "<li class=\"sortable-item ". $fila[3] . "\" id=\"" . $fila[1] . "\">" . $fila[2] . "</li>\n";
+                    $poolResultados .= "<li class=\"sortable-item ". $fila[6] . "\" id=\"" . $fila[4] . "\">" . $fila[5] . "</li>\n";
+                    $poolResultados .= "</ul>\n</div>\n";
                 }
             }
 
-            // terminamos de pintar los enfrentamientos disponibles
-            for ($i=1;$i<= $numVentanasEnfrentamiento ; $i++){
-                $poolEnfrentamientos .= "<div class=\"column left\">\n<ul class=\"sortable-list ventana-enfrentamiento\">\n</ul>\n</div>\n";
+            // terminamos de pintar los resultados disponibles
+            for ($i=1;$i<= $numVentanasResultado ; $i++){
+                $poolResultados .= "<div class=\"column left\">\n<ul class=\"sortable-list ventana-resultado\">\n</ul>\n</div>\n";
             }
         }
 
@@ -140,14 +140,14 @@
 
 <div id="contenedor-principal">
     <?php require_once("menu.php"); ?>
-    <h2 class="h2"><span>Gesti&oacute;n de Enfrentamientos</span></h2>
+    <h2 class="h2"><span>Gesti&oacute;n de Resultados</span></h2>
     
     <?php if ($fIdLiga == null) { ?>
             <p><b>No se ha seleccionado ninguna liga:</b></p>
             <div class="center"><form id="selectLiga" name="selectLiga" method="POST"><label for="fIdLiga" class="span-index">Liga  </label> <select name="fIdLiga" id="fIdLiga" class="select-index" ><?php printf($selectLigas); ?> </select></form></div>
 
     <?php }else{ ?>
-        <p>Gesti&oacute;n manual de enfrentamientos.<p>
+        <p>Gesti&oacute;n manual de resultados.<p>
         <div id="buscador">
             <form name="buscadorJugadores" id="buscadorJugadores" method="POST" action="">
                 <input type="hidden" name="accionForm" id="accionForm" value="1"/>
@@ -160,16 +160,16 @@
         </div>
 
         <?php if($accionForm > 0){ ?>
-            <div class="enfrentamientos-actions">
+            <div class="resultados-actions">
                 <a href="#" class="btn-emparejar" id="btn-generar-emparejamientos">Generar emparejamientos</a>
-                <a href="#" class="btn-grabar" id="btn-grabar">Grabar enfrentamientos</a>
+                <a href="#" class="btn-grabar" id="btn-grabar">Grabar resultados</a>
             </div>
         <?php } ?>
 
         <?php if($accionForm > 0 && $fIdLiga != null){ ?>
             
             <!-- TABLA DRAG & DROP -->
-            <div id="div-enfrentamientos">
+            <div id="div-resultados">
 
                 <div class="column left first">
                 <p class="titulo-columna-drag">Pool de jugadores</p>
@@ -180,7 +180,7 @@
                 </div>
 
                 <div class="matches-grid">
-                    <?php printf($poolEnfrentamientos); ?>
+                    <?php printf($poolResultados); ?>
                 </div>
 
 
@@ -198,7 +198,7 @@
     {
         var columns = [];
         var aux = 0;
-        $('#div-enfrentamientos ul.ventana-enfrentamiento').each(function(){
+        $('#div-resultados ul.ventana-resultado').each(function(){
             columns.push($(this).sortable('toArray').join('-'));            
             if ($(this).sortable('toArray').length != 2){           
                 aux= 1;
@@ -215,7 +215,7 @@
     function generarEmparejamientosAleatorios()
     {
         var jugadores = [];
-        $('#div-enfrentamientos .sortable-list').each(function(){
+        $('#div-resultados .sortable-list').each(function(){
             $(this).children('li').each(function(){
                 jugadores.push(this);
             });
@@ -233,8 +233,8 @@
             jugadores[posicionAleatoria] = jugador;
         }
 
-        $('#div-enfrentamientos ul.ventana-enfrentamiento').empty();
-        $('#div-enfrentamientos ul.ventana-enfrentamiento').each(function(indice){
+        $('#div-resultados ul.ventana-resultado').empty();
+        $('#div-resultados ul.ventana-resultado').each(function(indice){
             $(this).append(jugadores[indice * 2], jugadores[indice * 2 + 1]);
         });
     }
@@ -242,8 +242,8 @@
     $(document).ready(function(){
 
         // Example 1.3: Sortable and connectable lists with visual helper
-        $('#div-enfrentamientos .sortable-list').sortable({
-            connectWith: '#div-enfrentamientos .sortable-list',
+        $('#div-resultados .sortable-list').sortable({
+            connectWith: '#div-resultados .sortable-list',
             placeholder: 'placeholder',
             opacity: 0.8,
         });
@@ -266,11 +266,11 @@
 
         $("#btn-grabar").click(function(){
             if (getItems() == null){
-                alert("Todos los enfrentamientos deben tener dos jugadores.");  
-        /*  }else if (getNumItems() != 2 ){//<?php printf($numVentanasEnfrentamiento); ?>){
-                alert("Debes configurar todos los enfrentamientos.");*/
+                alert("Todos los resultados deben tener dos jugadores.");  
+        /*  }else if (getNumItems() != 2 ){//<?php printf($numVentanasResultado); ?>){
+                alert("Debes configurar todos los resultados.");*/
             }else{
-                grabarEnfrentamientos($('#fIdLiga option:selected').val(), getItems(), <?php printf($numVentanasEnfrentamiento); ?>, $('#fNumFase option:selected').val(), $('#fNumRonda option:selected').val());
+                grabarResultados($('#fIdLiga option:selected').val(), getItems(), <?php printf($numVentanasResultado); ?>, $('#fNumFase option:selected').val(), $('#fNumRonda option:selected').val());
             }
         });
 
@@ -331,13 +331,13 @@
     }
 
     // grabar datos
-    function grabarEnfrentamientos( fIdLiga, cruces, numVentanasEnfrentamiento, fNumFase, fNumRonda  )  {
+    function grabarResultados( fIdLiga, cruces, numVentanasResultado, fNumFase, fNumRonda  )  {
 
 
             var parametros = {
                     "fIdLiga" : fIdLiga,
                     "cruces" : cruces,
-                    "numVentanasEnfrentamiento" : numVentanasEnfrentamiento,
+                    "numVentanasResultado" : numVentanasResultado,
                     "fNumFase" : fNumFase,
                     "fNumRonda" : fNumRonda,
             };
@@ -348,10 +348,10 @@
                     url:   'ajax/ajax.cruces.php',
                     type:  'post',
                     beforeSend: function () {
-                            $("#div-enfrentamientos").html("<span class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></span>");
+                            $("#div-resultados").html("<span class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></span>");
                     },
                     success:  function (response) {
-                            $("#div-enfrentamientos").html(response);
+                            $("#div-resultados").html(response);
                           //  bindAjaxSelectChange();
                     }
             });
