@@ -1170,6 +1170,8 @@
   #contenedor-principal td.td-acciones > .acciones-menu {
     position: relative;
     display: inline-block;
+    margin-left: auto;
+    margin-right: 0;
     z-index: 20;
   }
   #contenedor-principal td.td-acciones > .form-btn-acciones,
@@ -1969,7 +1971,7 @@
     #contenedor-principal table td.td-acciones,
     #contenedor-principal table th.td-acciones {
       width: 104px !important;
-      min-width: 104px;
+      justify-content: flex-end !important;
     }
     #contenedor-principal table td.td-acciones {
       display: table-cell;
