@@ -115,7 +115,7 @@
 								<input type=\"hidden\" name=\"fFecIni\" id=\"fFecIni\" value=\"". $fila[2] ."\" />
 								<input type=\"hidden\" name=\"fFecFin\" id=\"fFecFin\" value=\"". $fila[3] ."\" />
 								<input type=\"hidden\" name=\"fClaveCifrada\" id=\"fClaveCifrada\" value=\"". $fila[4] ."\" />
-								<img src=\"recursos/img/tool.svg\" alt=\"form-editar-".$fila[0].$fila[1]."\"  class=\"btn-editar-reg\"/>
+								<img src=\"assets/img/tool.svg\" alt=\"form-editar-".$fila[0].$fila[1]."\"  class=\"btn-editar-reg\"/>
 							</form>\n";
 				}
 				$grid .= "</tr>\n</table>\n</div>";
@@ -248,7 +248,7 @@
 
 	    $( ".fFecIniForm" ).datepicker({
 	      showOn: "both",
-	      buttonImage: "recursos/img/calendar.png",
+	      buttonImage: "assets/img/calendar.svg",
 	      buttonImageOnly: true,
 	      buttonText: "Selecciona una fecha",
 	      dateFormat: 'dd-mm-yy',
@@ -260,7 +260,7 @@
 
 	    $( ".fFecFinForm" ).datepicker({
 	      showOn: "both",
-	      buttonImage: "recursos/img/calendar.png",
+	      buttonImage: "assets/img/calendar.svg",
 	      buttonImageOnly: true,
 	      buttonText: "Selecciona una fecha",
 	      dateFormat: 'dd-mm-yy',
@@ -357,7 +357,7 @@
 	          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
 	          <input type="hidden" name="accionForm" id="accionForm" value="2"/>
 	       	  <input type="hidden" id="fIdLiga" name="fIdLiga" value="<?php printf($fIdLiga); ?>"/>
-	          <a href="#" class="button" id="btnAltaCliente"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva fase</a>
+	          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva fase</a>
 	        </form>
 	      </div>
 

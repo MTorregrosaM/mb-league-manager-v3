@@ -110,14 +110,14 @@
                 <input type=\"hidden\" name=\"fIdUsuario\" id=\"fIdUsuario\" value=\"".$fila[0]."\"/>
                 <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>
 
-                <img src=\"recursos/img/options.svg\" title=\"Ver ligas que gestiona el usuario\" alt=\"form-ligas-".$fila[0]."\" class=\"btn-ligas-usuario\"/>
+                <img src=\"assets/img/options.svg\" title=\"Ver ligas que gestiona el usuario\" alt=\"form-ligas-".$fila[0]."\" class=\"btn-ligas-usuario\"/>
               </form>";
 
           $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
                 <input type=\"hidden\" name=\"fIdUsuarioBorrar\" id=\"fIdUsuarioBorrar\" value=\"".$fila[0]."\"/>
                 <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
                 <input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
-                <img src=\"recursos/img/trash.svg\" title=\"Eliminar usuario\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+                <img src=\"assets/img/trash.svg\" title=\"Eliminar usuario\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
               </form>";
 
           $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
@@ -127,7 +127,7 @@
                 <input type=\"hidden\" name=\"fPass\" id=\"fPass\" value=\"". $fila[2] ."\" />
                 <input type=\"hidden\" name=\"fRol\" id=\"fRol\" value=\"". $fila[3] ."\" />
 
-                <img src=\"recursos/img/tool.svg\" title=\"Editar usuario\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+                <img src=\"assets/img/tool.svg\" title=\"Editar usuario\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
               </form>\n";
         }
         $grid .= "</tr>\n</table>\n</div>";
@@ -342,7 +342,7 @@
       <div id="btn-alta">
         <form name="btnFormAltaUsuario" id="btnFormAltaUsuario" method="POST" action="">
           <input type="hidden" name="accionForm" id="accionForm" value="2"/>
-          <a href="#" class="button" id="btnAltaCliente"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Alta de nuevo usuario</a>
+          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nuevo usuario</a>
         </form>
       </div>
 

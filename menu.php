@@ -22,7 +22,7 @@
 
 <?php if ($estaLogado && ($rolUsuario == 'ADMIN' || $rolUsuario == 'USER' )) { ?>
 <div id="logo">
-	<img src="images/logo_mb.svg" alt="MB League">
+	<img src="assets/img/logo_mb.svg" alt="MB League">
 </div>
 <?php } ?>
 

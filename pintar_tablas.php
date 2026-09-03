@@ -40,7 +40,7 @@
     	printf("<td>");
     	while ($filaFase = mysqli_fetch_assoc($resultadoBDFase)) {
     		$icon = ($filaFase["bando"] == 'ALIADO') ? "icon_aliados.png": "icon_eje.png";
-			printf("<a href=\"http://www.modelbrush.com/mb-league/recursos/docs/ligas/III Liga Flames of War/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"http://www.modelbrush.com/mb-league/recursos/img/" . $icon . "\" alt=\"\"></a>");
+			printf("<a href=\"http://www.modelbrush.com/mb-league/assets/docs/ligas/III Liga Flames of War/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"http://www.modelbrush.com/mb-league/assets/img/" . $icon . "\" alt=\"\"></a>");
     	}
     	if($resultadoBDFase  == null){
 			printf("-");
@@ -53,7 +53,7 @@
     	printf("<td>");
     	while ($filaFase = mysqli_fetch_assoc($resultadoBDFase)) {
     		$icon = ($filaFase["bando"] == 'ALIADO') ? "icon_aliados.png": "icon_eje.png";
-			printf("<a href=\"http://www.modelbrush.com/mb-league/recursos/docs/ligas/III Liga Flames of War/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"http://www.modelbrush.com/mb-league/recursos/img/" . $icon . "\" alt=\"\"></a>");
+			printf("<a href=\"http://www.modelbrush.com/mb-league/assets/docs/ligas/III Liga Flames of War/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"http://www.modelbrush.com/mb-league/assets/img/" . $icon . "\" alt=\"\"></a>");
     	}
     	if($resultadoBDFase  == null){
 			printf("-");
@@ -66,7 +66,7 @@
     	printf("<td>");
     	while ($filaFase = mysqli_fetch_assoc($resultadoBDFase)) {
     		$icon = ($filaFase["bando"] == 'ALIADO') ? "icon_aliados.png": "icon_eje.png";
-			printf("<a href=\"http://www.modelbrush.com/mb-league/recursos/docs/ligas/III Liga Flames of War/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"http://www.modelbrush.com/mb-league/recursos/img/" . $icon . "\" alt=\"\"></a>");
+			printf("<a href=\"http://www.modelbrush.com/mb-league/assets/docs/ligas/III Liga Flames of War/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"http://www.modelbrush.com/mb-league/assets/img/" . $icon . "\" alt=\"\"></a>");
     	}
     	if($resultadoBDFase  == null){
 			printf("-");

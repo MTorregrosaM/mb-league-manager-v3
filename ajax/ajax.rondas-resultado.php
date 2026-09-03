@@ -75,7 +75,7 @@
 	                url:   'ajax/ajax.jugador-contrincante.php',
 	                type:  'post',
 	              	beforeSend: function () {
-	                        $("#selectJugador2").html("<div class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></div>");
+	                        $("#selectJugador2").html("<div class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></div>");
 	                },
 	                success:  function (response) {
 	                        $("#selectJugador2").html(response);

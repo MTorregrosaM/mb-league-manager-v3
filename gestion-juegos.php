@@ -114,7 +114,7 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
   <div id="btn-alta">
     <form name="btnFormAltaJuego" id="btnFormAltaJuego" method="POST" action="">
       <input type="hidden" name="accionForm" value="2" />
-      <a href="#" class="button" id="btnAltaJuego"><img src="recursos/img/icon_nuevo.png" alt="Nuevo" /> Alta de nuevo juego</a>
+      <a href="#" class="button" id="btnAltaJuego"><img src="assets/img/icon_nuevo.png" alt="Nuevo" /> Alta de nuevo juego</a>
     </form>
   </div>
   <?php if (count($juegos) > 0) { ?>
@@ -129,19 +129,19 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
       <td class="align-center td-acciones">
         <form method="GET" action="gestion-facciones.php" class="form-btn-acciones">
           <input type="hidden" name="idJuego" value="<?php echo (int) $juego[0]; ?>" />
-          <img src="recursos/img/cog.svg" title="Ver facciones del juego" alt="Ver facciones" class="btn-facciones" />
+          <img src="assets/img/cog.svg" title="Ver facciones del juego" alt="Ver facciones" class="btn-facciones" />
         </form>
         <form method="POST" action="gestion-juegos.php" class="form-btn-acciones">
           <input type="hidden" name="accionForm" value="3" />
           <input type="hidden" name="fIdJuegoBorrar" value="<?php echo (int) $juego[0]; ?>" />
-          <img src="recursos/img/trash.svg" title="Eliminar juego" alt="Eliminar juego" class="btn-borrar" />
+          <img src="assets/img/trash.svg" title="Eliminar juego" alt="Eliminar juego" class="btn-borrar" />
         </form>
         <form method="POST" action="gestion-juegos.php" class="form-btn-acciones">
           <input type="hidden" name="accionForm" value="4" />
           <input type="hidden" name="fIdJuego" value="<?php echo (int) $juego[0]; ?>" />
           <input type="hidden" name="fDescJuego" value="<?php echo htmlspecialchars($juego[1], ENT_QUOTES, "UTF-8"); ?>" />
           <input type="hidden" name="fIndActivo" value="<?php echo (int) $juego[2]; ?>" />
-          <img src="recursos/img/tool.svg" title="Editar juego" alt="Editar juego" class="btn-editar-reg" />
+          <img src="assets/img/tool.svg" title="Editar juego" alt="Editar juego" class="btn-editar-reg" />
         </form>
       </td>
     </tr>
@@ -156,7 +156,7 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
   $(function() {
     $(".fFecIniForm").datepicker({
       showOn: "both",
-      buttonImage: "recursos/img/calendar.png",
+      buttonImage: "assets/img/calendar.svg",
       buttonImageOnly: true,
       buttonText: "Selecciona una fecha",
       dateFormat: "dd-mm-yy",

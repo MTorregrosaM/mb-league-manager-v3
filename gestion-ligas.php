@@ -127,7 +127,7 @@
                 <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[0]."\"/>
                 <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>
 
-                <img src=\"recursos/img/cog.svg\" title=\"Ver fases de la liga\" alt=\"form-fases-".$fila[0]."\" class=\"btn-fases\"/>
+                <img src=\"assets/img/cog.svg\" title=\"Ver fases de la liga\" alt=\"form-fases-".$fila[0]."\" class=\"btn-fases\"/>
               </form>";
 
               $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" action=\"gestion-ligas.php\" class=\"form-btn-acciones\">
@@ -138,7 +138,7 @@
                 <input type=\"hidden\" name=\"fNombre\" id=\"fNombre\" value=\"". $fNombre ."\" />
                 <input type=\"hidden\" name=\"fNumFases\" id=\"fNumFases\" value=\"". $fNumFases ."\" />
                 <input type=\"hidden\" name=\"fNumRondas\" id=\"fNumRondas\" value=\"". $fNumRondas ."\" />
-                <img src=\"recursos/img/trash.svg\" title=\"Eliminar liga\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+                <img src=\"assets/img/trash.svg\" title=\"Eliminar liga\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
               </form>";
 
           $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
@@ -151,7 +151,7 @@
                 <input type=\"hidden\" name=\"fFecIni\" id=\"fFecIni\" value=\"". $fila[5] ."\" />
                 <input type=\"hidden\" name=\"fFecFin\" id=\"fFecFin\" value=\"". $fila[6] ."\" />
                 <input type=\"hidden\" name=\"fIdJuego\" id=\"fIdJuego\" value=\"". $fila[8] ."\" />
-                <img src=\"recursos/img/tool.svg\" title=\"Editar liga\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+                <img src=\"assets/img/tool.svg\" title=\"Editar liga\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
                 </form>\n";
               }
               $grid .= "</tr>\n</table>\n</div>";
@@ -326,7 +326,7 @@
 
       $( ".fFecIniForm" ).datepicker({
         showOn: "both",
-        buttonImage: "recursos/img/calendar.png",
+        buttonImage: "assets/img/calendar.svg",
         buttonImageOnly: true,
         buttonText: "Selecciona una fecha",
         dateFormat: 'dd-mm-yy',
@@ -338,7 +338,7 @@
 
       $( ".fFecFinForm" ).datepicker({
         showOn: "both",
-        buttonImage: "recursos/img/calendar.png",
+        buttonImage: "assets/img/calendar.svg",
         buttonImageOnly: true,
         buttonText: "Selecciona una fecha",
         dateFormat: 'dd-mm-yy',
@@ -443,11 +443,11 @@
 
       <?php if($oUsuario->rol == 'ADMIN') { ?>
       <div id="btn-alta">
-        <a href="gestion-juegos.php" class="button"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Gesti&oacute;n de juegos</a>
+        <a href="gestion-juegos.php" class="button"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Gesti&oacute;n de juegos</a>
         <form name="btnFormAltaLiga" id="btnFormAltaLiga" method="POST" action="">
           <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
           <input type="hidden" name="accionForm" id="accionForm" value="2"/>
-          <a href="#" class="button" id="btnAltaCliente"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva liga</a>
+          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva liga</a>
         </form>
       </div>
       <?php } ?>

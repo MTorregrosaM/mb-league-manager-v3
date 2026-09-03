@@ -19,7 +19,7 @@ function enlaceListaDetalle($urlDocumento, $idLiga, $numFase) {
         return $urlDocumento;
     }
 
-    return "recursos/docs/ligas/"
+    return "assets/docs/ligas/"
       . (int) $idLiga . "/"
         . (int) $numFase . "/"
         . rawurlencode(basename((string) $urlDocumento));

@@ -346,7 +346,7 @@
   <?php if (isset($oLiga) && $oLiga != null && !empty($oLiga->logo)) { ?>
     <div id="img-cabecera">
       <a href="alta-resultados.php">
-        <img src="<?php printf("recursos/img/ligas/" . htmlspecialchars($oLiga->logo, ENT_QUOTES, 'UTF-8')); ?>" width="100%" />
+        <img src="<?php printf("assets/img/ligas/" . htmlspecialchars($oLiga->logo, ENT_QUOTES, 'UTF-8')); ?>" width="100%" />
       </a>
     </div>
   <?php } ?>
@@ -427,15 +427,15 @@
                   <div class="resultados-radio">
                     <label>
                       <input type="radio" name="fResultadoRadio" value="3" <?php if ($fResultadoRadio == 3){ printf("checked"); } ?>/>
-                      <img src="images/icono-victoria.png" alt="Victoria">
+                      <img src="assets/img/icono-victoria.png" alt="Victoria">
                     </label>
                     <label>
                       <input type="radio" name="fResultadoRadio" value="1" <?php if ($fResultadoRadio == 1){ printf("checked"); } ?>/>
-                      <img src="images/icono-empate.png" alt="Empate">
+                      <img src="assets/img/icono-empate.png" alt="Empate">
                     </label>                    
                     <label>
                       <input id="fb3" type="radio" name="fResultadoRadio" value="0"  <?php if ($fResultadoRadio == 0){ printf("checked"); } ?>/>
-                      <img src="images/icono-derrota.png" alt="Derrota">
+                      <img src="assets/img/icono-derrota.png" alt="Derrota">
                     </label>
                   </div>
                   <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>">
@@ -545,7 +545,7 @@
                 // datepicker de fecha
                   $( ".fFechaBatallaForm" ).datepicker({
                     showOn: "both",
-                    buttonImage: "recursos/img/calendar.png",
+                    buttonImage: "assets/img/calendar.svg",
                     buttonImageOnly: true,
                     buttonText: "Selecciona una fecha",
                     dateFormat: 'dd-mm-yy',
@@ -615,7 +615,7 @@
                     url:   'ajax/ajax.fases.php',
                     type:  'post',
                     beforeSend: function () {
-                            $("#selectFases").html("<span class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></span>");
+                            $("#selectFases").html("<span class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></span>");
                     },
                     success:  function (response) {
                             $("#selectFases").html(response);
@@ -641,7 +641,7 @@
                   url:   'ajax/ajax.rondas-resultado.php',
                   type:  'post',
                   beforeSend: function () {
-                          $("#selectRondas").html("<div class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></div>");
+                          $("#selectRondas").html("<div class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></div>");
                   },
                   success:  function (response) {
                           $("#selectRondas").html(response);
@@ -667,7 +667,7 @@
                   url:   'ajax/ajax.jugador-contrincante.php',
                   type:  'post',
                   beforeSend: function () {
-                          $("#selectJugador2").html("<div class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></div>");
+                          $("#selectJugador2").html("<div class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></div>");
                   },
                   success:  function (response) {
                           $("#selectJugador2").html(response);

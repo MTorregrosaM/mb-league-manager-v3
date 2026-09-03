@@ -15,7 +15,7 @@ $detalleError = htmlspecialchars($detalleError, ENT_QUOTES, 'UTF-8');
     <title>Error <?php echo $status; ?> - MB League</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lekton:wght@400;700&family=VT323&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="recursos/css/estilos.css?v=20260908" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="assets/css/estilos.css?v=20260908" type="text/css" media="screen, projection">
 </head>
 <body class="login-page error-page">
     <div id="boxlogomodelbrush" aria-label="MB League">

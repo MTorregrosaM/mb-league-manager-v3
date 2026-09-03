@@ -38,9 +38,9 @@ The application is a server-rendered PHP MVC-style application with a legacy cod
 - `ajax/`: asynchronous endpoints used by dynamic forms and selectors.
 - `inc/`: embeddable PHP components for external pages.
 - Root PHP files: authenticated screens and workflows exposed to users.
-- `recursos/css/`: shared styles.
-- `recursos/js/`: jQuery, jQuery UI, calendars, validation and other frontend libraries.
-- `images/` and `recursos/img/`: application and league assets.
+- `assets/css/`: shared styles.
+- `assets/js/`: jQuery, jQuery UI, calendars, validation and other frontend libraries.
+- `assets/img/`: application and league image assets.
 
 The database layer uses `mysqli`. Existing application table and column names are retained for compatibility with the controllers and external integrations.
 

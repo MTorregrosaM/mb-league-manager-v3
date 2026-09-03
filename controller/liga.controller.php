@@ -346,7 +346,7 @@ class controllerLiga {
                   WHERE idLiga  = '". $fila[0] . "'";
             $resultadoBDaux2 = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
-            $rutaDocumentosLiga = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'recursos' . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR . 'ligas' . DIRECTORY_SEPARATOR . (int) $fila[0];
+            $rutaDocumentosLiga = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR . 'ligas' . DIRECTORY_SEPARATOR . (int) $fila[0];
             if (!is_dir($rutaDocumentosLiga) && !mkdir($rutaDocumentosLiga, 0775, true)) {
               throw new RuntimeException('No se pudo crear el directorio de documentos de la liga.');
             }
@@ -457,12 +457,12 @@ class controllerLiga {
       if ($resultadoBD >= 1){
 
         // borramos cualquier imagen con las 3 extensiones permitidas
-        if (file_exists("./recursos/img/ligas/logo-". $this->oLiga->idLiga.".png"))
-          unlink("./recursos/img/ligas/logo-". $this->oLiga->idLiga.".png");
-        if (file_exists("./recursos/img/ligas/logo-". $this->oLiga->idLiga.".jpg"))
-          unlink("./recursos/img/ligas/logo-". $this->oLiga->idLiga.".jpg");
-        if (file_exists("./recursos/img/ligas/logo-". $this->oLiga->idLiga.".gif"))
-          unlink("./recursos/img/ligas/logo-". $this->oLiga->idLiga.".gif");
+        if (file_exists("./assets/img/ligas/logo-". $this->oLiga->idLiga.".png"))
+          unlink("./assets/img/ligas/logo-". $this->oLiga->idLiga.".png");
+        if (file_exists("./assets/img/ligas/logo-". $this->oLiga->idLiga.".jpg"))
+          unlink("./assets/img/ligas/logo-". $this->oLiga->idLiga.".jpg");
+        if (file_exists("./assets/img/ligas/logo-". $this->oLiga->idLiga.".gif"))
+          unlink("./assets/img/ligas/logo-". $this->oLiga->idLiga.".gif");
         return true;  
       }else{
         return false;

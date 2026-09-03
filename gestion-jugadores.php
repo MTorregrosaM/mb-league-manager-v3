@@ -157,14 +157,14 @@
 	                <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
 	                <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>
 
-	                <img src=\"recursos/img/options.svg\" title=\"Ver listas del jugador\" alt=\"form-listas-".$fila[0]."\" class=\"btn-listas\"/>
+	                <img src=\"assets/img/options.svg\" title=\"Ver listas del jugador\" alt=\"form-listas-".$fila[0]."\" class=\"btn-listas\"/>
 	              </form>";
 
 	          $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
 	                <input type=\"hidden\" name=\"fIdJugadorBorrar\" id=\"fIdJugadorBorrar\" value=\"".$fila[0]."\"/>
 	                <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
 	                <input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
-	                <img src=\"recursos/img/trash.svg\" title=\"Eliminar jugador\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+	                <img src=\"assets/img/trash.svg\" title=\"Eliminar jugador\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
 	              </form>";
 
 	          $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
@@ -179,7 +179,7 @@
                   <input type=\"hidden\" name=\"fEmail\" id=\"fEmail\" value=\"". $fila[7] ."\" />
                   <input type=\"hidden\" name=\"fBando\" id=\"fBando\" value=\"". $fila[8] ."\" />
                   <input type=\"hidden\" name=\"fPuntosPintura\" id=\"fPuntosPintura\" value=\"". $fila[9] ."\" />
-	                <img src=\"recursos/img/tool.svg\" title=\"Editar jugador\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+	                <img src=\"assets/img/tool.svg\" title=\"Editar jugador\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
 	              </form>\n";
 	        }
           $grid .= "</tr>\n</table>\n</div>";
@@ -419,7 +419,7 @@
         <form name="btnFormAltaJugador" id="btnFormAltaJugador" method="POST" action="">
           <input type="hidden" name="accionForm" id="accionForm" value="2"/>
           <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
-          <a href="#" class="button" id="btnAltaJugador"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/> Alta de nuevo jugador</a>
+          <a href="#" class="button" id="btnAltaJugador"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nuevo jugador</a>
         </form>
       </div>
 

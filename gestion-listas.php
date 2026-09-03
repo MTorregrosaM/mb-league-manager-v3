@@ -79,7 +79,7 @@
 
     $oLiga = $oControllerLiga -> recuperarDatosLiga( $fIdLiga );
     $oJugador = $oControllerJugador -> recuperarDatosJugador( $fIdJugador );
-    $rutaDocumentosLiga = __DIR__ . "/recursos/docs/ligas/" . $fIdLiga;
+    $rutaDocumentosLiga = __DIR__ . "/assets/docs/ligas/" . $fIdLiga;
 
     // options para los select de los formularios
     // LIGAS
@@ -171,9 +171,9 @@
           $fDocAux = $fila[2];
 
           if (strpos($fila[2] , "http") === false && strpos($fila[2] , "https") === false && strpos($fila[2] , "wwww") === false){
-            //$fDocAux  = getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/".$fila[1]."/".$fila[2];
-            //$fDocAux  =$_SERVER['HTTP_HOST'] ."/mb-league/recursos/docs/ligas/".$oLiga->nombre."/".$fila[1]."/".$fila[2];
-            $fDocUrl = "/recursos/docs/ligas/" . $fIdLiga . "/" . $fila[1] . "/" . rawurlencode(basename($fila[2]));
+            //$fDocAux  = getcwd()."/assets/docs/ligas/".$oLiga->nombre."/".$fila[1]."/".$fila[2];
+            //$fDocAux  =$_SERVER['HTTP_HOST'] ."/mb-league/assets/docs/ligas/".$oLiga->nombre."/".$fila[1]."/".$fila[2];
+            $fDocUrl = "/assets/docs/ligas/" . $fIdLiga . "/" . $fila[1] . "/" . rawurlencode(basename($fila[2]));
             $fDocAux = $rutaDocumentosLiga . "/" . $fila[1] . "/" . basename($fila[2]);
           }
 
@@ -188,7 +188,7 @@
                 <input type=\"hidden\" name=\"fNumFase\" id=\"fNumFase\" value=\"". $fila[1] ."\" />
                 <input type=\"hidden\" name=\"fBando\" id=\"fBando\" value=\"". $fila[3]."\" />
                 <input type=\"hidden\" name=\"fRutaDoc\" id=\"fRutaDoc\" value=\"". $fDocAux ."\" />
-                <img src=\"recursos/img/trash.svg\" title=\"Eliminar lista\" alt=\"form-borrar-".$fila[1].$fila[0].$fila[3]."\" class=\"btn-borrar\"/>
+                <img src=\"assets/img/trash.svg\" title=\"Eliminar lista\" alt=\"form-borrar-".$fila[1].$fila[0].$fila[3]."\" class=\"btn-borrar\"/>
               </form>";
 
           $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
@@ -198,7 +198,7 @@
                 <input type=\"hidden\" name=\"fNumFase\" id=\"fNumFase\" value=\"". $fila[1] ."\" />
                 <input type=\"hidden\" name=\"fBando\" id=\"fBando\" value=\"". $fila[3]."\" />
                 <input type=\"hidden\" name=\"fUrlDocumentoAux\" id=\"fUrlDocumentoAux\" value=\"". $fila[2] ."\" />
-                <img src=\"recursos/img/cog.svg\" title=\"Editar lista\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+                <img src=\"assets/img/cog.svg\" title=\"Editar lista\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
               </form>\n";
         }
         $grid .= "</tr>\n</table>\n</div>";
@@ -372,7 +372,7 @@
                   url:   'ajax/ajax.fases.php',
                   type:  'post',
                   beforeSend: function () {
-                          $("#selectFases").html("<div class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></div>");
+                          $("#selectFases").html("<div class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></div>");
                   },
                   success:  function (response) {
                           $("#selectFases").html(response);
@@ -397,7 +397,7 @@
                   url:   'ajax/ajax.jugadores.php',
                   type:  'post',
                   beforeSend: function () {
-                          $("#selectJugadores").html("<div class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></div>");
+                          $("#selectJugadores").html("<div class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></div>");
                   },
                   success:  function (response) {
                           $("#selectJugadores").html(response);
@@ -447,7 +447,7 @@
                             /></p>
       <p><label for="fUrlDocumentoAux">Url documento: </label>  <input type="text" name="fUrlDocumentoAux" maxlength="35"  id="fUrlDocumentoAux" value="<?php printf($fUrlDocumento);?>"   data-validation="required"></p>
       <?php if (strlen($fUrlDocumento) > 0 && $accionForm == 4 ) { ?>
-          <p><label for=""> </label><div class="config-foto"><a href="/recursos/docs/ligas/<?php echo (int) $fIdLiga . "/" . (int) $fNumFase . "/" . rawurlencode(basename($fUrlDocumento)); ?>" target="_blank"><img src="recursos/img/icon-pdf.png" alt="Lista de ejército"/></a></div></p>
+          <p><label for=""> </label><div class="config-foto"><a href="/assets/docs/ligas/<?php echo (int) $fIdLiga . "/" . (int) $fNumFase . "/" . rawurlencode(basename($fUrlDocumento)); ?>" target="_blank"><img src="assets/img/icon-pdf.png" alt="Lista de ejército"/></a></div></p>
       <?php } ?>
       <p><input type="submit" value="<?php printf($txtAltaModBoton);?>" id="formButton" class="submit-button"/></p>
     </form>
@@ -502,7 +502,7 @@
         <input type="hidden" name="fIdJugador" id="fIdJugador" value="<?php printf($fIdJugador);?>"/>
         <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
         <input type="hidden" name="fNumFase" id="fNumFase" value="<?php printf("%s", $fNumFase ?? "");?>"/>
-        <a href="#" class="button" id="btnAltaLista"> <img src="recursos/img/icon_nuevo.png" alt="Nuevo"/>Alta de nueva lista</a>
+        <a href="#" class="button" id="btnAltaLista"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/>Alta de nueva lista</a>
       </form>
     </div>
 

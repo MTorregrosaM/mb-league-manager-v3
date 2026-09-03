@@ -298,7 +298,7 @@
                     url:   'ajax/ajax.fases.php',
                     type:  'post',
                     beforeSend: function () {
-                            $("#selectFases").html("<span class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></span>");
+                            $("#selectFases").html("<span class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></span>");
                     },
                     success:  function (response) {
                             $("#selectFases").html(response);
@@ -321,7 +321,7 @@
                     url:   'ajax/ajax.rondas.php',
                     type:  'post',
                     beforeSend: function () {
-                            $("#selectRondas").html("<span class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></span>");
+                            $("#selectRondas").html("<span class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></span>");
                     },
                     success:  function (response) {
                             $("#selectRondas").html(response);
@@ -348,7 +348,7 @@
                     url:   'ajax/ajax.cruces.php',
                     type:  'post',
                     beforeSend: function () {
-                            $("#div-resultados").html("<span class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></span>");
+                            $("#div-resultados").html("<span class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></span>");
                     },
                     success:  function (response) {
                             $("#div-resultados").html(response);

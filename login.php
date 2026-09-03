@@ -61,28 +61,28 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- js -->
-	<script type="text/javascript" src="recursos/js/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery.form-validator.min.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery-spanish.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery.raty.js"></script>	
-	<script type="text/javascript" src="recursos/js/moment.min.js"></script>
-	<script type="text/javascript" src="recursos/js/fullcalendar.min.js"></script>
-	<script type="text/javascript" src="recursos/js/jquery.qtip.min.js"></script>
-	<script type="text/javascript" src="recursos/js/lang/es.js"></script>
+	<script type="text/javascript" src="assets/js/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery.form-validator.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery-spanish.js"></script>
+	<script type="text/javascript" src="assets/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery.raty.js"></script>
+	<script type="text/javascript" src="assets/js/moment.min.js"></script>
+	<script type="text/javascript" src="assets/js/fullcalendar.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery.qtip.min.js"></script>
+	<script type="text/javascript" src="assets/js/lang/es.js"></script>
 
 	<!-- css  -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Lekton:wght@400;700&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="recursos/css/estilos.css?v=20260908" type="text/css" media="screen, projection"/>
-	<link rel="stylesheet" type="text/css" href="recursos/js/css/jquery-ui.min.css" />
-	<link rel="stylesheet" type="text/css" href="recursos/js/css/jquery.raty.css" />
-	<link rel="stylesheet" type="text/css" href="recursos/css/style-drag.css" />
+	<link rel="stylesheet" href="assets/css/estilos.css?v=20260908" type="text/css" media="screen, projection"/>
+	<link rel="stylesheet" type="text/css" href="assets/js/css/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/js/css/jquery.raty.css" />
+	<link rel="stylesheet" type="text/css" href="assets/css/style-drag.css" />
 
 	<!-- calendario -->
-	<link rel='stylesheet'  type="text/css" href="recursos/js/css/fullcalendar.css" />
-	<link rel='stylesheet'  type="text/css" href="recursos/js/css/jquery.qtip.css" />
+	<link rel='stylesheet'  type="text/css" href="assets/js/css/fullcalendar.css" />
+	<link rel='stylesheet'  type="text/css" href="assets/js/css/jquery.qtip.css" />
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 		
 	<link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-32x32.png" sizes="32x32" />

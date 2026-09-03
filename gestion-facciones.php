@@ -100,7 +100,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
     <form method="POST" action="gestion-facciones.php">
       <input type="hidden" name="idJuego" value="<?php echo $idJuego; ?>" />
       <input type="hidden" name="accionForm" value="2" />
-      <a href="#" class="button" id="btnAltaFaccion"><img src="recursos/img/icon_nuevo.png" alt="Nuevo" /> Alta de nueva facci&oacute;n</a>
+      <a href="#" class="button" id="btnAltaFaccion"><img src="assets/img/icon_nuevo.png" alt="Nuevo" /> Alta de nueva facci&oacute;n</a>
     </form>
   </div>
   <?php if (count($facciones) > 0) { ?>
@@ -116,7 +116,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
           <input type="hidden" name="idJuego" value="<?php echo $idJuego; ?>" />
           <input type="hidden" name="accionForm" value="3" />
           <input type="hidden" name="fIdFaccionBorrar" value="<?php echo (int) $faccion[0]; ?>" />
-          <img src="recursos/img/trash.svg" title="Eliminar facción" alt="Eliminar facción" class="btn-borrar" />
+          <img src="assets/img/trash.svg" title="Eliminar facción" alt="Eliminar facción" class="btn-borrar" />
         </form>
         <form method="POST" action="gestion-facciones.php" class="form-btn-acciones">
           <input type="hidden" name="idJuego" value="<?php echo $idJuego; ?>" />
@@ -124,7 +124,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
           <input type="hidden" name="fIdFaccion" value="<?php echo (int) $faccion[0]; ?>" />
           <input type="hidden" name="fDescFaccion" value="<?php echo htmlspecialchars($faccion[2], ENT_QUOTES, "UTF-8"); ?>" />
           <input type="hidden" name="fIndActivo" value="<?php echo (int) $faccion[3]; ?>" />
-          <img src="recursos/img/tool.svg" title="Editar facción" alt="Editar facción" class="btn-editar-reg" />
+          <img src="assets/img/tool.svg" title="Editar facción" alt="Editar facción" class="btn-editar-reg" />
         </form>
       </td>
     </tr>

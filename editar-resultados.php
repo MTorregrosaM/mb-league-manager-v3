@@ -289,8 +289,8 @@
 
             // SI HEMOS BUSCADO POR UN JUGADOR, LO PINTAMOS DE OTRO COLOR
             $classJugadorBuscado = ($fila[4] == $fIdJugador1) ? "class=\"jugadorSeleccionado\"" : "";
-            $imgStar = "<img class=\"star-deportividad\" src=\"recursos/img/star.svg\" title=\"Deportividad\"/>";
-            $imgFlag = "<img class=\"star-deportividad\" src=\"recursos/img/flag.svg\" title=\"Victoria concedida\"/>";
+            $imgStar = "<img class=\"star-deportividad\" src=\"assets/img/star.svg\" title=\"Deportividad\"/>";
+            $imgFlag = "<img class=\"star-deportividad\" src=\"assets/img/flag.svg\" title=\"Victoria concedida\"/>";
 
 
             $grid .="\n<tr><td>" . $fila[2] . " (" . $fila[3]  . ")</td><td>" . $fila[10] . "</td><td ". $classJugadorBuscado . ">" .  $oJugador1->nick ." (" ;
@@ -307,8 +307,8 @@
 
             // SI HEMOS BUSCADO POR UN JUGADOR, LO PINTAMOS DE OTRO COLOR
             $classJugadorBuscado = ($fila[5] == $fIdJugador1) ? "class=\"jugadorSeleccionado\"" : "";
-            $imgStar = "<img class=\"star-deportividad\" src=\"recursos/img/star.svg\" title=\"Deportividad\"/>";
-            $imgFlag = "<img class=\"star-deportividad\" src=\"recursos/img/flag.svg\" title=\"Victoria concedida\"/>";
+            $imgStar = "<img class=\"star-deportividad\" src=\"assets/img/star.svg\" title=\"Deportividad\"/>";
+            $imgFlag = "<img class=\"star-deportividad\" src=\"assets/img/flag.svg\" title=\"Victoria concedida\"/>";
 
             $grid .= "<td ". $classJugadorBuscado . ">" . $oJugador2->nick . " (";
 
@@ -328,7 +328,7 @@
             if ($fila[11] != 1) {
 
             
-            $grid .= "<img src=\"recursos/img/check.svg\" width=\"24\" height=\"24\" title=\"Validar resultado\" alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\" onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\"/>";
+            $grid .= "<img src=\"assets/img/check.svg\" width=\"24\" height=\"24\" title=\"Validar resultado\" alt=\"validar-resultado-".$fila[0]."\" class=\"btn-validar-resultado\" onClick=\"validarResultado(" . $fila[0] . "," . $fila[1] . ",'" . $fIdJugador1 . "','" .  $fFechaBatalla . "','" .$fIndValidado . "'," . $pagActual .");\"/>";
             }
             $grid .= " <form name=\"form-editar-".$fila[0]."\" id=\"form-editar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
                   <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\" />
@@ -359,7 +359,7 @@
                     <input type=\"hidden\" name=\"fIdMisionSecJug23\" id=\"fIdMisionSecJug23\" value=\"". $fIdMisionSecJug23 ."\" />
                     <input type=\"hidden\" name=\"fIdMisionSecJug24\" id=\"fIdMisionSecJug24\" value=\"". $fIdMisionSecJug24 ."\" />
 
-                    <img src=\"recursos/img/cog.svg\" width=\"24\" height=\"24\" title=\"Editar resultado\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
+                    <img src=\"assets/img/cog.svg\" width=\"24\" height=\"24\" title=\"Editar resultado\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
                   </form>\n";
             if ($fila[11] == 1) {
             $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
@@ -368,7 +368,7 @@
                   <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
                   <input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
                   <input type=\"hidden\" name=\"fIdResultado\" id=\"fIdResultado\" value=\"". $fila[0] ."\" />
-                    <img src=\"recursos/img/trash.svg\" title=\"Resetear resultado\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+                    <img src=\"assets/img/trash.svg\" title=\"Resetear resultado\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
                 </form>";
             }
             
@@ -599,7 +599,7 @@
 
       $( ".fFechaBatallaForm" ).datepicker({
         showOn: "both",
-        buttonImage: "recursos/img/calendar.png",
+        buttonImage: "assets/img/calendar.svg",
         buttonImageOnly: true,
         buttonText: "Selecciona una fecha",
         dateFormat: 'dd-mm-yy',
@@ -696,7 +696,7 @@
                         url:   'ajax/ajax.validar-resultado.php',
                         type:  'post',
                         beforeSend: function () {
-                                $("#grid").html("<div style=\"text-align: center\"><img src=\"recursos/img/loader-blanco.gif\" alt=\"Cargando...\" /></div>");
+                                $("#grid").html("<div style=\"text-align: center\"><img src=\"assets/img/loader-blanco.gif\" alt=\"Cargando...\" /></div>");
                         },
                         success:  function (response) {
                         $("#mensaje-accion").remove();
@@ -718,7 +718,7 @@
                         url:   'ajax/ajax.jugadores.php',
                         type:  'post',
                         beforeSend: function () {
-                                $("#divSelectJugadores").html("<div class=\"loading-select\"><img src=\"recursos/img/loading.gif\" alt=\"Cargando...\" /></div>");
+                                $("#divSelectJugadores").html("<div class=\"loading-select\"><img src=\"assets/img/loading.gif\" alt=\"Cargando...\" /></div>");
                         },
                         success:  function (response) {
                                 $("#divSelectJugadores").html(response);

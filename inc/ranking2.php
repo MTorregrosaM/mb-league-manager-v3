@@ -142,7 +142,7 @@
             
                 while ($fila1 = mysqli_fetch_assoc($resultadoBD1)) {
                     $arrRankingRow = array ();
-                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/images/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
+                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/assets/img/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
                     array_push($arrRankingRow, $nickNuevo, $fila1["numPartidas"], $fila1["partidasVictoria"], $fila1["partidasDerrota"], $fila1["puntosVictoria"], $fila1["puntosTotales"]+$puntosPintura, $fila1["indValidado"]);
                     array_push($arrRanking, $arrRankingRow);   
                 }
@@ -215,7 +215,7 @@
             
                 while ($fila1 = mysqli_fetch_assoc($resultadoBD1)) {
                     $arrRankingRow = array ();
-                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/images/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
+                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/assets/img/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
                     array_push($arrRankingRow, $nickNuevo, $fila1["numPartidas"], $fila1["partidasVictoria"], $fila1["partidasDerrota"], $fila1["puntosVictoria"], $fila1["puntosTotales"]+$puntosPintura, $fila1["indValidado"]);
                     array_push($arrRanking, $arrRankingRow);   
                 }
@@ -296,8 +296,8 @@
             
                 while ($fila1 = mysqli_fetch_assoc($resultadoBD1)) {
                     $arrRankingRow = array ();
-                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/images/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
-                    $iconoFaccion = "<img src=\"http://modelbrush.com/mb-league/recursos/img/" . $fila["imgFaccion"]  . "\" alt=\"" . $fila["descFaccion"] . "\" title=\"" . $fila["descFaccion"] . "\" width=\"20px\"/>";
+                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/assets/img/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
+                    $iconoFaccion = "<img src=\"http://modelbrush.com/mb-league/assets/img/" . $fila["imgFaccion"]  . "\" alt=\"" . $fila["descFaccion"] . "\" title=\"" . $fila["descFaccion"] . "\" width=\"20px\"/>";
                     array_push($arrRankingRow, $nickNuevo, $iconoFaccion, $fila1["numPartidas"], $fila1["partidasVictoria"], $fila1["partidasEmpate"], $fila1["partidasDerrota"], $fila1["puntosAFavor"], $fila1["puntosEnContra"], $fila1["puntosTotales"]+$puntosPintura, $fila1["indValidado"]);
                     array_push($arrRanking, $arrRankingRow);   
                 }
@@ -371,7 +371,7 @@
             
                 while ($fila1 = mysqli_fetch_assoc($resultadoBD1)) {
                     $arrRankingRow = array ();
-                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/images/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
+                    $nickNuevo = ($puntosPintura == 0)? $fila["nick"] : $fila["nick"] . " <img src=\"http://modelbrush.com/mb-league/assets/img/icono-flamesofwar-pintura.png\" alt=\"Ejército pintado: +2 puntos\"  title=\"Ejército pintado: +2 puntos\" >";
                     array_push($arrRankingRow, $nickNuevo, $fila1["numPartidas"], $fila1["partidasVictoria"], $fila1["partidasEmpate"], $fila1["partidasDerrota"], $fila1["puntosTotales"]+$puntosPintura, $fila1["indValidado"]);
                     array_push($arrRanking, $arrRankingRow);   
                 }

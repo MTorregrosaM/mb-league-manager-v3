@@ -104,11 +104,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     $deportividad2 = random_int(1, 3);
                                     $fechaResultado = fechaTest(-($numeroFases * $numeroRondas) + (($fase - 1) * $numeroRondas + $ronda));
                                 }
-                                insertarTest($conexion, "INSERT INTO mb_enfrentamientos (idLiga, numFase, numRonda, idJugador1, idJugador2, bandoJugador1, bandoJugador2, resultadoJugador1, resultadoJugador2, valPinturaJug1, valPinturaJug2, valDeportividadJug1, valDeportividadJug2, fechaBatalla, indValidado, audAlta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", "iiiiissiiiiiiisis", array($idLiga, $fase, $ronda, $jugador1, $jugador2, (string) (($partido % 2) + 1), (string) (((($partido + 1) % 2) + 1)), $resultado1, $resultado2, $pintura1, $pintura2, $deportividad1, $deportividad2, $fechaResultado, $validado, $ahora));
+                                $insertarEnfrentamiento = insertarTest($conexion, "INSERT INTO mb_enfrentamientos (idLiga, numFase, numRonda, idJugador1, idJugador2, bandoJugador1, bandoJugador2, resultadoJugador1, resultadoJugador2, valPinturaJug1, valPinturaJug2, valDeportividadJug1, valDeportividadJug2, fechaBatalla, indValidado, audAlta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", "iiiii" . "ss" . "iiiiii" . "sis", array($idLiga, $fase, $ronda, $jugador1, $jugador2, (string) (($partido % 2) + 1), (string) (((($partido + 1) % 2) + 1)), $resultado1, $resultado2, $pintura1, $pintura2, $deportividad1, $deportividad2, $fechaResultado, $validado, $ahora));
+                                if ($insertarEnfrentamiento < 1) {
+                                    $error = "No se pudieron crear todos los enfrentamientos.";
+                                    break 3;
+                                }
                             }
                         }
                     }
-                    $mensaje = "Liga creada correctamente: " . $nombreLiga . " (ID " . $idLiga . "). Contraseña de todas las fases: test.";
+                    if ($error === "") {
+                        $mensaje = "Liga creada correctamente: " . $nombreLiga . " (ID " . $idLiga . "). Contraseña de todas las fases: test.";
+                    }
                 }
             }
         }
