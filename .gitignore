@@ -5,6 +5,7 @@
 /.mysql-test-data/
 /log.log
 /sql/seed_pro.sql
+/mb-league-manager-v3.zip
 
 # Local development instructions
 /README.local.md
