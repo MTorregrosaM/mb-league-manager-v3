@@ -2,6 +2,7 @@
   require_once __DIR__ . "/config/db.class.php";
   require_once __DIR__ . "/config/security.php";
   require_once __DIR__ . "/config/mailer.php";
+  require_once __DIR__ . "/inc/puntuacion-fow.php";
   validarCsrfPublico();
 ?>
 <html lang="es" data-bs-theme="dark">
@@ -51,7 +52,8 @@
     $fIdEnfrentamiento = (isset( $_POST["fIdEnfrentamiento"]))? $_POST["fIdEnfrentamiento"] : "";
     $fValPintura = (isset( $_POST["fValPintura"]))? $_POST["fValPintura"] : 1;
     $fValDeportividad = (isset( $_POST["fValDeportividad"]))? $_POST["fValDeportividad"] : 1;
-    $fResultadoRadio = (isset( $_POST["fResultadoRadio"]))? $_POST["fResultadoRadio"] : 3;
+    $fResultadoRadio = estadoResultadoFow((isset( $_POST["fResultadoRadio"]))? $_POST["fResultadoRadio"] : 1);
+    $resultadoValido = true;
 
     /* FLAMES OF WAR */
     $fIdMisionSec1 = (isset( $_POST["fIdMisionSec1"]))? $_POST["fIdMisionSec1"] : "";
@@ -83,8 +85,8 @@
       // FLAMES OF WAR
       $idJuego = $oLiga->idJuego;
       if($oLiga->idJuego <= 2 ){
-        $maxResultado = (($oLiga->idJuego == 1)? 6 : 8);
-        $minResultado = 1;
+        $maxResultado = 8;
+        $minResultado = 0;
       
         $fResultadoJugador1 = (isset( $_POST["fResultadoJugador1"]))? $_POST["fResultadoJugador1"] : $minResultado; 
         $fResultadoJugador2 = (isset( $_POST["fResultadoJugador2"]))? $_POST["fResultadoJugador2"] : $maxResultado;         
@@ -228,7 +230,15 @@
     }
 
     // ALTA DE NUEVO ENFRENTAMIENTO 
-    if ($accionForm == 1 && $tockenEnvio == 0 ) {
+    if ($accionForm == 1 && $tockenEnvio == 0 && $oLiga !== null && $oLiga->idJuego <= 2) {
+      $resultadoValido = validarPuntosFow($fResultadoJugador1, $fResultadoRadio)
+        && validarPuntosFow($fResultadoJugador2, $fResultadoRadio === 3 ? 0 : ($fResultadoRadio === 0 ? 3 : 1));
+      if (!$resultadoValido) {
+        $mensajeAltaMod .= '<div id="mensaje-error">Los puntos de victoria no son válidos para el resultado seleccionado.</div>';
+      }
+    }
+
+    if ($accionForm == 1 && $tockenEnvio == 0 && $resultadoValido) {
       $arrMisionesSec =  array();
       if ($selectMisSec1 > 0 ){
         array_push($arrMisionesSec, $selectMisSec1);
@@ -244,10 +254,7 @@
       } 
 
          
-      if ($oLiga->idJuego <= 2) {
-        $fResultadoJugador2 = $maxResultado + 1 - (int) $fResultadoJugador1;
-      }
-      $comprobarAlta = $oControllerEnfrentamiento->altaResultadoEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador1, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector );
+      $comprobarAlta = $oControllerEnfrentamiento->altaResultadoEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador1, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector, $fResultadoRadio );
       /*  1. OK
         2. ERROR
         3. AVISO 
@@ -414,19 +421,23 @@
             <!-- RESULTADOS - DESLIZADOR. FLAMES OF WAR, GUILD BALL  -->
             <?php if ($oLiga->idJuego <= 2 || $oLiga->idJuego == 5) {?>
               <div class="resultados-izq">                          
-                  <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>" >            
-                <p id="enfrentamientoJug1" > </p>
-                  <div id="slider-resultado-1"></div>
                   <div class="resultados-radio">
                     <label>
+                      <input type="radio" name="fResultadoRadio" value="3" <?php if ($fResultadoRadio == 3){ printf("checked"); } ?>/>
+                      <img src="images/icono-victoria.png" alt="Victoria">
+                    </label>
+                    <label>
                       <input type="radio" name="fResultadoRadio" value="1" <?php if ($fResultadoRadio == 1){ printf("checked"); } ?>/>
-                      <img src="images/icono-empate.png">
+                      <img src="images/icono-empate.png" alt="Empate">
                     </label>                    
                     <label>
                       <input id="fb3" type="radio" name="fResultadoRadio" value="0"  <?php if ($fResultadoRadio == 0){ printf("checked"); } ?>/>
-                      <img src="images/icono-derrota.png">
+                      <img src="images/icono-derrota.png" alt="Derrota">
                     </label>
                   </div>
+                  <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>">
+                <p id="enfrentamientoJug1" > </p>
+                  <div id="slider-resultado-1"></div>
                 </div>
 
               
@@ -543,22 +554,32 @@
 
                 
                 // slider de resultados
+                  function maximoPuntosFowPorResultado(estado) {
+                    return estado === 3 ? 5 : (estado === 0 ? 4 : 3);
+                  }
+
+                  function actualizarResultadoFow() {
+                    var estado = parseInt($("input[name=fResultadoRadio]:checked").val(), 10);
+                    var maximo = maximoPuntosFowPorResultado(estado);
+                    var puntos = Math.min(parseInt($("#fResultadoJugador1").val(), 10) || 0, maximo);
+                    if (estado === 3) { puntos = 5; }
+                    if (estado === 0) { puntos = 4; }
+                    $("#slider-resultado-1").slider("option", "max", maximo);
+                    $("#slider-resultado-1").slider("option", "value", puntos);
+                    $("#fResultadoJugador1").val(puntos);
+                    $("#fResultadoJugador2").val(estado === 1 ? puntos : (estado === 3 ? 4 : 5));
+                  }
+
                   $( "#slider-resultado-1" ).slider({
                     range: "max",
-                    min: <?php echo $minResultado; ?>,
-                    max: <?php echo $maxResultado; ?>,
+                    min: 0,
+                    max: maximoPuntosFowPorResultado(<?php echo $fResultadoRadio; ?>),
                     value: <?php printf($fResultadoJugador1);?>,
                     slide: function( event, ui ) {
                       $("#fResultadoJugador1" ).val( ui.value );
+                      actualizarResultadoFow();
 
-                      <?php  
-                        // SOLO EN FLAMES OF WAR LOS SLIDER SE REPARTEN 7 PUNTOS
-                        if($oLiga->idJuego <= 2 ){ ?>
-                            $("#fResultadoJugador2" ).val( <?php echo $maxResultado+1; ?>-ui.value );
-                            $("#slider-resultado-2").slider( "option", "value", <?php echo $maxResultado+1; ?>-ui.value );
-                      <?php } ?>
-
-                      if(  ui.value >= <?php echo $maxResultado-2; ?>){
+                      if(  ui.value >= 3){
                         $("#fVictoriaSector option[value=0]").remove();
                         $("#p-sectores").show();
                         
@@ -570,18 +591,8 @@
 
                   $( "#fResultadoJugador1" ).val( $( "#slider-resultado-1" ).slider( "value" ) );
 
-                  $( "#slider-resultado-2" ).slider({
-                    range: "max",
-                    min: <?php echo $minResultado; ?>,
-                    max: <?php echo $maxResultado; ?>,
-                    value: <?php echo $maxResultado+1; ?> - <?php printf($fResultadoJugador1);?>,
-                    slide: function( event, ui ) {
-                      $("#fResultadoJugador2" ).val( ui.value );
-                      $("#fResultadoJugador1" ).val( <?php echo $maxResultado+1; ?>-ui.value );
-                      $("#slider-resultado-1").slider( "option", "value", <?php echo $maxResultado+1; ?>-ui.value );
-                    }
-                  });
-                  $("#fResultadoJugador2" ).val( <?php echo $maxResultado+1; ?> - $( "#slider-resultado-1" ).slider( "value" ) );
+                  $("input[name=fResultadoRadio]").on("change", actualizarResultadoFow);
+                  actualizarResultadoFow();
 
       <?php } ?>
     }); 

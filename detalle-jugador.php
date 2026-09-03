@@ -90,6 +90,7 @@ $nombreLiga = $oLiga !== null ? (string) $oLiga->nombre : "";
               $oContrincante = $oControllerJugador->recuperarDatosJugador($idContrincante);
               $resultadoJugador = $esJugador1 ? $enfrentamiento[6] : $enfrentamiento[7];
               $resultadoContrincante = $esJugador1 ? $enfrentamiento[7] : $enfrentamiento[6];
+              $claseResultado = ((int) $resultadoJugador > (int) $resultadoContrincante) ? "resultado-victoria" : (((int) $resultadoJugador < (int) $resultadoContrincante) ? "resultado-derrota" : "");
               $victoriaConcedida = (int) $enfrentamiento[14] === (int) $idJugador ? "Sí" : "No";
               $victoriaSector = $enfrentamiento[15] === null || $enfrentamiento[15] === "" ? "-" : $enfrentamiento[15];
               $estado = (int) $enfrentamiento[11] === 1 ? "Validado" : "Pendiente";
@@ -99,7 +100,7 @@ $nombreLiga = $oLiga !== null ? (string) $oLiga->nombre : "";
             <td><?php echo (int) $enfrentamiento[3]; ?></td>
             <td><?php echo escaparDetalle($enfrentamiento[10]); ?></td>
             <td><?php echo escaparDetalle(nombreJugadorDetalle($oContrincante, $idContrincante)); ?></td>
-            <td><?php echo escaparDetalle($resultadoJugador) . "-" . escaparDetalle($resultadoContrincante); ?></td>
+            <td class="<?php echo $claseResultado; ?>"><span class="<?php echo $claseResultado; ?>"><?php echo escaparDetalle($resultadoJugador); ?></span>-<span class="<?php echo $claseResultado; ?>"><?php echo escaparDetalle($resultadoContrincante); ?></span></td>
             <td><?php echo $estado; ?></td>
             <td><?php echo $victoriaConcedida; ?></td>
             <td><?php echo escaparDetalle($victoriaSector); ?></td>

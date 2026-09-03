@@ -1502,6 +1502,10 @@
   .detalle-jugador-tabla th, .detalle-jugador-tabla td { padding: .55rem .7rem; border-color: var(--app-border); text-align: left; white-space: nowrap; }
   .detalle-jugador-tabla th { background: var(--app-surface-raised) !important; color: #fff; }
   .detalle-jugador-tabla td { color: #d9e0e7; }
+  .detalle-jugador-tabla td.resultado-victoria,
+  .detalle-jugador-tabla td.resultado-victoria span { color: #2DE68A !important; font-weight: 700; }
+  .detalle-jugador-tabla td.resultado-derrota,
+  .detalle-jugador-tabla td.resultado-derrota span { color: #ff6b6b !important; font-weight: 700; }
   .detalle-jugador-tabla tr:hover td { background: rgba(255,255,255,.035); }
   .detalle-jugador-listas { min-width: 560px; }
   .detalle-jugador-listas td:last-child { text-align: center; }

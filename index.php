@@ -37,9 +37,10 @@ function pintarRanking($filas, $columnas, $orden, $columnasDatos) {
     }
 }
 
-  function pintarRankingResultados($filas) {
+  function pintarRankingResultados($filas, $esFlamesOfWar = false) {
+    $columnas = $esFlamesOfWar ? 5 : 4;
     if (!is_array($filas) || count($filas) === 0) {
-      echo '<tr><td colspan="4">No hay resultados</td></tr>';
+      echo '<tr><td colspan="' . $columnas . '">No hay resultados</td></tr>';
       return;
     }
     foreach (array_slice($filas, 0, 10) as $indice => $fila) {
@@ -47,7 +48,11 @@ function pintarRanking($filas, $columnas, $orden, $columnasDatos) {
       $idJugador = (int) ($fila[3] ?? 0);
       $nombreJugador = escaparIndex($fila[0] ?? '');
       $enlaceJugador = $idJugador > 0 ? '<a class="link-grid" href="detalle-jugador.php?fIdJugador=' . $idJugador . '">' . $nombreJugador . '</a>' : $nombreJugador;
-      echo '<tr class="' . trim($clasePosicion) . '"><td><span class="ranking-position-badge">' . (int) ($indice + 1) . '</span></td><td>' . $enlaceJugador . '</td><td>' . escaparIndex($fila[1] ?? 0) . '</td><td>' . escaparIndex($fila[2] ?? 0) . '</td></tr>';
+      echo '<tr class="' . trim($clasePosicion) . '"><td><span class="ranking-position-badge">' . (int) ($indice + 1) . '</span></td><td>' . $enlaceJugador . '</td><td>' . escaparIndex($fila[1] ?? 0) . '</td>';
+      if ($esFlamesOfWar) {
+        echo '<td>' . escaparIndex($fila[4] ?? 0) . '</td>';
+      }
+      echo '<td>' . escaparIndex($fila[2] ?? 0) . '</td></tr>';
     }
   }
 
@@ -129,7 +134,7 @@ $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
   <?php if ($oLiga !== null) { ?>
     <section class="index-main-ranking">
       <h2>Ranking de resultados</h2>
-      <table><tr><th>Nº</th><th>Nick</th><th>Partidas</th><th>Puntos</th></tr><?php pintarRankingResultados($oControllerEnfrentamiento->recuperarRankingResultados($fIdLiga)); ?></table>
+      <table><tr><th>Nº</th><th>Nick</th><th>Partidas</th><?php if (in_array((int) $oLiga->idJuego, array(1, 2), true)) { ?><th>Victorias</th><?php } ?><th>VPs</th></tr><?php pintarRankingResultados($oControllerEnfrentamiento->recuperarRankingResultados($fIdLiga), in_array((int) $oLiga->idJuego, array(1, 2), true)); ?></table>
     </section>
     <section class="index-ranking-grid">
       <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "dch" : "izq"; ?>"><h2>Top Puntuación Pintura</h2><table><tr><th>Nick</th><th>Media</th></tr><?php pintarRanking($oControllerEnfrentamiento->recuperarRankingPuntosPintura($fIdLiga), 2, "ordenarRanking", array(0, 2)); ?></table></div>

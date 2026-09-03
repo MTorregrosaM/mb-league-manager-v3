@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../inc/puntuacion-fow.php';
 
 /* Descripcion: Entrenador
  * Autor: Marcos Torregrosa
@@ -68,7 +69,7 @@ class controllerEnfrentamiento {
 
 
   	/* método para RESULTADO */
-  	public function altaResultadoEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector ){
+	public function altaResultadoEnfrentamiento( $fIdLiga, $fIdEnfrentamiento, $fIdJugador, $fFechaBatalla, $fResultadoJugador1, $fResultadoJugador2, $fValPintura, $arrMisionesSec, $fValDeportividad, $fVictoriaSector, $fResultadoRadio = null ){
 
 		try {
 			//$fValDeportividad = 0;
@@ -94,8 +95,26 @@ class controllerEnfrentamiento {
 
 			// validamos si ya se han actualizado los datos del enfrentamiento
 			$oEnfrentamiento = $this->recuperarEnfrentamiento($fIdEnfrentamiento);
+			$tipoJuegoLiga = $this->oConexBD->ejecutarConsulta("SELECT idJuego FROM mb_ligas WHERE idLiga = " . (int) $fIdLiga);
+			if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2 && (!validarPuntosFow($fResultadoJugador1, 3) || !validarPuntosFow($fResultadoJugador2, 3))) {
+				return 3;
+			}
 	
 			if ($oEnfrentamiento->indValidado == null &&  $oEnfrentamiento->resultadoJugador1 == null && $oEnfrentamiento->resultadoJugador2 == null) {
+				if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2) {
+					if ($fResultadoRadio !== null && (int) $fResultadoRadio === 3) {
+						$marcadorFow = array(5, 4);
+					} elseif ($fResultadoRadio !== null && (int) $fResultadoRadio === 0) {
+						$marcadorFow = array(4, 5);
+					} else {
+						$marcadorFow = calcularMarcadorFow($fResultadoJugador1, $fResultadoJugador2);
+					}
+					if ($marcadorFow === null) {
+						return 3;
+					}
+					$fResultadoJugador1 = $marcadorFow[0];
+					$fResultadoJugador2 = $marcadorFow[1];
+				}
 
 				// actualizamos los resultados de los enfrentamientos
 				$queryDB = "UPDATE mb_enfrentamientos SET
@@ -272,6 +291,10 @@ class controllerEnfrentamiento {
 		
 			// comprobamos los campos que han cambiado
 			$this->oEnfrentamiento = $this->recuperarEnfrentamiento ( $fIdEnfrentamiento );
+			$tipoJuegoLiga = $this->oConexBD->ejecutarConsulta("SELECT idJuego FROM mb_ligas WHERE idLiga = " . (int) $fIdLiga);
+			if (!empty($tipoJuegoLiga) && (int) $tipoJuegoLiga[0][0] <= 2 && (!validarPuntosFow($fResultadoJugador1, 3) || !validarPuntosFow($fResultadoJugador2, 3))) {
+				return 2;
+			}
 			
 
 	  		$queryDB = "UPDATE mb_enfrentamientos SET ";
@@ -871,6 +894,8 @@ class controllerEnfrentamiento {
 				$queryDB = "SELECT j.idJugador AS idJugador, j.nick,
 						SUM(CASE WHEN e.fechaBatalla IS NOT NULL AND e.fechaBatalla > 0 THEN 1 ELSE 0 END) AS partidasJugadas,
 						SUM(CASE WHEN e.idJugador1 = j.idJugador THEN IFNULL(e.resultadoJugador1, 0) ELSE IFNULL(e.resultadoJugador2, 0) END) AS resultado
+						,SUM(CASE WHEN (e.idJugador1 = j.idJugador AND e.resultadoJugador1 > e.resultadoJugador2)
+							OR (e.idJugador2 = j.idJugador AND e.resultadoJugador2 > e.resultadoJugador1) THEN 1 ELSE 0 END) AS victorias
 					FROM mb_jugadores j
 					LEFT JOIN mb_enfrentamientos e
 						ON (e.idJugador1 = j.idJugador OR e.idJugador2 = j.idJugador)
@@ -878,14 +903,14 @@ class controllerEnfrentamiento {
 					WHERE j.idLiga = " . (int) $fIdLiga . "
 						AND j.nick != 'zMercenario'
 					GROUP BY j.idJugador, j.nick
-					ORDER BY resultado DESC, partidasJugadas DESC, j.nick";
+					ORDER BY victorias DESC, resultado DESC, partidasJugadas DESC, j.nick";
 
 				$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
 				$arrResultados = array();
 
 				if ($resultadoBD != null) {
 					foreach ($resultadoBD as $fila) {
-						$arrResultados[] = array($fila["nick"], $fila["partidasJugadas"], $fila["resultado"], $fila["idJugador"]);
+						$arrResultados[] = array($fila["nick"], $fila["partidasJugadas"], $fila["resultado"], $fila["idJugador"], $fila["victorias"]);
 					}
 				}
 
