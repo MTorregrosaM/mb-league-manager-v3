@@ -151,9 +151,9 @@
                 <input type=\"hidden\" name=\"fFecFin\" id=\"fFecFin\" value=\"". $fila[6] ."\" />
                 <input type=\"hidden\" name=\"fIdJuego\" id=\"fIdJuego\" value=\"". $fila[8] ."\" />
                 <img src=\"recursos/img/tool.svg\" title=\"Editar liga\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
-              </form>\n";
-        }
-        $grid .= "</tr>\n</table>\n</div>";
+                </form>\n";
+              }
+              $grid .= "</tr>\n</table>\n</div>";
         } else {
             $grid = "<p>No hay resultados</p>";
         }
