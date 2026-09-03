@@ -104,6 +104,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
     </form>
   </div>
   <?php if (count($facciones) > 0) { ?>
+  <div class="tabla-grid-wrap">
   <table class="table-6">
     <tr class="primerafilatabla"><th>Facción</th><th class="align-center">Activo</th><th class="td-acciones"></th></tr>
     <?php foreach ($facciones as $faccion) { ?>
@@ -129,6 +130,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
     </tr>
     <?php } ?>
   </table>
+  </div>
   <?php } else { echo "<p>No hay facciones para este juego.</p>"; } ?>
   <div id="div-volver"><a href="gestion-juegos.php" class="btn-volver">Volver</a></div>
   <?php } ?>

@@ -14,13 +14,13 @@ function nombreJugadorDetalle($oJugador, $idJugador) {
     return trim((string) $oJugador->nick) !== "" ? $oJugador->nick : "Jugador #" . (int) $idJugador;
 }
 
-function enlaceListaDetalle($urlDocumento, $nombreLiga, $numFase) {
+function enlaceListaDetalle($urlDocumento, $idLiga, $numFase) {
     if (filter_var($urlDocumento, FILTER_VALIDATE_URL)) {
         return $urlDocumento;
     }
 
-    return "/mb-league/recursos/docs/ligas/"
-        . rawurlencode($nombreLiga) . "/"
+    return "recursos/docs/ligas/"
+      . (int) $idLiga . "/"
         . (int) $numFase . "/"
         . rawurlencode(basename((string) $urlDocumento));
 }
@@ -123,7 +123,7 @@ $nombreLiga = $oLiga !== null ? (string) $oLiga->nombre : "";
           <tr><td colspan="4">No hay listas disponibles.</td></tr>
         <?php } else { ?>
           <?php foreach ($arrListas as $lista) {
-              $hrefLista = enlaceListaDetalle($lista[2], $nombreLiga, $lista[1]);
+              $hrefLista = enlaceListaDetalle($lista[2], $idLiga, $lista[1]);
           ?>
           <tr>
             <td><?php echo (int) $lista[1]; ?></td>

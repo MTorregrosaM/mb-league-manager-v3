@@ -93,7 +93,7 @@
 
       // comprobamos que haya datos
       if (is_array($arrUsuarios) && count($arrUsuarios) >= 1){
-        $grid  = "<table class=\"table-4\">\n
+        $grid  = "<div class=\"tabla-grid-wrap\">\n<table class=\"table-4\">\n
               <tr>
               <th>Nick</th>
               <th>Rol</th>
@@ -130,7 +130,7 @@
                 <img src=\"recursos/img/tool.svg\" title=\"Editar usuario\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
               </form>\n";
         }
-        $grid .= "</tr>\n</table>";
+        $grid .= "</tr>\n</table>\n</div>";
       }else{
         $grid  =  "<p>No hay resultados</p>";
       }

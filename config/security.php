@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/error-handler.php';
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_set_cookie_params(array(
         'httponly' => true,
@@ -25,14 +27,16 @@ function validarCsrfPublico(): void {
     $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
     if (!is_string($token) || !hash_equals($_SESSION['csrf_token'], $token)) {
         http_response_code(403);
-        exit('Solicitud no válida');
+        mostrarPaginaError(403, 'La solicitud no ha superado la validación de seguridad.');
+        exit;
     }
 }
 
 function exigirLigaActivaPublica($idLiga): void {
     if (filter_var($idLiga, FILTER_VALIDATE_INT) === false || (int) $idLiga <= 0) {
         http_response_code(400);
-        exit('Liga no válida');
+        mostrarPaginaError(400, 'La liga solicitada no es válida.');
+        exit;
     }
 
     $conexion = new conexBD();
@@ -43,6 +47,7 @@ function exigirLigaActivaPublica($idLiga): void {
     );
     if (!is_array($resultado) || count($resultado) === 0) {
         http_response_code(403);
-        exit('Liga no disponible');
+        mostrarPaginaError(403, 'La liga solicitada no está disponible.');
+        exit;
     }
 }

@@ -105,7 +105,7 @@
 
         // comprobamos que haya datos
       if (is_array($arrLigas) && count($arrLigas) >= 1){
-        $grid  = "<table class=\"table-6\">\n
+        $grid  = "<div class=\"tabla-grid-wrap\">\n<table class=\"table-6\">\n
               <tr class=\"primerafilatabla\">
               <th>Nombre</th>
               <th>Juego</th>
@@ -153,7 +153,7 @@
                 <img src=\"recursos/img/tool.svg\" title=\"Editar liga\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
               </form>\n";
         }
-        $grid .= "</tr>\n</table>";
+        $grid .= "</tr>\n</table>\n</div>";
         } else {
             $grid = "<p>No hay resultados</p>";
         }

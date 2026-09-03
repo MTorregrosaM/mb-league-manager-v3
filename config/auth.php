@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/error-handler.php';
+
 require_once __DIR__ . '/db.class.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -18,7 +20,8 @@ if (empty($_SESSION['csrf_token'])) {
         $_SESSION = array();
         session_destroy();
         http_response_code(403);
-        exit('Sesión expirada');
+        mostrarPaginaError(403, 'Tu sesión ha caducado. Vuelve a identificarte.');
+        exit;
     }
     $_SESSION['ultima_actividad'] = time();
 
@@ -34,7 +37,8 @@ function validarCsrf(): void {
     $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
     if (!is_string($token) || !hash_equals($_SESSION['csrf_token'], $token)) {
         http_response_code(403);
-        exit('Solicitud no válida');
+        mostrarPaginaError(403, 'La solicitud no ha superado la validación de seguridad.');
+        exit;
     }
 }
 
@@ -84,14 +88,16 @@ function ligasPermitidasUsuario(): ?string {
 function exigirAccesoLiga(int $idLiga): void {
     if (!usuarioPuedeAccederLiga($idLiga)) {
         http_response_code(403);
-        exit('Acceso no autorizado');
+        mostrarPaginaError(403, 'No tienes permiso para acceder a esta liga.');
+        exit;
     }
 }
 
 function exigirAdministrador(): void {
     if (strtoupper(trim((string) ($_SESSION['rol'] ?? ''))) !== 'ADMIN') {
         http_response_code(403);
-        exit('Acceso no autorizado');
+        mostrarPaginaError(403, 'Esta zona está reservada para administradores.');
+        exit;
     }
 }
 
@@ -151,20 +157,23 @@ function validarAccesoLigaEnPeticion(): void {
         }
         if (is_array($valor)) {
             http_response_code(403);
-            exit('Solicitud no válida');
+            mostrarPaginaError(403, 'La solicitud no está permitida.');
+            exit;
         }
         if ($valor !== null && $valor !== '' && filter_var($valor, FILTER_VALIDATE_INT) !== false) {
             exigirAccesoLiga((int) $valor);
         } elseif ($valor !== null && $valor !== '') {
             http_response_code(403);
-            exit('Solicitud no válida');
+            mostrarPaginaError(403, 'La solicitud no está permitida.');
+            exit;
         }
     }
 }
 
 if (($_SESSION['autorizado'] ?? 0) != 1 || empty($_SESSION['usuario'])) {
     http_response_code(403);
-    exit('Forbidden');
+    mostrarPaginaError(403, 'No tienes permiso para entrar en esta zona.');
+    exit;
 }
 
 validarCsrf();

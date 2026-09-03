@@ -1,7 +1,14 @@
 <?php
+    require_once __DIR__ . "/config/error-handler.php";
     require_once __DIR__ . "/config/security.php";
 
     register_shutdown_function(function () {
+        $ultimoError = error_get_last();
+        $erroresFatales = array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR);
+        if (is_array($ultimoError) && in_array($ultimoError['type'], $erroresFatales, true)) {
+            $oLog = Log::getInstance();
+            $oLog->trazaLog(null, 'ERROR FATAL PHP: ' . $ultimoError['message'] . ' en ' . $ultimoError['file'] . ':' . $ultimoError['line']);
+        }
         require_once __DIR__ . "/footer.php";
     });
 
@@ -37,6 +44,7 @@
     <script type="text/javascript" src="recursos/js/jquery.qtip.min.js"></script>
     <script type="text/javascript" src="recursos/js/lang/es.js"></script>
     <script type="text/javascript" src="recursos/js/responsive-nav.js"></script>
+    <script type="text/javascript" src="recursos/js/menu-acciones.js?v=20260905"></script>
         <?php if (function_exists('csrfToken') || function_exists('csrfTokenPublico')): ?>
         <script>
             window.csrfToken = <?php echo json_encode(function_exists('csrfToken') ? csrfToken() : csrfTokenPublico(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
@@ -57,7 +65,7 @@
     <script>window.responsiveNav = function () { return null; };</script>
 
     <!-- css  -->
-    <link rel="stylesheet" href="recursos/css/estilos.css?v=20260902" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="recursos/css/estilos.css?v=20260905" type="text/css" media="screen, projection"/>
     <link rel="stylesheet" type="text/css" href="recursos/js/css/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="recursos/js/css/jquery.raty.css" />
     <link rel="stylesheet" type="text/css" href="recursos/css/style-drag.css" />

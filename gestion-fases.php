@@ -94,7 +94,7 @@
 
 			// comprobamos que haya datos
 			if (is_array($arrFases) && count($arrFases) >= 1){
-				$grid  = "<table class=\"table-6\">\n
+				$grid  = "<div class=\"tabla-grid-wrap\">\n<table class=\"table-6\">\n
 							<tr>
 							<th>Fase</th>
 							<th>Clave</th>
@@ -118,7 +118,7 @@
 								<img src=\"recursos/img/tool.svg\" alt=\"form-editar-".$fila[0].$fila[1]."\"  class=\"btn-editar-reg\"/>
 							</form>\n";
 				}
-				$grid .= "</tr>\n</table>";
+				$grid .= "</tr>\n</table>\n</div>";
 			}else{
 				$grid  =  "<p>No hay resultados</p>";
 			}

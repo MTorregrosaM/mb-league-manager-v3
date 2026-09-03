@@ -110,6 +110,34 @@
     }
   }
 
+  #contenedor-principal {
+    padding-bottom: 0;
+  }
+
+  #contenedor-principal > :last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .site-footer {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: .35rem 0;
+  }
+
+  #contenedor-principal {
+    padding-bottom: 0;
+  }
+
+  #contenedor-principal > :last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .site-footer {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: .35rem 0;
+  }
+
   /*---------------------------------------------------
   3. Menu responsive
   ---------------------------------------------------*/
@@ -239,7 +267,7 @@
   4. Contenido
   ---------------------------------------------------*/
   #contenedor-principal  {position:relative;  max-width:960px; min-width:320px; margin: 0 auto; margin-top: 20px; display: block; clear: both; padding-bottom:60px;}
-  .site-footer { width: min(100% - 2rem, 960px); margin: 2rem auto 1rem; padding: 1rem 0; color: var(--app-muted, #9da8b5); text-align: center; }
+  .site-footer { width: min(100% - 2rem, 1180px); margin: 0 auto; align-self: center; box-sizing: border-box; padding: .35rem 0; color: var(--app-muted, #9da8b5); text-align: center; }
   .site-footer small { font-size: .75rem; }
   .site-footer a, .site-footer a:visited { color: #2DE68A; text-decoration: none; }
   .site-footer a:hover, .site-footer a:focus,
@@ -860,10 +888,14 @@
     max-width: 1180px;
     width: calc(100% - 2rem);
     margin: 1.5rem auto 0;
-    padding-bottom: 2rem;
+    padding-bottom: 0;
   }
 
-  .site-footer { flex: 0 0 auto; margin-bottom: 0; }
+  #contenedor-principal > :last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .site-footer { flex: 0 0 auto; margin: 0; padding: .35rem 0; }
 
   #logo { display: none; }
 
@@ -1030,7 +1062,10 @@
     text-align: left !important;
   }
   .index-main-ranking table {
-    width: 100%;
+    display: inline-table;
+    width: max-content;
+    max-width: 100%;
+    table-layout: auto;
     border: 1px solid var(--app-border);
     border-radius: .6rem;
     background: var(--app-surface);
@@ -1060,15 +1095,15 @@
     margin: 0;
   }
   .index-ranking-grid table {
+    display: inline-table;
+    width: max-content;
+    max-width: 100%;
+    table-layout: auto;
     border: 1px solid var(--app-border);
     border-radius: .6rem;
     background: var(--app-surface);
   }
-  .ranking-deportividad table { table-layout: fixed; }
-  .ranking-deportividad th:first-child, .ranking-deportividad td:first-child { width: 42%; }
-  .ranking-deportividad th:nth-child(2), .ranking-deportividad td:nth-child(2) { width: 16%; }
-  .ranking-deportividad th:nth-child(3), .ranking-deportividad td:nth-child(3) { width: 19%; }
-  .ranking-deportividad th:nth-child(4), .ranking-deportividad td:nth-child(4) { width: 23%; }
+  .index-ranking-grid table { table-layout: auto; }
   .index-ranking-grid table th {
     padding: .85rem 1rem;
     background: var(--app-surface-raised) !important;
@@ -1097,7 +1132,8 @@
   #contenedor-principal table td.td-acciones {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    text-align: right !important;
   }
   #contenedor-principal table td.td-acciones > form:has(.btn-borrar) {
     order: 2;
@@ -1131,6 +1167,64 @@
     vertical-align: middle;
     content: url("../img/ok.svg");
   }
+  #contenedor-principal td.td-acciones > .acciones-menu {
+    position: relative;
+    display: inline-block;
+    z-index: 20;
+  }
+  #contenedor-principal td.td-acciones > .form-btn-acciones,
+  #contenedor-principal td.td-acciones > .btn-validar-resultado {
+    display: none !important;
+  }
+  .acciones-menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--app-border);
+    border-radius: .35rem;
+    background: var(--app-surface-raised);
+    color: var(--app-accent);
+    font-size: 1.55rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .acciones-menu-trigger:hover,
+  .acciones-menu-trigger:focus-visible { border-color: var(--app-accent); color: #fff; }
+  .acciones-menu-list {
+    position: absolute;
+    top: calc(100% + .3rem);
+    right: 0;
+    display: none;
+    width: max-content;
+    min-width: 0;
+    max-width: calc(100vw - 1rem);
+    padding: .35rem;
+    border: 1px solid var(--app-border);
+    border-radius: .45rem;
+    background: var(--app-surface-raised);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .35);
+  }
+  .acciones-menu.is-open .acciones-menu-list { display: flex; flex-direction: column; gap: .2rem; }
+  .acciones-menu-item {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    width: max-content;
+    min-width: 0;
+    padding: .4rem .55rem;
+    border: 0;
+    border-radius: .3rem;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+  }
+  .acciones-menu-item:hover,
+  .acciones-menu-item:focus-visible { background: var(--app-accent); color: #fff; }
+  .acciones-menu-item img { width: 22px !important; height: 22px !important; flex: 0 0 22px; }
   #estrellasPintura img[src*="star.svg#off"],
   #estrellasDeportividad img[src*="star.svg#off"],
   #estrellasPintura2 img[src*="star.svg#off"],
@@ -1395,6 +1489,7 @@
   .detalle-jugador-bloque { margin: 0 0 1.25rem; padding: 1rem; border: 1px solid var(--app-border); border-radius: .65rem; background: var(--app-surface); }
   .detalle-jugador-bloque h3 { margin: 0 0 1rem; color: #2DE68A; font-size: 1.15rem; }
   .detalle-jugador-tabla-wrap { overflow-x: auto; }
+  .tabla-grid-wrap { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
   .detalle-jugador-tabla { min-width: 900px; border: 1px solid var(--app-border); border-radius: .6rem; background: var(--app-surface); }
   .detalle-jugador-tabla th, .detalle-jugador-tabla td { padding: .55rem .7rem; border-color: var(--app-border); text-align: left; white-space: nowrap; }
   .detalle-jugador-tabla th { background: var(--app-surface-raised) !important; color: #fff; }
@@ -1449,6 +1544,33 @@
     font-size: 2.25rem;
     line-height: 1;
   }
+  .error-page {
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+  }
+  .error-page #boxlogomodelbrush { width: 100%; }
+  .error-panel {
+    width: min(100% - 2rem, 520px);
+    margin: 2rem auto 0;
+    padding: 2rem;
+    box-sizing: border-box;
+    border: 1px solid var(--app-border);
+    border-radius: .65rem;
+    background: var(--app-surface);
+    text-align: center;
+  }
+  .error-panel .error-code {
+    margin: 0 0 .75rem;
+    color: var(--app-accent-hover);
+    font-family: 'VT323', monospace;
+    font-size: 1.5rem;
+  }
+  .error-panel h1 { float: none; width: auto; margin: 0 0 .75rem; color: #fff; font-size: 1.8rem; }
+  .error-panel p:not(.error-code) { margin: 0 0 1.5rem; color: var(--app-muted); }
+  .error-panel .button { display: inline-block; margin: 0; }
+  .error-page .site-footer { margin-top: auto; }
+  .login-page .site-footer { width: min(100% - 2rem, 960px); }
   #boxlogomodelbrush .logomodelbrush { width: min(100%, 360px); height: auto; }
   #login fieldset { padding: 2rem; border: 1px solid var(--app-border); border-radius: .75rem; background: var(--app-surface); box-shadow: 0 18px 50px rgba(0,0,0,.25); }
   #login fieldset legend { padding: .5rem 1rem; border-radius: .35rem; background: var(--app-accent); }
@@ -1736,17 +1858,18 @@
     table { display: block; overflow-x: auto; white-space: nowrap; }
     #contenedor-principal table th,
     #contenedor-principal table td { padding: .7rem .85rem; }
-    .index-main-ranking table { display: table; table-layout: fixed; overflow: visible; white-space: normal; }
+    .index-main-ranking table { display: table; table-layout: auto; overflow: visible; white-space: normal; }
     .index-main-ranking table th,
     .index-main-ranking table td { padding: .6rem .45rem; overflow-wrap: anywhere; }
-    .index-main-ranking table th:first-child,
-    .index-main-ranking table td:first-child { width: 13%; }
-    .index-main-ranking table th:nth-child(2),
-    .index-main-ranking table td:nth-child(2) { width: 27%; }
-    .index-main-ranking table th:nth-child(3),
-    .index-main-ranking table td:nth-child(3) { width: 30%; }
-    .index-main-ranking table th:nth-child(4),
-    .index-main-ranking table td:nth-child(4) { width: 30%; }
+    #contenedor-principal .index-main-ranking table,
+    #contenedor-principal .index-ranking-grid table {
+      box-sizing: border-box;
+      display: table !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      table-layout: auto !important;
+    }
   }
 
   @media (max-width: 480px) {
@@ -1778,7 +1901,7 @@
       margin-top: 1.25rem;
     }
     .bottom-login { font-size: .9rem; }
-    .site-footer { margin-top: .5rem; }
+    .site-footer { margin-top: 0; padding-top: .35rem; padding-bottom: .35rem; }
     .app-navbar {
       width: calc(100% + 1rem);
       max-width: none;
@@ -1806,10 +1929,17 @@
     }
     #btn-alta {
       display: block;
+      margin-top: 1rem;
     }
+    #btn-alta > a,
+    #btn-alta > form {
+      margin: .5rem 0;
+    }
+    #buscador + #btn-alta { margin-top: 1.25rem; }
     #btn-alta .button {
       display: block;
       width: 100% !important;
+      margin: .5rem 0;
       text-align: center;
     }
     #buscador, #form, #selector-informes, .ranking-card,
@@ -1860,11 +1990,11 @@
     }
     #contenedor-principal .index-main-ranking table,
     #contenedor-principal .index-ranking-grid table {
-      display: table;
-      width: 100%;
+      display: table !important;
+      width: 100% !important;
       min-width: 0;
-      max-width: 100%;
-      table-layout: fixed;
+      max-width: 100% !important;
+      table-layout: auto !important;
       overflow: visible;
       white-space: normal;
     }
@@ -1937,7 +2067,7 @@
       justify-self: center !important;
       justify-content: center;
     }
-    .site-footer { width: calc(100% - 1rem); padding: .75rem 0; }
+    .site-footer { width: calc(100% - 1rem); padding: .35rem 0; }
   }
 
   @media (max-width: 767.98px) {
@@ -2149,6 +2279,43 @@
       margin: 0 .45rem 0 0;
       line-height: 1.2;
     }
+    #altaModJugador p:has(.span-radio-button),
+    #altaModLiga p:has(.span-radio-button) {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .35rem;
+      min-height: 38px;
+    }
+    #altaModJugador p:has(.span-radio-button) .span-radio-button,
+    #altaModLiga p:has(.span-radio-button) .span-radio-button {
+      display: inline-block;
+      width: auto !important;
+      margin: 0 .5rem 0 0;
+      padding: 0;
+      float: none !important;
+      text-align: left;
+    }
+    #altaModJugador p:has(.span-radio-button) .radio-button,
+    #altaModLiga p:has(.span-radio-button) .radio-button {
+      display: inline-block !important;
+      width: 18px !important;
+      height: 18px;
+      min-height: 18px !important;
+      margin: 0;
+      padding: 0;
+      float: none !important;
+      flex: 0 0 18px;
+    }
+    #altaModJugador p:has(.span-radio-button) .label-radio-button,
+    #altaModLiga p:has(.span-radio-button) .label-radio-button {
+      display: inline-block !important;
+      width: auto !important;
+      margin: 0 .45rem 0 0;
+      padding: 0;
+      float: none !important;
+      line-height: 1.2;
+    }
     #contenedor-principal table:has(td.td-acciones) th:nth-child(n + 3):not(.td-acciones),
     #contenedor-principal table:has(td.td-acciones) td:nth-child(n + 3):not(.td-acciones) {
       display: none !important;
@@ -2210,5 +2377,174 @@
     width: auto !important;
     margin: 0 10px 0 0 !important;
     vertical-align: middle;
+  }
+
+  @media (max-width: 767.98px) {
+    .detalle-jugador-bloque h3 {
+      float: none !important;
+      display: block;
+      clear: both;
+      width: 100%;
+    }
+
+    .detalle-jugador-tabla-wrap {
+      clear: both;
+      width: 100%;
+    }
+
+    #contenedor-principal table:not(.detalle-jugador-tabla) {
+      display: block !important;
+      width: max-content !important;
+      min-width: 100% !important;
+      max-width: none !important;
+      table-layout: auto !important;
+      overflow-x: auto !important;
+      overflow-y: hidden;
+      white-space: nowrap !important;
+    }
+
+    #contenedor-principal table:not(.detalle-jugador-tabla) th,
+    #contenedor-principal table:not(.detalle-jugador-tabla) td {
+      width: auto !important;
+      min-width: max-content !important;
+      max-width: none !important;
+      white-space: nowrap !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+    }
+
+    #contenedor-principal table:has(td.td-acciones) th:nth-child(n + 3):not(.td-acciones),
+    #contenedor-principal table:has(td.td-acciones) td:nth-child(n + 3):not(.td-acciones) {
+      display: table-cell !important;
+    }
+
+    #contenedor-principal table:has(td.td-acciones) th.td-acciones,
+    #contenedor-principal table:has(td.td-acciones) td.td-acciones {
+      width: auto !important;
+      min-width: max-content !important;
+      max-width: none !important;
+    }
+
+    #contenedor-principal table:has(td.td-acciones) {
+      table-layout: auto !important;
+    }
+
+    #contenedor-principal .index-main-ranking,
+    #contenedor-principal .index-ranking-grid > div {
+      overflow-x: hidden;
+    }
+
+    #contenedor-principal .index-main-ranking table,
+    #contenedor-principal .index-ranking-grid table {
+      display: table !important;
+      width: max-content !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      table-layout: auto !important;
+      overflow: visible;
+      white-space: normal !important;
+    }
+    #contenedor-principal .index-main-ranking table th,
+    #contenedor-principal .index-main-ranking table td,
+    #contenedor-principal .index-ranking-grid table th,
+    #contenedor-principal .index-ranking-grid table td {
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: 100%;
+      white-space: normal !important;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  #contenedor-principal td.td-acciones {
+    position: relative;
+    width: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow: visible !important;
+  }
+  #contenedor-principal td.td-acciones > .form-btn-acciones,
+  #contenedor-principal td.td-acciones > .btn-validar-resultado {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #contenedor-principal td.td-acciones > .acciones-menu {
+    z-index: 9999;
+  }
+  #contenedor-principal table:has(td.td-acciones) {
+    overflow: visible !important;
+  }
+  .acciones-menu-trigger {
+    color: var(--app-accent-hover) !important;
+    border-color: var(--app-accent-hover) !important;
+  }
+  .acciones-menu-list {
+    position: fixed !important;
+    z-index: 2147483647 !important;
+    isolation: isolate;
+    opacity: 1 !important;
+    background: var(--app-surface-raised) !important;
+    pointer-events: auto;
+  }
+  .acciones-menu,
+  .acciones-menu-trigger {
+    position: relative;
+    z-index: 1 !important;
+  }
+  #contenedor-principal td.td-acciones > .acciones-menu.is-open {
+    z-index: 2147483647 !important;
+  }
+  .acciones-menu-item {
+    position: relative;
+    z-index: 2147483647 !important;
+    white-space: nowrap;
+  }
+  .tabla-grid-wrap {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .tabla-grid-wrap > table { margin: 0; }
+
+  @media (max-width: 767.98px) {
+    #form p:has(input.fFecIniForm),
+    #form p:has(input.fFecFinForm),
+    #form p:has(input.fFechaBatallaForm) {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .35rem;
+    }
+    #form p:has(input.fFecIniForm) label,
+    #form p:has(input.fFecFinForm) label,
+    #form p:has(input.fFechaBatallaForm) label {
+      flex: 0 0 100%;
+    }
+    #form p:has(input.fFecIniForm) input.fFecIniForm,
+    #form p:has(input.fFecFinForm) input.fFecFinForm,
+    #form p:has(input.fFechaBatallaForm) input.fFechaBatallaForm {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
+    #form p:has(input.fFecIniForm) input.fFecIniForm + .ui-datepicker-trigger,
+    #form p:has(input.fFecFinForm) input.fFecFinForm + .ui-datepicker-trigger,
+    #form p:has(input.fFechaBatallaForm) input.fFechaBatallaForm + .ui-datepicker-trigger {
+      flex: 0 0 24px;
+      width: 24px !important;
+      height: 24px;
+      margin: 0 !important;
+    }
   }
 

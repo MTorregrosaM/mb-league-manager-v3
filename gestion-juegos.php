@@ -118,6 +118,7 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
     </form>
   </div>
   <?php if (count($juegos) > 0) { ?>
+  <div class="tabla-grid-wrap">
   <table class="table-6">
     <tr class="primerafilatabla"><th>Juego</th><th class="align-center">Activo</th><th class="align-center">Alta</th><th class="td-acciones"></th></tr>
     <?php foreach ($juegos as $juego) { ?>
@@ -146,6 +147,7 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
     </tr>
     <?php } ?>
   </table>
+  </div>
   <div id="div-volver"><a href="gestion-ligas.php" class="btn-volver">Volver</a></div>
   <?php } else { echo "<p>No hay juegos.</p>"; } ?>
   <?php } ?>

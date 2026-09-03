@@ -81,7 +81,7 @@
     if ($fIdLiga != 0) {
       $oLiga = $oControllerLiga->recuperarDatosLiga($fIdLiga);
 
-      if ($oLiga !== null) {
+      if ($oLiga !== null && (int) $oLiga->indActivo === 1) {
         // FLAMES OF WAR
         if($oLiga->idJuego <= 2 ){
         $maxResultado = (($oLiga->idJuego == 1)? 6 : 8);
@@ -115,7 +115,7 @@
           }
         }
       } else {
-        $fIdLiga = 0;
+        $fIdLiga = null;
       }
     }
 
@@ -137,7 +137,7 @@
 
     // options para los select de los formularios
     // LIGAS
-    $arrLigas =  $oControllerLiga->recuperarSelectLigas(null, false,  $ligasUsuario );
+    $arrLigas =  $oControllerLiga->recuperarSelectLigas(null, false,  $ligasUsuario, false, true );
     $selectLigasSelected = ($fIdLiga != null ) ? $fIdLiga : 0;    
     $selectLigas = "<option value=''></option>\n";
     if (!empty($arrLigas) && is_array($arrLigas)   ){
@@ -494,9 +494,9 @@
       }
     }
 
-  }catch(Exception $e){
+  }catch(Throwable $e){
     $oLog = Log::getInstance();
-    $oLog->trazaLog ($e, "gestion-enfrentamientos.php");  
+    $oLog->trazaLog ($e, "editar-resultados.php");  
     return null;   
   }
 

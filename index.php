@@ -69,7 +69,7 @@ $oControllerUsuario = new controllerUsuario();
 $ligasUsuario = $oControllerUsuario->recuperarLigasUsuario($_SESSION["usuario"] ?? "");
 $arrLigas = $oControllerLiga->recuperarSelectLigas(null, true, null, true);
 $arrLigas = is_array($arrLigas) ? $arrLigas : array();
-$fIdLiga = isset($_POST["fIdLiga"]) ? (int) $_POST["fIdLiga"] : 0;
+$fIdLiga = isset($_GET["fIdLiga"]) ? (int) $_GET["fIdLiga"] : 0;
 if ($fIdLiga <= 0 && count($arrLigas) > 0) {
     foreach ($arrLigas as $liga) {
         if ((int) ($liga[2] ?? 0) === 1) {
@@ -116,9 +116,9 @@ $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
   <?php require_once "menu.php"; ?>
   <h2 class="h2"><span>Competiciones</span></h2>
   <div class="center">
-    <form id="selectLiga" name="selectLiga" method="POST">
+    <form id="selectLiga" name="selectLiga" method="GET" action="index.php">
       <label for="fIdLiga" class="span-index">Liga</label>
-      <select name="fIdLiga" id="fIdLiga" class="select-index">
+      <select name="fIdLiga" id="fIdLiga" class="select-index" onchange="if (this.value !== '') window.location.href = 'index.php?fIdLiga=' + encodeURIComponent(this.value) + '&_=' + Date.now();">
         <option value="">Seleccione una liga</option>
         <?php foreach ($arrLigas as $liga) { ?>
           <option value="<?php echo (int) $liga[0]; ?>" <?php echo $fIdLiga === (int) $liga[0] ? "selected" : ""; ?>><?php echo escaparIndex($liga[1]); ?></option>
@@ -129,10 +129,10 @@ $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
   <?php if ($oLiga !== null) { ?>
     <section class="index-main-ranking">
       <h2>Ranking de resultados</h2>
-      <table><tr><th>Nº</th><th>Nick</th><th>Partidas jugadas</th><th>Resultado</th></tr><?php pintarRankingResultados($oControllerEnfrentamiento->recuperarRankingResultados($fIdLiga)); ?></table>
+      <table><tr><th>Nº</th><th>Nick</th><th>Partidas</th><th>Puntos</th></tr><?php pintarRankingResultados($oControllerEnfrentamiento->recuperarRankingResultados($fIdLiga)); ?></table>
     </section>
     <section class="index-ranking-grid">
-      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "dch" : "izq"; ?>"><h2>Top Puntuación Pintura</h2><table><tr><th>Nick</th><th>Media puntos pintura (partidas disputadas)</th></tr><?php pintarRanking($oControllerEnfrentamiento->recuperarRankingPuntosPintura($fIdLiga), 2, "ordenarRanking", array(0, 2)); ?></table></div>
+      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "dch" : "izq"; ?>"><h2>Top Puntuación Pintura</h2><table><tr><th>Nick</th><th>Media</th></tr><?php pintarRanking($oControllerEnfrentamiento->recuperarRankingPuntosPintura($fIdLiga), 2, "ordenarRanking", array(0, 2)); ?></table></div>
       <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "izq" : "dch"; ?> ranking-deportividad"><h2>Top Deportividad</h2><table><tr><th>Nick</th><th>Puntos</th><th>Puntos</th><th>Partidas</th></tr><?php pintarDeportividad($oControllerEnfrentamiento->recuperarRankingPuntosDeportividad($fIdLiga), $fIdLiga); ?></table></div>
       <?php if (in_array((int) $oLiga->idJuego, array(1, 2), true)) { ?>
         <div class="div-ranking-dch"><h2>Campaña por sectores</h2><table><tr><th>Fase</th><th>Sector</th><th>Bando dominante</th></tr><?php pintarSectores($oControllerEnfrentamiento->recuperarRankingSectores($fIdLiga, $oLiga->idJuego)); ?></table></div>
@@ -145,10 +145,5 @@ $oLiga = $fIdLiga > 0 ? $oControllerLiga->recuperarDatosLiga($fIdLiga) : null;
     <p class="center">No hay competiciones disponibles.</p>
   <?php } ?>
 </div>
-<script>
-  document.getElementById("fIdLiga").addEventListener("change", function () {
-    document.getElementById("selectLiga").submit();
-  });
-</script>
 </body>
 </html>

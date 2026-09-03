@@ -79,6 +79,7 @@
 
     $oLiga = $oControllerLiga -> recuperarDatosLiga( $fIdLiga );
     $oJugador = $oControllerJugador -> recuperarDatosJugador( $fIdJugador );
+    $rutaDocumentosLiga = __DIR__ . "/recursos/docs/ligas/" . $fIdLiga;
 
     // options para los select de los formularios
     // LIGAS
@@ -155,7 +156,7 @@
 
       // comprobamos que haya datos
       if ($arrListasJugador != null && count($arrListasJugador) >= 1){
-        $grid  = "<table class=\"table-4\">\n
+        $grid  = "<div class=\"tabla-grid-wrap\">\n<table class=\"table-4\">\n
               <tr>
               <th>Fase</th>
               <th>Bando</th>
@@ -166,14 +167,17 @@
 
         foreach($arrListasJugador as $fila){
           // primero calculamos la ruta del directorio
+          $fDocUrl = $fila[2];
+          $fDocAux = $fila[2];
 
           if (strpos($fila[2] , "http") === false && strpos($fila[2] , "https") === false && strpos($fila[2] , "wwww") === false){
             //$fDocAux  = getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/".$fila[1]."/".$fila[2];
             //$fDocAux  =$_SERVER['HTTP_HOST'] ."/mb-league/recursos/docs/ligas/".$oLiga->nombre."/".$fila[1]."/".$fila[2];
-            $fDocAux  = "/mb-league/recursos/docs/ligas/".$oLiga->nombre."/".$fila[1]."/".$fila[2];
+            $fDocUrl = "/recursos/docs/ligas/" . $fIdLiga . "/" . $fila[1] . "/" . rawurlencode(basename($fila[2]));
+            $fDocAux = $rutaDocumentosLiga . "/" . $fila[1] . "/" . basename($fila[2]);
           }
 
-          $grid .="\n<tr><td>" . $fila[1] . "</td><td>" . $fila[3] . "</td><td  class=\"align-center\"><a target=\"blank\" href=\"" .  $fDocAux  . "\" class=\"link-grid\">Descargar</a></td><td class=\"align-center\">" . $fila[4] . "</td>";
+          $grid .="\n<tr><td>" . $fila[1] . "</td><td>" . $fila[3] . "</td><td  class=\"align-center\"><a target=\"blank\" href=\"" .  $fDocUrl  . "\" class=\"link-grid\">Descargar</a></td><td class=\"align-center\">" . $fila[4] . "</td>";
           $grid .= "<td class=\"align-center td-acciones\">";
 
 
@@ -197,7 +201,7 @@
                 <img src=\"recursos/img/cog.svg\" title=\"Editar lista\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
               </form>\n";
         }
-        $grid .= "</tr>\n</table>";
+        $grid .= "</tr>\n</table>\n</div>";
       }else{
         $grid  =  "<p>No hay resultados</p>";
       }
@@ -223,13 +227,13 @@
           // subimos el fichero de la imagen si todo ha ido ok
           if ($fSubidaValida && strpos($fUrlDocumento , "http") === false && strpos($fUrlDocumento , "https") === false && strpos($fUrlDocumento , "wwww") === false){
 
-            if (!is_dir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/") && !mkdir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/")){
+            if (!is_dir($rutaDocumentosLiga) && !mkdir($rutaDocumentosLiga, 0775, true)){
               printf("Error creando directorio");
             }
-            if (!is_dir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/".$fNumFase."/") && !mkdir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/".$fNumFase."/")){
+            if (!is_dir($rutaDocumentosLiga . "/" . $fNumFase) && !mkdir($rutaDocumentosLiga . "/" . $fNumFase, 0775, true)){
               printf("Error creando directorio");
             }
-            $rutaDestino = getcwd()."/recursos/docs/ligas/" . basename($oLiga->nombre) . "/" . $fNumFase . "/" . basename($fUrlDocumento);
+            $rutaDestino = $rutaDocumentosLiga . "/" . $fNumFase . "/" . basename($fUrlDocumento);
             move_uploaded_file($_FILES['fUrlDocumento']['tmp_name'], $rutaDestino);
           }
         }
@@ -258,7 +262,7 @@
         if (!$fArchivoSubido && strpos($fUrlDocumento , "http") === false && strpos($fUrlDocumento , "https") === false && strpos($fUrlDocumento , "wwww") === false){
           $fUrlDocumento = "lista-".$fIdLiga.$fNumFase.$fIdJugador.Date("is")."-".$fBando.substr($fUrlDocumento,strpos($fUrlDocumento, "."));
         }
-        $comprobarAltaMod = $oControllerJugador->modificarLista( $fIdJugador, $fIdLiga, $fNumFase, $fBando, $fUrlDocumento, getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/".$fNumFase."/"  );
+        $comprobarAltaMod = $oControllerJugador->modificarLista( $fIdJugador, $fIdLiga, $fNumFase, $fBando, $fUrlDocumento, $rutaDocumentosLiga . "/" . $fNumFase . "/"  );
 
 
         // subimos el fichero de la imagen si todo ha ido ok
@@ -266,13 +270,13 @@
           // subimos el fichero de la imagen si todo ha ido ok
           if ($fSubidaValida && strpos($fUrlDocumento , "http") === false && strpos($fUrlDocumento , "https") === false && strpos($fUrlDocumento , "wwww") === false && isset($_FILES['fUrlDocumento']['name'])){
 
-            if (!is_dir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/") && !mkdir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/")){
+            if (!is_dir($rutaDocumentosLiga) && !mkdir($rutaDocumentosLiga, 0775, true)){
               printf("Error creando directorio");
             }
-            if (!is_dir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/".$fNumFase."/") && !mkdir(getcwd()."/recursos/docs/ligas/".$oLiga->nombre."/".$fNumFase."/")){
+            if (!is_dir($rutaDocumentosLiga . "/" . $fNumFase) && !mkdir($rutaDocumentosLiga . "/" . $fNumFase, 0775, true)){
               printf("Error creando directorio");
             }
-            $rutaDestino = getcwd()."/recursos/docs/ligas/" . basename($oLiga->nombre) . "/" . $fNumFase . "/" . basename($fUrlDocumento);
+            $rutaDestino = $rutaDocumentosLiga . "/" . $fNumFase . "/" . basename($fUrlDocumento);
             move_uploaded_file($_FILES['fUrlDocumento']['tmp_name'], $rutaDestino);
           }
         }
@@ -443,7 +447,7 @@
                             /></p>
       <p><label for="fUrlDocumentoAux">Url documento: </label>  <input type="text" name="fUrlDocumentoAux" maxlength="35"  id="fUrlDocumentoAux" value="<?php printf($fUrlDocumento);?>"   data-validation="required"></p>
       <?php if (strlen($fUrlDocumento) > 0 && $accionForm == 4 ) { ?>
-          <p><label for=""> </label><div class="config-foto"><a href="/mb-league/recursos/docs/ligas/<?php printf($oLiga->nombre."/".$fNumFase."/". $fUrlDocumento); ?>" target="blank"><img src="recursos/img/icon-pdf.png" alt="LIsta de ejército"/></a></div></p>
+          <p><label for=""> </label><div class="config-foto"><a href="/recursos/docs/ligas/<?php echo (int) $fIdLiga . "/" . (int) $fNumFase . "/" . rawurlencode(basename($fUrlDocumento)); ?>" target="_blank"><img src="recursos/img/icon-pdf.png" alt="Lista de ejército"/></a></div></p>
       <?php } ?>
       <p><input type="submit" value="<?php printf($txtAltaModBoton);?>" id="formButton" class="submit-button"/></p>
     </form>

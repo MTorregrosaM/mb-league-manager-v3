@@ -964,7 +964,7 @@ class controllerEnfrentamiento {
 						and t3.idLiga = t2.idLiga
 						where t3.idLiga =  " . $fIdLiga . "
 						and nick != 'zMercenario'
-						group by t3.nick
+						group by t3.idJugador, t3.nick
 						ORDER BY t3.idJugador";  
 
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
@@ -1020,9 +1020,9 @@ class controllerEnfrentamiento {
 					) T3
 					ON T1.idJugador = T3.idJugador2
 					WHERE idLiga = " .  $fIdLiga . " 
-					group by idJugador1, idJugador2
+					group by T1.idJugador, T1.nick
 					
-					order by idJugador";
+					order by T1.idJugador";
 
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
 
@@ -1042,7 +1042,7 @@ class controllerEnfrentamiento {
 
 					foreach ($resultadoBD1 as $fila1) {
 					    $arrRankingRow = array ();
-					    array_push($arrRankingRow, $fila["nick"], $fila1["PuntosDeportividad"], $fila["numPartidas"], $fila["idJugador1"], str_replace(',', '', $fila1["PuntosDeportividad"]), $fila1["PuntosTotalesDeportividad"]);
+					    array_push($arrRankingRow, $fila["nick"], $fila1["PuntosDeportividad"], $fila["numPartidas"], $fila["idJugador1"], str_replace(',', '', (string) $fila1["PuntosDeportividad"]), $fila1["PuntosTotalesDeportividad"]);
 					    array_push($arrResultados, $arrRankingRow);   
 					}
 

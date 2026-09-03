@@ -2,7 +2,8 @@
 
  	// USUARIO
 	$estaLogado = (($_SESSION["autorizado"] ?? 0) == 1 && !empty($_SESSION["usuario"]));
-	$rolUsuario = $estaLogado ? ($_SESSION["rol"] ?? '') : '';
+	$rolUsuario = $estaLogado ? strtoupper(trim((string) ($_SESSION["rol"] ?? ''))) : '';
+	$esAdministrador = $estaLogado && $rolUsuario === 'ADMIN';
 	$paginaActual = basename($_SERVER['PHP_SELF']);
 	$seccionesMenu = array(
 		'gestion-ligas.php' => array('gestion-ligas.php', 'gestion-fases.php', 'gestion-ligas-usuario.php'),
@@ -38,7 +39,7 @@
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item"><a class="nav-link<?php printf($paginaActual == 'index.php' ? ' active' : ''); ?>" href="index.php">Competiciones</a></li>
 				<?php if ($estaLogado) { ?>
-					<?php if ($rolUsuario == 'ADMIN' ) { ?><li class="nav-item"><a class="nav-link<?php printf($paginaActual == 'gestion-usuarios.php' ? ' active' : ''); ?>" href="gestion-usuarios.php">Usuarios</a></li><?php } ?>
+					<?php if ($esAdministrador) { ?><li class="nav-item"><a class="nav-link<?php printf($paginaActual == 'gestion-usuarios.php' ? ' active' : ''); ?>" href="gestion-usuarios.php">Usuarios</a></li><?php } ?>
 					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['gestion-ligas.php']) ? ' active' : ''); ?>" href="gestion-ligas.php">Ligas</a></li>
 					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['gestion-jugadores.php']) ? ' active' : ''); ?>" href="gestion-jugadores.php">Jugadores</a></li>
 					<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['gestion-enfrentamientos.php']) ? ' active' : ''); ?>" href="gestion-enfrentamientos.php">Cruces</a></li>

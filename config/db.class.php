@@ -50,10 +50,11 @@ class conexBD {
 		}
 		$this->conexion->set_charset('utf8');
 		
-		}catch(Exception $e){
+		}catch(Throwable $e){
 			$oLog = Log::getInstance();
 			$this->cerrarConexion();
-			$oLog->trazaLog ($e, "ERROR DB");		 
+			$oLog->trazaLog ($e, "ERROR DB");
+			throw new RuntimeException('No se pudo abrir la conexión a la base de datos.', 0, $e);
 		}
 
     }
@@ -107,7 +108,7 @@ class conexBD {
 			$this->cerrarConexion();
 			return $rows;
 
-		}catch(Exception $e){
+		}catch(Throwable $e){
 			$oLog = Log::getInstance();
 			$this->cerrarConexion();
 			$oLog->trazaLog ($e, "db.class.php");	
@@ -139,15 +140,32 @@ class conexBD {
 				$this->cerrarConexion();
 				return $afectadas;
 			}
-			$resultado = $sentencia->get_result();
-			$filas = $resultado ? $resultado->fetch_all(MYSQLI_NUM) : array();
-			if ($resultado) {
-				$resultado->free();
+			$filas = array();
+			if (method_exists($sentencia, 'get_result')) {
+				$resultado = $sentencia->get_result();
+				$filas = $resultado ? $resultado->fetch_all(MYSQLI_NUM) : array();
+				if ($resultado) {
+					$resultado->free();
+				}
+			} else {
+				$metadatos = $sentencia->result_metadata();
+				if ($metadatos !== false) {
+					$valores = array();
+					$referencias = array();
+					while ($campo = $metadatos->fetch_field()) {
+						$referencias[] = &$valores[$campo->name];
+					}
+					$metadatos->free();
+					call_user_func_array(array($sentencia, 'bind_result'), $referencias);
+					while ($sentencia->fetch()) {
+						$filas[] = array_values($valores);
+					}
+				}
 			}
 			$sentencia->close();
 			$this->cerrarConexion();
 			return $filas;
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$oLog = Log::getInstance();
 			$this->cerrarConexion();
 			$oLog->trazaLog($e, "db.class.php");

@@ -15,12 +15,13 @@
          printf("ERROR DB");
     }
 
-	$rutaLiga = "";
-    $query = "SELECT nombre FROM mb_ligas WHERE idLiga = ". $idLiga;
-    $resultadoBD = $conexion->	query( $query );
-	while ($fila = mysqli_fetch_assoc($resultadoBD)) {
-		$rutaLiga = $fila["nombre"];
-	}
+    $rutaLiga = (int) $idLiga;
+    $enlaceLista = function ($documento, $fase) use ($rutaLiga) {
+        if (preg_match('/^https?:\/\//i', $documento)) {
+            return $documento;
+        }
+        return "/recursos/docs/ligas/" . $rutaLiga . "/" . (int) $fase . "/" . rawurlencode(basename($documento));
+    };
 
     $query = "SELECT idJugador, nick FROM mb_jugadores WHERE idLiga = ". $idLiga . " order by nick";
     $resultadoBD = $conexion->	query( $query );
@@ -44,7 +45,7 @@
         while ($filaFase = mysqli_fetch_assoc($resultadoBDFase)) {
             $aux = 1;
             $icon = ($filaFase["bando"] == 'ALIADO') ? "icon_aliados.png": "icon_eje.png";
-            printf("<a href=\"/mb-league/recursos/docs/ligas/" .$rutaLiga . "/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"/mb-league/recursos/img/" . $icon . "\" width=\"17px\" alt=\"\"></a> ");
+            printf("<a href=\"" . htmlspecialchars($enlaceLista($filaFase["urlDocumento"], $filaFase["numFase"]), ENT_QUOTES, 'UTF-8') . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"/recursos/img/" . $icon . "\" width=\"17px\" alt=\"\"></a> ");
         }
 
         if( $aux == 0){
@@ -61,7 +62,7 @@
         while ($filaFase = mysqli_fetch_assoc($resultadoBDFase)) {
             $aux = 1;
             $icon = ($filaFase["bando"] == 'ALIADO') ? "icon_aliados.png": "icon_eje.png";
-             printf("<a href=\"/mb-league/recursos/docs/ligas/" .$rutaLiga . "/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"/mb-league/recursos/img/" . $icon . "\" width=\"17px\" alt=\"\"></a> ");
+             printf("<a href=\"" . htmlspecialchars($enlaceLista($filaFase["urlDocumento"], $filaFase["numFase"]), ENT_QUOTES, 'UTF-8') . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"/recursos/img/" . $icon . "\" width=\"17px\" alt=\"\"></a> ");
         }
         if( $aux == 0){
             printf("-");
@@ -76,7 +77,7 @@
         while ($filaFase = mysqli_fetch_assoc($resultadoBDFase)) {
             $aux = 1;
             $icon = ($filaFase["bando"] == 'ALIADO') ? "icon_aliados.png": "icon_eje.png";
-            printf("<a href=\"/mb-league/recursos/docs/ligas/" .$rutaLiga . "/". $filaFase["numFase"]."/" . $filaFase["urlDocumento"] . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"/mb-league/recursos/img/" . $icon . "\" width=\"17px\" alt=\"\"></a> ");
+            printf("<a href=\"" . htmlspecialchars($enlaceLista($filaFase["urlDocumento"], $filaFase["numFase"]), ENT_QUOTES, 'UTF-8') . "\" target=\"_blank\"><img title=\"Bajar lista en PDF\" src=\"/recursos/img/" . $icon . "\" width=\"17px\" alt=\"\"></a> ");
         }
      
         if( $aux == 0){

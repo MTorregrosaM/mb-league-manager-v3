@@ -5,3 +5,6 @@
 /.mysql-test-data/
 /log.log
 /sql/seed_pro.sql
+
+# Local development instructions
+/README.local.md

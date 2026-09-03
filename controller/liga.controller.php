@@ -346,6 +346,17 @@ class controllerLiga {
                   WHERE idLiga  = '". $fila[0] . "'";
             $resultadoBDaux2 = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
+            $rutaDocumentosLiga = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'recursos' . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR . 'ligas' . DIRECTORY_SEPARATOR . (int) $fila[0];
+            if (!is_dir($rutaDocumentosLiga) && !mkdir($rutaDocumentosLiga, 0775, true)) {
+              throw new RuntimeException('No se pudo crear el directorio de documentos de la liga.');
+            }
+            for ($fase = 1; $fase <= (int) $fNumFases; $fase++) {
+              $rutaFase = $rutaDocumentosLiga . DIRECTORY_SEPARATOR . $fase;
+              if (!is_dir($rutaFase) && !mkdir($rutaFase, 0775, true)) {
+                throw new RuntimeException('No se pudo crear el directorio de documentos de la fase.');
+              }
+            }
+
             
             $fechaInicio = new DateTime($fechaLigaInicio);
             $fechaFin = new DateTime($fechaLigaFin);
@@ -537,7 +548,7 @@ class controllerLiga {
 
 
     /* Listado de empresas para los formularios de búsqueda */
-    public function recuperarSelectLigas( $formAlta = null, $mostrarInactivos = false, $idLigas = null, $selectorPublico = false ){
+    public function recuperarSelectLigas( $formAlta = null, $mostrarInactivos = false, $idLigas = null, $selectorPublico = false, $soloActivas = false ){
     try {
 
 
@@ -550,6 +561,9 @@ class controllerLiga {
       }
       if (!$selectorPublico && isset($_SESSION["rol"]) && $_SESSION["rol"] != "ADMIN" && $idLigas !== null) {
         $mostrarInactivos = true;
+      }
+      if ($soloActivas) {
+        $mostrarInactivos = false;
       }
       
 
