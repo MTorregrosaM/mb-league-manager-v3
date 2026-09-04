@@ -71,7 +71,9 @@ function pintarRanking($filas, $columnas, $orden, $columnasDatos) {
 $oControllerResultado = new controllerResultado();
 $oControllerLiga = new controllerLiga();
 $oControllerUsuario = new controllerUsuario();
-$ligasUsuario = $oControllerUsuario->recuperarLigasUsuario($_SESSION["usuario"] ?? "");
+$ligasUsuario = !empty($_SESSION["usuario"])
+  ? $oControllerUsuario->recuperarLigasUsuario($_SESSION["usuario"])
+  : null;
 $arrLigas = $oControllerLiga->recuperarSelectLigas(null, true, null, true);
 $arrLigas = is_array($arrLigas) ? $arrLigas : array();
 $fIdLiga = isset($_GET["fIdLiga"]) ? (int) $_GET["fIdLiga"] : 0;

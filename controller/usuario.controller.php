@@ -344,6 +344,11 @@ class controllerUsuario {
 
     /* método para recuperar el las ligas de un usuario. */
     public function recuperarLigasUsuario (  $fIdUsuario ) {
+
+    $fIdUsuario = filter_var($fIdUsuario, FILTER_VALIDATE_INT);
+    if ($fIdUsuario === false || $fIdUsuario <= 0) {
+      return null;
+    }
   
 		try {
 
