@@ -59,7 +59,13 @@ League access is checked for requests that contain a league, player or related e
 - `controller/`: database operations and application rules.
 - `config/`: authentication, security, database access, logging and configuration.
 - `ajax/`: asynchronous endpoints used by selectors, rounds, pairings and result validation.
-- `inc/`: reusable views for rankings, progress, rounds and external league displays.
+- `inc/`: reusable templates and helpers for external league displays.
+	- `ranking.php`: league ranking template, expects `$idLiga`.
+	- `fase-ronda.php`: round template, exposes `printFaseRonda($idLiga, $idFase, $idRonda)`.
+	- `listas.php`: player army-list template, expects `$idLiga`.
+	- `progreso_liga.php`: league progress template, expects `$idLiga`.
+	- `funciones_mb_league.php` and `puntuacion-fow.php`: shared helper functions.
+	- The former hardcoded `faseN-rondaM.php` copies and the obsolete `ranking2.php` have been removed.
 - `assets/css/`: shared responsive styles and the application theme.
 - `assets/js/`: jQuery, jQuery UI, calendars, form validation and supporting frontend libraries.
 - `assets/img/`: existing application, league and interface assets.
@@ -89,7 +95,7 @@ League access is checked for requests that contain a league, player or related e
 
 ## External integrations
 
-The PHP files in `inc/` can be included by other pages to render league rounds, player lists, progress information and rankings. `pintar_tablas.php` provides another reusable reporting entry point. Integrations must provide the variables expected by the selected component and use the same database access configuration.
+The PHP files in `inc/` can be included by other pages to render league rounds, player lists, progress information and rankings. Use the parameterized templates instead of creating a file for each phase and round. `pintar_tablas.php` provides another reusable reporting entry point. Integrations must provide the variables expected by the selected component and use the same database access configuration.
 
 ## Database scripts
 
