@@ -1579,6 +1579,30 @@
   .detalle-jugador-cabecera { margin-bottom: 1rem; }
   .detalle-jugador-cabecera .h2 { margin-bottom: .35rem; }
   .detalle-jugador-liga { margin: 0; color: var(--app-muted); }
+  .detalle-jugador-graficos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1.25rem; }
+  .detalle-jugador-grafico { min-width: 0; padding: 1rem; border: 1px solid var(--app-border); border-radius: .65rem; background: var(--app-surface); }
+  .detalle-jugador-grafico h3 { margin: 0 0 1rem; color: #2DE68A; font-size: 1.15rem; }
+  .detalle-jugador-grafico-vacio { margin: 0; color: var(--app-muted); }
+  .grafico-fases { display: grid; gap: .75rem; }
+  .grafico-fase-fila { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) 1.5rem; align-items: center; gap: .6rem; color: var(--app-muted); font-size: .9rem; }
+  .grafico-fase-fila strong { color: #fff; text-align: right; }
+  .grafico-fase-barra { display: flex; height: 1rem; overflow: hidden; border-radius: .25rem; background: var(--app-surface-raised); }
+  .grafico-fase-barra i { display: block; height: 100%; }
+  .grafico-victorias { background: #2DE68A; }
+  .grafico-empates { background: #e0a43b; }
+  .grafico-derrotas { background: #ff6b6b; }
+  .grafico-leyenda, .grafico-resumen { display: flex; flex-wrap: wrap; gap: .8rem 1rem; margin-top: 1rem; color: var(--app-muted); font-size: .85rem; }
+  .grafico-leyenda span { display: inline-flex; align-items: center; gap: .35rem; }
+  .grafico-leyenda i { width: .65rem; height: .65rem; border-radius: .15rem; }
+  .grafico-dona-contenedor { position: relative; display: grid; place-items: center; min-height: 9rem; }
+  .grafico-dona { width: 8rem; height: 8rem; border-radius: 50%; background: conic-gradient(#2DE68A 0 calc(var(--victorias) * 1%), #e0a43b calc(var(--victorias) * 1%) calc((var(--victorias) + var(--empates)) * 1%), #ff6b6b calc((var(--victorias) + var(--empates)) * 1%) 100%); }
+  .grafico-dona::after { content: ''; display: block; width: 5.2rem; height: 5.2rem; margin: 1.4rem; border-radius: 50%; background: var(--app-surface); }
+  .grafico-dona-total { position: absolute; display: grid; place-items: center; color: #fff; line-height: 1.05; }
+  .grafico-dona-total strong { font-size: 1.5rem; }
+  .grafico-dona-total span { color: var(--app-muted); font-size: .75rem; }
+  .grafico-resumen { justify-content: space-between; margin-top: .5rem; }
+  .grafico-resumen span { display: grid; gap: .15rem; text-align: center; }
+  .grafico-resumen strong { color: #fff; font-size: 1.2rem; }
   .detalle-jugador-bloque { margin: 0 0 1.25rem; padding: 1rem; border: 1px solid var(--app-border); border-radius: .65rem; background: var(--app-surface); }
   .detalle-jugador-bloque h3 { margin: 0 0 1rem; color: #2DE68A; font-size: 1.15rem; }
   .detalle-jugador-tabla-wrap { overflow-x: auto; }
@@ -2507,6 +2531,8 @@
   }
 
   @media (max-width: 767.98px) {
+    .detalle-jugador-graficos { grid-template-columns: 1fr; }
+    .detalle-jugador-grafico { padding: .8rem; }
     .detalle-jugador-bloque h3 {
       float: none !important;
       display: block;

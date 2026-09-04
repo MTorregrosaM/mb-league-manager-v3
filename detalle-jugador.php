@@ -49,6 +49,35 @@ $arrListas = $oControllerJugador->recuperarListadoListas((int) $idJugador, $idLi
 $arrListas = is_array($arrListas) ? $arrListas : array();
 $nombreJugador = nombreJugadorDetalle($oJugador, $idJugador);
 $nombreLiga = $oLiga !== null ? (string) $oLiga->nombre : "";
+$estadisticasJugador = array("victorias" => 0, "empates" => 0, "derrotas" => 0, "jugados" => 0);
+$estadisticasFases = array();
+foreach ($arrResultados as $resultado) {
+  if ($resultado[10] === null || $resultado[10] === "") {
+    continue;
+  }
+
+  $esJugador1 = (int) $resultado[4] === (int) $idJugador;
+  $puntosJugador = (int) ($esJugador1 ? $resultado[6] : $resultado[7]);
+  $puntosContrincante = (int) ($esJugador1 ? $resultado[7] : $resultado[6]);
+  $fase = (int) $resultado[2];
+  if (!isset($estadisticasFases[$fase])) {
+    $estadisticasFases[$fase] = array("jugados" => 0, "victorias" => 0, "empates" => 0, "derrotas" => 0);
+  }
+
+  $estadisticasJugador["jugados"]++;
+  $estadisticasFases[$fase]["jugados"]++;
+  if ($puntosJugador > $puntosContrincante) {
+    $estadisticasJugador["victorias"]++;
+    $estadisticasFases[$fase]["victorias"]++;
+  } elseif ($puntosJugador < $puntosContrincante) {
+    $estadisticasJugador["derrotas"]++;
+    $estadisticasFases[$fase]["derrotas"]++;
+  } else {
+    $estadisticasJugador["empates"]++;
+    $estadisticasFases[$fase]["empates"]++;
+  }
+}
+ksort($estadisticasFases);
 ?>
 <!doctype html>
 <html lang="es" data-bs-theme="dark">
@@ -63,6 +92,51 @@ $nombreLiga = $oLiga !== null ? (string) $oLiga->nombre : "";
     <h2 class="h2"><span><?php echo escaparDetalle($nombreJugador); ?></span></h2>
     <p class="detalle-jugador-liga"><?php echo escaparDetalle($nombreLiga); ?></p>
   </div>
+
+  <?php if ($estadisticasJugador["jugados"] >= 2) { ?>
+  <section class="detalle-jugador-graficos" aria-label="Resumen gráfico de enfrentamientos">
+    <article class="detalle-jugador-grafico">
+      <h3>Balance por fase</h3>
+      <?php if (count($estadisticasFases) === 0) { ?>
+        <p class="detalle-jugador-grafico-vacio">Sin enfrentamientos jugados.</p>
+      <?php } else { ?>
+        <div class="grafico-fases" role="img" aria-label="Victorias, empates y derrotas por fase">
+          <?php foreach ($estadisticasFases as $fase => $estadisticasFase) {
+              $jugadosFase = max(1, $estadisticasFase["jugados"]);
+              $victoriasWidth = round($estadisticasFase["victorias"] * 100 / $jugadosFase, 2);
+              $empatesWidth = round($estadisticasFase["empates"] * 100 / $jugadosFase, 2);
+              $derrotasWidth = max(0, 100 - $victoriasWidth - $empatesWidth);
+          ?>
+            <div class="grafico-fase-fila">
+              <span>Fase <?php echo (int) $fase; ?></span>
+              <div class="grafico-fase-barra">
+                <i class="grafico-victorias" style="width: <?php echo $victoriasWidth; ?>%"></i>
+                <i class="grafico-empates" style="width: <?php echo $empatesWidth; ?>%"></i>
+                <i class="grafico-derrotas" style="width: <?php echo $derrotasWidth; ?>%"></i>
+              </div>
+              <strong><?php echo (int) $estadisticasFase["jugados"]; ?></strong>
+            </div>
+          <?php } ?>
+        </div>
+        <div class="grafico-leyenda"><span><i class="grafico-victorias"></i>Victorias</span><span><i class="grafico-empates"></i>Empates</span><span><i class="grafico-derrotas"></i>Derrotas</span></div>
+      <?php } ?>
+    </article>
+
+    <article class="detalle-jugador-grafico">
+      <h3>Resultado global</h3>
+      <?php $jugados = max(1, $estadisticasJugador["jugados"]); ?>
+      <div class="grafico-dona-contenedor">
+        <div class="grafico-dona" style="--victorias: <?php echo round($estadisticasJugador["victorias"] * 100 / $jugados, 2); ?>; --empates: <?php echo round($estadisticasJugador["empates"] * 100 / $jugados, 2); ?>;" role="img" aria-label="Resultado global de los enfrentamientos"></div>
+        <div class="grafico-dona-total"><strong><?php echo (int) $estadisticasJugador["jugados"]; ?></strong><span>jugados</span></div>
+      </div>
+      <div class="grafico-resumen">
+        <span><strong><?php echo (int) $estadisticasJugador["victorias"]; ?></strong>Victorias</span>
+        <span><strong><?php echo (int) $estadisticasJugador["empates"]; ?></strong>Empates</span>
+        <span><strong><?php echo (int) $estadisticasJugador["derrotas"]; ?></strong>Derrotas</span>
+      </div>
+    </article>
+  </section>
+  <?php } ?>
 
   <section class="detalle-jugador-bloque">
     <h3>Resultados</h3>
