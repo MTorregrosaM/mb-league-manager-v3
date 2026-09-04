@@ -361,9 +361,6 @@
 
 
 
-    <br/>
-    <div id="div-volver"><a href="index.php" class="btn-volver">Volver</a></div>
-
 
 </div>
 

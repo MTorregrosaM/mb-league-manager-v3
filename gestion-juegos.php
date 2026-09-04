@@ -114,7 +114,7 @@ $juegos = $oControllerJuego->recuperarListadoJuegos($busqueda, ($pagActual - 1) 
   <div id="btn-alta">
     <form name="btnFormAltaJuego" id="btnFormAltaJuego" method="POST" action="">
       <input type="hidden" name="accionForm" value="2" />
-      <a href="#" class="button" id="btnAltaJuego"><img src="assets/img/icon_nuevo.png" alt="Nuevo" /> Alta de nuevo juego</a>
+      <a href="#" class="button" id="btnAltaJuego"><img src="assets/img/new.svg" alt="Nuevo" /> Alta de nuevo juego</a>
     </form>
   </div>
   <?php if (count($juegos) > 0) { ?>

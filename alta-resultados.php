@@ -91,6 +91,14 @@
         $fResultadoJugador1 = (isset( $_POST["fResultadoJugador1"]))? $_POST["fResultadoJugador1"] : ($fResultadoRadio == 1 ? 3 : $minResultado);
         $fResultadoJugador2 = (isset( $_POST["fResultadoJugador2"]))? $_POST["fResultadoJugador2"] : $maxResultado;         
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+          $fResultadoJugador2 = $fResultadoRadio === 1
+            ? $fResultadoJugador1
+            : ((int) $fResultadoJugador1 <= 3
+              ? 3
+              : ($fResultadoRadio === 3 ? 4 : 5));
+        }
+
       // GUILD BALL  
       } else  if($oLiga->idJuego == 5 ){
         $maxResultado = 12;
@@ -231,8 +239,9 @@
 
     // ALTA DE NUEVO RESULTADO
     if ($accionForm == 1 && $tockenEnvio == 0 && $oLiga !== null && $oLiga->idJuego <= 2) {
+      $fResultadoRadio = estadoResultadoFow($fResultadoRadio);
       $resultadoValido = validarPuntosFow($fResultadoJugador1, $fResultadoRadio);
-      if ($fResultadoRadio === 1) {
+      if ($fResultadoRadio === 1 && $fResultadoJugador2 !== '') {
         $resultadoValido = $resultadoValido && validarPuntosFow($fResultadoJugador2, 1)
           && (int) $fResultadoJugador1 === (int) $fResultadoJugador2;
       }
@@ -323,11 +332,11 @@
 
 
       // tocken para evitar duplicados
-      $tockenEnvio = 1;
+      $tockenEnvio = ($comprobarAlta == 1) ? 1 : 0;
 
     }else if ($accionForm == 1 && (int) $tockenEnvio === 1){
 
-      $mensajeAltaMod .= "<div id=\"mensaje-error\" class=\"alert alert-danger\" role=\"alert\">El resultado de tu batalla ya se ha enviado, no puedes volver a enviarlo. Si tienes alguna duda escr&iacute;benos a <a href='hola@modelbrush.com'>hola@modelbrush.com</a>.</div>";
+      $mensajeAltaMod .= "<div id=\"mensaje-error\" class=\"alert alert-danger\" role=\"alert\">El resultado de tu batalla ya se ha enviado, no puedes volver a enviarlo.</div>";
       
     }
     
@@ -397,20 +406,26 @@
           <?php if ($accionForm == 4){ ?> <input type="hidden" name="fIdResultadoEditar" id="fIdResultadoEditar" value="1"/>  <?php } ?>
         
           <input type="hidden" name="fClaveCifrada" id="fClaveCifrada"  value="<?php printf($fClaveCifrada);?>"  />
-          <input type="hidden" name="fIdResultado" id="fIdResultado" value="<?php printf($fIdResultado);?>"/>
           <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
           <input type="hidden" name="fNumFase" id="fNumFase" value="<?php printf($fNumFase);?>"/>
           <input type="hidden" name="tockenEnvio" id="tockenEnvio" value="<?php printf($tockenEnvio);?>"/>
+          <?php if ($fIdResultado != "") { ?>
+            <input type="hidden" name="fIdResultado" id="fIdResultado" value="<?php printf($fIdResultado);?>"/>
+          <?php } ?>
+          <?php if ($fIdJugador2 != 0) { ?>
+            <input type="hidden" name="fIdJugador2" id="fIdJugador2" value="<?php printf($fIdJugador2);?>"/>
+          <?php } ?>
+          <input type="hidden" name="fResultadoJugador2" id="fResultadoJugador2" value="<?php printf($fResultadoJugador2);?>"/>
           <p><label for="fIdJugador1">&iquest;Qui&eacute;n eres?: </label> <span id="selectJugadores"><select name="fIdJugador1" id="fIdJugador1" data-validation="required " ><option value=""></option><?php printf($selectJugadores); ?> </select></span></p>
           
           <p><label for="fNumRonda">Ronda: </label> <span id="selectRondas"><?php printf($selectRondas); ?></span><br/></p>
           
-          <p><label for="fIdJugador2Nick">Tu contrincante: </label><span id="selectJugador2" name="selectJugador2"><input type="text" name="fIdJugador2Nick" id="fIdJugador2Nick" value="<?php printf($fIdJugador2Nick);?>" class="input-contrincante" disabled /></span></p>
+          <p><label for="fIdJugador2Nick">Tu contrincante: </label><span id="selectJugador2" name="selectJugador2"><input type="text" name="fIdJugador2Nick" id="fIdJugador2Nick" value="<?php printf($fIdJugador2Nick);?>" class="input-contrincante" readonly /></span></p>
           
           <p><label for="fFechaBatalla">Fecha de batalla: </label>  
           <span class="fecha-batalla-control">
             <input type="text" class="fFechaBatallaForm" name="fFechaBatalla" id="fFechaBatalla" maxlength="10"
-            value="<?php printf($fFechaBatalla);?>" data-validation="required date"
+            value="<?php printf($fFechaBatalla);?>" data-validation="required"
             data-validation-format="dd-mm-yyyy">
           </span></p>
 
@@ -442,7 +457,10 @@
                     </label>
                   </div>
                   <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>">
-                <p id="resultadoJug1" > </p>
+                <div class="resultado-nombres">
+                  <p id="resultadoJug1" > </p>
+                  <p id="resultadoJug2" ><?php printf($fIdJugador2Nick); ?></p>
+                </div>
                   <div id="slider-resultado-1"></div>
                 </div>
 
@@ -564,7 +582,7 @@
                     return estado === 3 ? 5 : (estado === 0 ? 4 : 3);
                   }
 
-                  function actualizarResultadoFow(puntosSeleccionados) {
+                  window.actualizarResultadoFow = function(puntosSeleccionados) {
                     var estado = parseInt($("input[name=fResultadoRadio]:checked").val(), 10);
                     var maximo = maximoPuntosFowPorResultado(estado);
                     var puntosIniciales = puntosSeleccionados === undefined
@@ -574,7 +592,9 @@
                     $("#slider-resultado-1").slider("option", "max", maximo);
                     $("#slider-resultado-1").slider("option", "value", puntos);
                     $("#fResultadoJugador1").val(puntos);
-                    $("#fResultadoJugador2").val(estado === 1 ? puntos : (estado === 3 ? 4 : 5));
+                    $("#fResultadoJugador2").val(estado === 1
+                      ? puntos
+                      : (puntos <= 3 ? 3 : (estado === 3 ? 4 : 5)));
                   }
 
                   $( "#slider-resultado-1" ).slider({

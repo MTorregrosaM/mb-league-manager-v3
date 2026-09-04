@@ -42,7 +42,7 @@
     $fIdJuego = $_POST["fIdJuego"] ?? "";
     $fFecIni = $_POST["fFecIni"] ?? "";
     $fFecFin = $_POST["fFecFin"] ?? "";
-    $fIndActivo = $_POST["fIndActivo"] ?? 1;
+    $fIndActivo = $_POST["fIndActivo"] ?? (($accionForm == 2) ? 1 : "");
     $pagActual = $_POST["pagActual"] ?? 1;
     $fIdLigaBorrar = $_POST["fIdLigaBorrar"] ?? "";
     $fIdLigaEditar = $_POST["fIdLigaEditar"] ?? "";
@@ -90,7 +90,8 @@
         /* PAGINADOR */
     /********************************/
         $numRegs = $oControllerLiga->paginadorLigas($fNombre, $fIndActivo, $fFecIni, $ligasUsuario);
-        $numPags = ceil($numRegs / 10);
+        $numPags = max(1, (int) ceil($numRegs / 10));
+        $pagActual = min(max(1, (int) $pagActual), $numPags);
         require_once("paginador.inc");
 
         /********************************/
@@ -180,6 +181,7 @@
             if ($comprobarAltaMod == 1) {
                 // Recuperamos el ID de la nueva liga
                 $idNuevaLiga = $oControllerLiga->recuperarUltimaLiga($fNombre, $fFecIni);
+                $oControllerLiga->asignarPermisoLigaUsuario($_SESSION["usuario"], $idNuevaLiga);
 
             }
 
@@ -380,8 +382,10 @@
       <?php printf ($mensajeAltaMod);  ?>
       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
       <input type="hidden" name="accionForm" id="accionForm" value="<?php printf($accionForm);?>"/>
-      <?php if ($accionForm == 4){ ?> <input type="hidden" name="fIdLigaEditar" id="fIdLigaEditar" value="1"/>  <?php } ?>
+      <?php if ($accionForm == 4){ ?>
+      <input type="hidden" name="fIdLigaEditar" id="fIdLigaEditar" value="<?php printf($fIdLiga);?>"/>
       <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
+      <?php } ?>
       <p><label for="fNombre">Nombre: </label>  <input type="text" name="fNombre" maxlength="35"  id="fNombre" data-validation="required " value="<?php printf($fNombre);?>"  ></p>
       <p><label for="fIdJuego">Juego: </label>  <select name="fIdJuego"  id="fIdJuego" ><option></option><?php printf($selectJuegos); ?></select></p>
       <p><label for="fNumFases">N&uacute;mero fases: </label>  <input type="number" name="fNumFases" min="1" step="1" autocomplete="new-password" data-validation="required number"  id="fNumFases" value="<?php printf($fNumFases);?>" class="no-border spinnerFases"></p>
@@ -441,16 +445,16 @@
         </form>
       </div>
 
-      <?php if($oUsuario->rol == 'ADMIN') { ?>
       <div id="btn-alta">
-        <a href="gestion-juegos.php" class="button"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Gesti&oacute;n de juegos</a>
+        <?php if($oUsuario->rol == 'ADMIN') { ?>
+        <a href="gestion-juegos.php" class="button"> <img src="assets/img/new.svg" alt="Nuevo"/> Gesti&oacute;n de juegos</a>
+        <?php } ?>
         <form name="btnFormAltaLiga" id="btnFormAltaLiga" method="POST" action="">
           <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
           <input type="hidden" name="accionForm" id="accionForm" value="2"/>
-          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva liga</a>
+          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/new.svg" alt="Nuevo"/> Alta de nueva liga</a>
         </form>
       </div>
-      <?php } ?>
 
 
       <?php

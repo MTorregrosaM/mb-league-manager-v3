@@ -39,11 +39,6 @@
 
 
 		echo "<div id=\"mensaje-ok\">Cruces grabados correctamente.</div>";
-		echo "<form action=\"gestion-resultados.php\" id=\"form-volver\" name=\"form-volver\" method=\"POST\"><input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\"/><input type=\"hidden\" id=\"fIdLiga\" name=\"fIdLiga\" value=\"".$fIdLiga."\"/>";
-		echo "<input type=\"hidden\" id=\"fNumFase\" name=\"fNumFase\" value=\"".$fNumFase."\"/>";
-		echo "<input type=\"hidden\" id=\"accionForm\" name=\"accionForm\" value=\"1\"/>";
-		echo "<input type=\"hidden\" id=\"fNumRonda\" name=\"fNumRonda\" value=\"".$fNumRonda."\"/></form>";
-		echo "<div id=\"div-volver\"><span class=\"btn-volver\" onClick=\"$('#form-volver').submit();\">Volver</span></div>";
 
 
 ?>

@@ -342,7 +342,7 @@
       <div id="btn-alta">
         <form name="btnFormAltaUsuario" id="btnFormAltaUsuario" method="POST" action="">
           <input type="hidden" name="accionForm" id="accionForm" value="2"/>
-          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nuevo usuario</a>
+          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/new.svg" alt="Nuevo"/> Alta de nuevo usuario</a>
         </form>
       </div>
 

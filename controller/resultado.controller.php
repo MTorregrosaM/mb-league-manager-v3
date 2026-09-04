@@ -478,15 +478,25 @@ class controllerResultado {
 
 
   	/* método para borrar todos los resultados */
-  	public function borrarResultadosFaseRonda( $fIdLiga, $fNumFase, $fNumRonda  ){
+   	public function borrarResultadosFaseRonda( $fIdLiga, $fNumFase, $fNumRonda  ){
 
 		try {
 
-			// insertamos el nuevo registro
-			 $queryDB = "DELETE FROM mb_enfrentamientos 
-						WHERE idLiga = " . $fIdLiga . "
-						AND numFase = " . $fNumFase . "
-						AND numRonda = " . $fNumRonda;
+			$idLiga = (int) $fIdLiga;
+			$numFase = (int) $fNumFase;
+			$numRonda = (int) $fNumRonda;
+			$queryDB = "DELETE FROM mb_enfren_misiones_sec
+						WHERE idEnfrentamiento IN (
+							SELECT idEnfrentamiento FROM mb_enfrentamientos
+							WHERE idLiga = " . $idLiga . "
+							AND numFase = " . $numFase . "
+							AND numRonda = " . $numRonda . ")";
+			$this->oConexBD->ejecutarConsulta($queryDB, 1);
+
+			$queryDB = "DELETE FROM mb_enfrentamientos
+						WHERE idLiga = " . $idLiga . "
+						AND numFase = " . $numFase . "
+						AND numRonda = " . $numRonda;
 			
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
@@ -717,19 +727,41 @@ class controllerResultado {
 				return 2;
 			}
 
-			 $queryDB = "UPDATE mb_enfrentamientos SET
-						indValidado = 0
+			$this->oConexBD->ejecutarConsulta(
+				"DELETE FROM mb_enfren_misiones_sec WHERE idEnfrentamiento = " . $fIdResultado,
+				1
+			);
+
+			$queryDB = "UPDATE mb_enfrentamientos SET
+						resultadoJugador1 = NULL
+						,resultadoJugador2 = NULL
+						,valPintura = NULL
+						,valPinturaJug1 = NULL
+						,valPinturaJug2 = NULL
+						,valDeportividadJug1 = NULL
+						,valDeportividadJug2 = NULL
+						,fechaBatalla = NULL
+						,indValidado = NULL
+						,idJugVictoriaConcedida = NULL
+						,victoriaSector = NULL
+						,audAlta = NULL
 						WHERE idEnfrentamiento = " . $fIdResultado;
 			
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
 
 			$estadoReset = $this->oConexBD->ejecutarConsulta(
-				"SELECT indValidado FROM mb_enfrentamientos WHERE idEnfrentamiento = " . $fIdResultado
+				"SELECT resultadoJugador1, resultadoJugador2, valPinturaJug1,
+						valPinturaJug2, valDeportividadJug1, valDeportividadJug2,
+						fechaBatalla, indValidado
+				 FROM mb_enfrentamientos WHERE idEnfrentamiento = " . $fIdResultado
 			);
 
 			
 			if ($resultadoBD !== null
-				&& isset($estadoReset[0][0]) && (int) $estadoReset[0][0] === 0){
+				&& isset($estadoReset[0])
+				&& count(array_filter($estadoReset[0], function ($valor) {
+					return $valor !== null;
+				})) === 0){
 				return 1;				
 			}else{
 				return 2;
@@ -741,6 +773,38 @@ class controllerResultado {
 			return null;	 
 		}
   	}
+
+
+
+	public function resetearValidacion( $fIdResultado  ){
+
+		try {
+			$fIdResultado = (int) $fIdResultado;
+			if ($fIdResultado <= 0) {
+				return 2;
+			}
+
+			$queryDB = "UPDATE mb_enfrentamientos SET
+						indValidado = 0
+						WHERE idEnfrentamiento = " . $fIdResultado;
+
+			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB, 1);
+			$estadoReset = $this->oConexBD->ejecutarConsulta(
+				"SELECT indValidado FROM mb_enfrentamientos WHERE idEnfrentamiento = " . $fIdResultado
+			);
+
+			if ($resultadoBD !== null
+				&& isset($estadoReset[0][0]) && (int) $estadoReset[0][0] === 0){
+				return 1;
+			}
+
+			return 2;
+		}catch(Exception $e){
+			$oLog = Log::getInstance();
+			$oLog->trazaLog ($e, "resetearValidacion - liga.controller.php");
+			return null;
+		}
+	}
 
 
 
@@ -1029,28 +1093,28 @@ class controllerResultado {
   	public function recuperarRankingPuntosDeportividad(  $fIdLiga ) {
 
 		try {
-
-	  		//$queryDB = "SELECT distinct idJugador, nick FROM mb_jugadores WHERE idLiga = 1 order by idJugador";  
-
-			$queryDB = "SELECT idJugador1, nick, sum(IFNULL(T2.numPartidas,0))+sum(IFNULL(T3.numPartidas,0)) as numPartidas
-				FROM mb_jugadores T1
-				JOIN				
-					(
-						select idJugador1 , count(1)  as numPartidas from mb_enfrentamientos where indValidado = 1 and idJugVictoriaConcedida = 0
-						group by idJugador1
-					) T2
-					on T2.idJugador1 = T1.idJugador
-					LEFT JOIN
-					(
-						select idJugador2 , count(1)  as numPartidas from mb_enfrentamientos where indValidado = 1 and idJugVictoriaConcedida = 0
-						group by idJugador2
-
-					) T3
-					ON T1.idJugador = T3.idJugador2
-					WHERE idLiga = " .  $fIdLiga . " 
-					group by T1.idJugador, T1.nick
-					
-					order by T1.idJugador";
+				$queryDB = "SELECT
+						T1.idJugador,
+						T1.nick,
+						COUNT(T2.idEnfrentamiento) AS numPartidas,
+						IFNULL(SUM(CASE
+							WHEN T2.idJugador1 = T1.idJugador THEN T2.valDeportividadJug1
+							ELSE T2.valDeportividadJug2
+						END), 0) AS PuntosTotalesDeportividad,
+						IFNULL(ROUND(SUM(CASE
+							WHEN T2.idJugador1 = T1.idJugador THEN T2.valDeportividadJug1
+							ELSE T2.valDeportividadJug2
+						END) / NULLIF(COUNT(T2.idEnfrentamiento), 0), 2), 0) AS PuntosDeportividad
+					FROM mb_jugadores T1
+					LEFT JOIN mb_enfrentamientos T2
+						ON (T2.idJugador1 = T1.idJugador OR T2.idJugador2 = T1.idJugador)
+						AND T2.idLiga = " . (int) $fIdLiga . "
+						AND T2.indValidado = 1
+						AND T2.idJugVictoriaConcedida = 0
+					WHERE T1.idLiga = " . (int) $fIdLiga . "
+						AND T1.nick != 'zMercenario'
+					GROUP BY T1.idJugador, T1.nick
+					ORDER BY T1.idJugador";
 
 			$resultadoBD = $this->oConexBD->ejecutarConsulta($queryDB);
 
@@ -1059,21 +1123,9 @@ class controllerResultado {
 			if ($resultadoBD != null){
 
 				foreach ($resultadoBD as $fila) {
-
-					$query1 = "SELECT IFNULL(sum(CASE WHEN idJugador1 = " . $fila[0] . " THEN valDeportividadJug1 ELSE 0 END) + 
-						            sum(CASE WHEN idJugador2 = " . $fila[0] . " THEN valDeportividadJug2 ELSE 0 END),0) as PuntosTotalesDeportividad,
-									REPLACE(ROUND(IFNULL(sum(CASE WHEN idJugador1 = " . $fila[0] . " THEN valDeportividadJug1 ELSE 0 END) + 
-						            sum(CASE WHEN idJugador2 = " . $fila[0] . " THEN valDeportividadJug2 ELSE 0 END),0)/" .  $fila["numPartidas"] . ",2 ),'.',',') 
-						             AS PuntosDeportividad
-					            FROM mb_enfrentamientos WHERE (IdJugador1 = " . $fila[0] . " or idJugador2 = " . $fila[0] . ") ";      
-					$resultadoBD1 = $this->oConexBD->ejecutarConsulta($query1);
-
-					foreach ($resultadoBD1 as $fila1) {
-					    $arrRankingRow = array ();
-					    array_push($arrRankingRow, $fila["nick"], $fila1["PuntosDeportividad"], $fila["numPartidas"], $fila["idJugador1"], str_replace(',', '', (string) $fila1["PuntosDeportividad"]), $fila1["PuntosTotalesDeportividad"]);
-					    array_push($arrResultados, $arrRankingRow);   
-					}
-
+					$arrRankingRow = array();
+					array_push($arrRankingRow, $fila["nick"], str_replace('.', ',', (string) $fila["PuntosDeportividad"]), $fila["numPartidas"], $fila["idJugador"], $fila["PuntosDeportividad"], $fila["PuntosTotalesDeportividad"]);
+					array_push($arrResultados, $arrRankingRow);
 				}
     			//usort($arrResultados, "sortByOrder");
 				return $arrResultados;	

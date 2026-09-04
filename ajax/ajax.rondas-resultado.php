@@ -80,10 +80,11 @@
 	                success:  function (response) {
 	                        $("#selectJugador2").html(response);
 							$("#resultadoJug2").text( $('#fIdJugador2Nick').val() );
-							$("#fResultadoJugador1").val( $('#fResultadoJugador1Aux').val() );
-			        		$("#slider-resultado-1").slider( "option", "value", $('#fResultadoJugador1Aux').val() );
-							$("#fResultadoJugador2").val( $("#slider-resultado-1").slider("option", "max") + 1 - $('#fResultadoJugador1Aux').val() );
-			        		$("#slider-resultado-2").slider( "option", "value", $("#slider-resultado-1").slider("option", "max") + 1 - $('#fResultadoJugador1Aux').val() );
+							var resultadoGuardado = $('#fResultadoRadioAux').val();
+							if (resultadoGuardado !== undefined) {
+								$("input[name=fResultadoRadio][value='" + resultadoGuardado + "']").prop("checked", true);
+							}
+							actualizarResultadoFow(parseInt($('#fResultadoJugador1Aux').val(), 10));
 							$("#fFechaBatalla").val( $('#fFechaBatallaAux').val() );
 							$('#estrellasPintura').raty({ score: 1, click: function(score, evt) { $("#fValPintura").val(score);} });
 							$('#fValPintura').val( 1 );

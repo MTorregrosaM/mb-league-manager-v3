@@ -146,7 +146,8 @@
 	              </tr>\n";
 
 	        foreach($arrJugadores as $fila){
-            $grid .="\n<tr><td>" . $fila[2] . "</td><td>" .  $fila[3]  . "</td><td>" . $fila[4] . "</td><td>" .  $fila[7]. "</td><td  class=\"align-center\">" .  $fila[6] . "</td>";
+            $apellidos = trim($fila[4] . " " . $fila[5]);
+            $grid .="\n<tr><td>" . $fila[2] . "</td><td>" .  $fila[3]  . "</td><td>" . $apellidos . "</td><td>" .  $fila[7]. "</td><td  class=\"align-center\">" .  $fila[6] . "</td>";
 	          $grid .= "<td class=\"align-center td-acciones\">";
 
 
@@ -157,7 +158,7 @@
 	                <input type=\"hidden\" name=\"fIdLiga\" id=\"fIdLiga\" value=\"".$fila[1]."\"/>
 	                <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"1\"/>
 
-	                <img src=\"assets/img/options.svg\" title=\"Ver listas del jugador\" alt=\"form-listas-".$fila[0]."\" class=\"btn-listas\"/>
+                  <img src=\"assets/img/options.svg\" title=\"Gestionar listas de jugador\" alt=\"form-listas-".$fila[0]."\" class=\"btn-listas\"/>
 	              </form>";
 
 	          $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
@@ -209,7 +210,7 @@
 	        */
 
 	        $mensajeAltaMod .= "<div id=\"". (($comprobarAltaMod == 1)? "mensaje-ok" : "mensaje-error") ."\">".
-                    ( ($comprobarAltaMod == 1)? "Jugador creado correctamente. <a href=\"#\"  class=\"btnVolver\">Volver</a>" :
+                    ( ($comprobarAltaMod == 1)? "Jugador creado correctamente. " :
                       (($comprobarAltaMod == 3)? "No se puede dar de alta: el nick, email, nombre + apellidos o teléfono ya se han utilizado." :
                      "Se ha producido un error en su solicitud."))  ."</div>";
 	      }
@@ -419,7 +420,7 @@
         <form name="btnFormAltaJugador" id="btnFormAltaJugador" method="POST" action="">
           <input type="hidden" name="accionForm" id="accionForm" value="2"/>
           <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
-          <a href="#" class="button" id="btnAltaJugador"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nuevo jugador</a>
+          <a href="#" class="button" id="btnAltaJugador"> <img src="assets/img/new.svg" alt="Nuevo"/> Alta de nuevo jugador</a>
         </form>
       </div>
 

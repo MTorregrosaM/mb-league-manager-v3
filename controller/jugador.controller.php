@@ -478,6 +478,63 @@ class controllerJugador {
     try {
 
       $this->oJugador = $this->recuperarDatosJugador ( $fIdJugador );
+
+      $queryListas = "SELECT idLiga, numFase, urlDocumento
+            FROM mb_listas
+            WHERE idJugador = ?";
+      $listas = $this->oConexBD->ejecutarConsultaPreparada($queryListas, 'i', array((int) $fIdJugador));
+
+      if ($listas === null) {
+        return false;
+      }
+
+      foreach ($listas as $lista) {
+        $documento = (string) $lista[2];
+        if ($documento === '' || preg_match('/^(?:https?:)?\\/\\/|^www\\./i', $documento)) {
+          continue;
+        }
+
+        $rutaDocumento = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR . 'ligas' . DIRECTORY_SEPARATOR
+          . (int) $lista[0] . DIRECTORY_SEPARATOR . (int) $lista[1] . DIRECTORY_SEPARATOR . basename($documento);
+        if (is_file($rutaDocumento)) {
+          unlink($rutaDocumento);
+        }
+      }
+
+      $queryBorrarMisiones = "DELETE FROM mb_enfren_misiones_sec
+            WHERE idJugador1 = ?
+            OR idEnfrentamiento IN (
+              SELECT idEnfrentamiento
+              FROM mb_enfrentamientos
+              WHERE idJugador1 = ? OR idJugador2 = ?
+            )";
+      $resultadoMisiones = $this->oConexBD->ejecutarConsultaPreparada(
+        $queryBorrarMisiones,
+        'iii',
+        array((int) $fIdJugador, (int) $fIdJugador, (int) $fIdJugador),
+        1
+      );
+      if ($resultadoMisiones === null) {
+        return false;
+      }
+
+      $queryBorrarEnfrentamientos = "DELETE FROM mb_enfrentamientos
+            WHERE idJugador1 = ? OR idJugador2 = ?";
+      $resultadoEnfrentamientos = $this->oConexBD->ejecutarConsultaPreparada(
+        $queryBorrarEnfrentamientos,
+        'ii',
+        array((int) $fIdJugador, (int) $fIdJugador),
+        1
+      );
+      if ($resultadoEnfrentamientos === null) {
+        return false;
+      }
+
+      $queryBorrarListas = "DELETE FROM mb_listas WHERE idJugador = ?";
+      $resultadoListas = $this->oConexBD->ejecutarConsultaPreparada($queryBorrarListas, 'i', array((int) $fIdJugador), 1);
+      if ($resultadoListas === null) {
+        return false;
+      }
     
         $queryDB = "DELETE FROM mb_jugadores WHERE idJugador = ?";
 

@@ -45,6 +45,10 @@
                 echo "\n<input type=\"text\" id=\"fIdJugador2Nick\" name=\"fIdJugador2Nick\" value=\"" . $arrJugadores[3] . "\" class=\"input-contrincante\" readonly/>";
                 echo "\n<input type=\"hidden\" id=\"fResultadoJugador1Aux\" name=\"fResultadoJugador1Aux\" value=\"" . (($arrJugadores[4] != null)? $arrJugadores[4] : $minResultado) . "\"  />";
                 echo "\n<input type=\"hidden\" id=\"fResultadoJugador2Aux\" name=\"fResultadoJugador2Aux\" value=\"" . (($arrJugadores[5] != null)? $arrJugadores[5] : $maxResultado) . "\"  />";
+                $resultadoRadio = ($arrJugadores[4] != null && $arrJugadores[5] != null)
+                    ? resultadoRadioDesdePuntuacionFow($arrJugadores[4], $arrJugadores[5])
+                    : 1;
+                echo "\n<input type=\"hidden\" id=\"fResultadoRadioAux\" value=\"" . $resultadoRadio . "\" />";
                 echo "\n<input type=\"hidden\" id=\"fFechaBatallaAux\" name=\"fFechaBatallaAux\" value=\"" . $arrJugadores[6] . "\"  />";
             }else{
                 echo "\n<input type=\"text\" id=\"fIdJugador2Nick\" name=\"fIdJugador2Nick\" value=\"&nbsp;\" class=\"input-contrincante\" disabled/>";

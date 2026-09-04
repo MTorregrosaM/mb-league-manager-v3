@@ -294,7 +294,6 @@ class controllerUsuario {
     public function borrarUsuario ( $fIdUsuario ) {
     
     try {
-
       $this->oUsuario = $this->recuperarDatosUsuario ( $fIdUsuario );
 
         $queryDB = "DELETE FROM mb_usuarios
@@ -417,7 +416,7 @@ class controllerUsuario {
       $idUsuario = (int) $idUsuario;
       $queryDB = "SELECT T1.idLiga,
         CONCAT(COALESCE(YEAR(COALESCE(T1.fecIni, (SELECT MIN(fecIni) FROM mb_fases WHERE mb_fases.idLiga = T1.idLiga))), ''), '_', T1.nombre),
-        T2.idUsuario
+        CASE WHEN T2.idUsuario IS NULL THEN 0 ELSE 1 END
           FROM mb_ligas T1
           LEFT JOIN mb_ligas_usuarios T2 ON T1.idLiga = T2.idLiga AND T2.idUsuario = " . $idUsuario . "
           ORDER BY T1.fecIni DESC, T1.nombre";

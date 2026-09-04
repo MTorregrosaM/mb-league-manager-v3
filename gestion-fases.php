@@ -357,7 +357,7 @@
 	          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
 	          <input type="hidden" name="accionForm" id="accionForm" value="2"/>
 	       	  <input type="hidden" id="fIdLiga" name="fIdLiga" value="<?php printf($fIdLiga); ?>"/>
-	          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/> Alta de nueva fase</a>
+	          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/new.svg" alt="Nuevo"/> Alta de nueva fase</a>
 	        </form>
 	      </div>
 

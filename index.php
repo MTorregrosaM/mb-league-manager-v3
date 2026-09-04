@@ -144,7 +144,7 @@ if ($oLiga !== null && strtoupper(trim((string) ($_SESSION["rol"] ?? ""))) !== "
     </section>
     <section class="index-ranking-grid">
       <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "dch" : "izq"; ?>"><h2>Top Puntuación Pintura</h2><table><tr><th>Nick</th><th>Media</th></tr><?php pintarRanking($oControllerResultado->recuperarRankingPuntosPintura($fIdLiga), 2, "ordenarRanking", array(0, 2)); ?></table></div>
-      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "izq" : "dch"; ?> ranking-deportividad"><h2>Top Deportividad</h2><table><tr><th>Nick</th><th>Puntos</th><th>Puntos</th><th>Partidas</th></tr><?php pintarDeportividad($oControllerResultado->recuperarRankingPuntosDeportividad($fIdLiga), $fIdLiga); ?></table></div>
+      <div class="div-ranking-<?php echo in_array((int) $oLiga->idJuego, array(1, 2), true) ? "izq" : "dch"; ?> ranking-deportividad"><h2>Top Deportividad</h2><table><tr><th>Nick</th><th>Media</th><th>Total</th><th>Partidas</th></tr><?php pintarDeportividad($oControllerResultado->recuperarRankingPuntosDeportividad($fIdLiga), $fIdLiga); ?></table></div>
       <?php if (in_array((int) $oLiga->idJuego, array(1, 2), true)) { ?>
         <div class="div-ranking-dch"><h2>Campaña por sectores</h2><table><tr><th>Fase</th><th>Sector</th><th>Bando dominante</th></tr><?php pintarSectores($oControllerResultado->recuperarRankingSectores($fIdLiga, $oLiga->idJuego)); ?></table></div>
       <?php } ?>

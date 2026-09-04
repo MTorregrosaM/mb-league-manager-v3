@@ -227,6 +227,13 @@
       
       }
 
+      if ( $accionForm == 6 ){
+        $comprobarBorrado = $oControllerResultado->resetearValidacion( (int) $fIdResultadoReset );
+
+        $mensajeBorrado .= "<div id=\"mensaje-accion\" class=\"". (($comprobarBorrado)? "mensaje-ok" : "mensaje-error") ."\">".
+          (($comprobarBorrado)? "Validaci&oacute;n reseteada correctamente." : "Se ha producido un error en su solicitud.") ."</div>";
+      }
+
       /********************************/
       /* 1. BUSCADOR */
       /********************************/
@@ -361,15 +368,22 @@
 
                     <img src=\"assets/img/cog.svg\" width=\"24\" height=\"24\" title=\"Editar resultado\" alt=\"form-editar-".$fila[0]."\"  class=\"btn-editar-reg\"/>
                   </form>\n";
-            if ($fila[11] == 1) {
-            $grid .= "  <form name=\"form-borrar-".$fila[0]."\" id=\"form-borrar-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
+            $grid .= "  <form name=\"form-reset-".$fila[0]."\" id=\"form-reset-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
               <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\" />
                   <input type=\"hidden\" name=\"fIdResultadoReset\" id=\"fIdResultadoReset\" value=\"".$fila[0]."\"/>
                   <input type=\"hidden\" name=\"accionForm\" id=\"accionForm\" value=\"3\"/>
                   <input type=\"hidden\" name=\"pagActual\" id=\"pagActual\" value=\"". $pagActual ."\" />
                   <input type=\"hidden\" name=\"fIdResultado\" id=\"fIdResultado\" value=\"". $fila[0] ."\" />
-                    <img src=\"assets/img/trash.svg\" title=\"Resetear resultado\" alt=\"form-borrar-".$fila[0]."\" class=\"btn-borrar\"/>
+                    <img src=\"assets/img/trash.svg\" title=\"Resetear resultado\" alt=\"form-reset-".$fila[0]."\" class=\"btn-borrar\"/>
                 </form>";
+            if ($fila[11] == 1) {
+              $grid .= "  <form name=\"form-reset-validacion-".$fila[0]."\" id=\"form-reset-validacion-".$fila[0]."\" method=\"POST\" class=\"form-btn-acciones\">
+                <input type=\"hidden\" name=\"csrf_token\" value=\"".htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8')."\" />
+                <input type=\"hidden\" name=\"fIdResultadoReset\" value=\"".$fila[0]."\"/>
+                <input type=\"hidden\" name=\"accionForm\" value=\"6\"/>
+                <input type=\"hidden\" name=\"pagActual\" value=\"". $pagActual ."\" />
+                <img src=\"assets/img/trash.svg\" title=\"Resetear validaci&oacute;n\" alt=\"form-reset-validacion-".$fila[0]."\" class=\"btn-borrar\"/>
+              </form>";
             }
             
           }

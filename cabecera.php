@@ -65,10 +65,10 @@
     <script>window.responsiveNav = function () { return null; };</script>
 
     <!-- css  -->
-    <link rel="stylesheet" href="assets/css/estilos.css?v=20260914" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="assets/css/estilos.css?v=20260915" type="text/css" media="screen, projection"/>
     <link rel="stylesheet" type="text/css" href="assets/js/css/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="assets/js/css/jquery.raty.css" />
-    <link rel="stylesheet" type="text/css" href="assets/css/style-drag.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/style-drag.css?v=20260915" />
     <link href="https://fonts.googleapis.com/css2?family=Lekton:wght@400;700&family=VT323&display=swap" rel="stylesheet">
 
 

@@ -13,6 +13,26 @@
 
 class controllerLiga {
 
+    public function asignarPermisoLigaUsuario($idUsuario, $idLiga) {
+      $idUsuario = (int) $idUsuario;
+      $idLiga = (int) $idLiga;
+
+      if ($idUsuario <= 0 || $idLiga <= 0) {
+        return false;
+      }
+
+      $resultado = $this->oConexBD->ejecutarConsultaPreparada(
+        "INSERT IGNORE INTO mb_ligas_usuarios (idUsuario, idLiga) VALUES (?, ?)",
+        "ii",
+        array($idUsuario, $idLiga),
+        1
+      );
+
+      return $resultado !== null;
+    }
+
+
+
   private $oConexBD;
   private $oLiga;
 

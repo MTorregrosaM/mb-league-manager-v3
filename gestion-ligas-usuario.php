@@ -82,7 +82,7 @@
               if (count($arrLigas) >= 1 ){
                 foreach ($arrLigas as $fila){
                   printf("<label class=\"checkbox-liga\"><input type=\"checkbox\" name=\"fIdsLigasUsuario[]\" value=\"". $fila[0] . "\" class=\"checkbox-form\"");
-                   if ($fila[2] != null) printf("checked ");
+                   if ((int) $fila[2] === 1) printf("checked ");
                   printf(">" . htmlspecialchars($fila[1], ENT_QUOTES, "UTF-8") . "</label>");
                 }
               }

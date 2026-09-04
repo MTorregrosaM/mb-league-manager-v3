@@ -502,7 +502,7 @@
         <input type="hidden" name="fIdJugador" id="fIdJugador" value="<?php printf($fIdJugador);?>"/>
         <input type="hidden" name="fIdLiga" id="fIdLiga" value="<?php printf($fIdLiga);?>"/>
         <input type="hidden" name="fNumFase" id="fNumFase" value="<?php printf("%s", $fNumFase ?? "");?>"/>
-        <a href="#" class="button" id="btnAltaLista"> <img src="assets/img/icon_nuevo.png" alt="Nuevo"/>Alta de nueva lista</a>
+        <a href="#" class="button" id="btnAltaLista"> <img src="assets/img/new.svg" alt="Nuevo"/>Alta de nueva lista</a>
       </form>
     </div>
 

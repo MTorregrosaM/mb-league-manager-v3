@@ -100,7 +100,7 @@ $facciones = $oControllerFaccion->recuperarListadoFacciones($idJuego, $busqueda)
     <form method="POST" action="gestion-facciones.php">
       <input type="hidden" name="idJuego" value="<?php echo $idJuego; ?>" />
       <input type="hidden" name="accionForm" value="2" />
-      <a href="#" class="button" id="btnAltaFaccion"><img src="assets/img/icon_nuevo.png" alt="Nuevo" /> Alta de nueva facci&oacute;n</a>
+      <a href="#" class="button" id="btnAltaFaccion"><img src="assets/img/new.svg" alt="Nuevo" /> Alta de nueva facci&oacute;n</a>
     </form>
   </div>
   <?php if (count($facciones) > 0) { ?>

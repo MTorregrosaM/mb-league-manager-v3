@@ -50,6 +50,24 @@
 	grid-template-columns: 210px minmax(0, 1fr);
 	align-items: start;
 	column-gap: 1rem;
+	clear: both;
+}
+#div-resultados > #mensaje-ok {
+	grid-column: 1 / -1 !important;
+	width: 100% !important;
+	box-sizing: border-box;
+}
+.resultados-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	clear: both;
+	margin: 10px 0;
+}
+.resultados-actions .btn-grabar,
+.resultados-actions .btn-emparejar {
+	float: none !important;
+	margin-right: 0;
 }
 #div-resultados .matches-grid {
 	display: grid;
