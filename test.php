@@ -41,6 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $fechaInicio = date("Y-m-d");
             $fechaFin = fechaTest($numeroFases * $numeroRondas + 7);
             $ahora = date("Y-m-d H:i:s");
+            $claveFaseTest = "test";
 
             $insertada = insertarTest($conexion, "INSERT INTO mb_ligas (nombre, numFases, numRondas, fecIni, fecFin, indActivo, idJuego, audAlta) VALUES (?, ?, ?, ?, ?, 1, ?, ?)", "siissis", array($nombreLiga, $numeroFases, $numeroRondas, $fechaInicio, $fechaFin, $idJuego, $ahora));
             $liga = $conexion->ejecutarConsultaPreparada("SELECT idLiga FROM mb_ligas WHERE nombre = ? ORDER BY idLiga DESC LIMIT 1", "s", array($nombreLiga));
@@ -50,21 +51,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $error = "No se pudo crear la liga de prueba.";
             } else {
                 $jugadores = array();
+                $bandosJugadores = array();
                 for ($indice = 1; $indice <= $numeroJugadores; $indice++) {
                     $nick = "Test_" . $idLiga . "_" . $indice;
-                    $insertarJugador = insertarTest($conexion, "INSERT INTO mb_jugadores (idLiga, nick, nombre, bando, puntosPintura, audAlta) VALUES (?, ?, ?, ?, ?, ?)", "isssis", array($idLiga, $nick, "Jugador " . $indice, (string) (($indice % 2) + 1), random_int(1, 5), $ahora));
-                    $jugador = $conexion->ejecutarConsultaPreparada("SELECT idJugador FROM mb_jugadores WHERE idLiga = ? AND nick = ? LIMIT 1", "is", array($idLiga, $nick));
-                    if ($insertarJugador < 1 || !is_array($jugador) || count($jugador) === 0) {
+                    $bando = (string) (($indice % 2) + 1);
+                    $insertarJugador = insertarTest($conexion, "INSERT INTO mb_jugadores (idLiga, nick, nombre, apellido1, apellido2, telefono, email, bando, puntosPintura, audAlta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", "issssissis", array($idLiga, $nick, "Jugador " . $indice, "", "", 0, "", $bando, random_int(1, 5), $ahora));
+                    $idJugador = method_exists($conexion, 'obtenerUltimoInsertId')
+                        ? $conexion->obtenerUltimoInsertId()
+                        : 0;
+                    if ($idJugador < 1) {
+                        $jugador = $conexion->ejecutarConsultaPreparada("SELECT idJugador FROM mb_jugadores WHERE idLiga = ? AND nick = ? LIMIT 1", "is", array($idLiga, $nick));
+                        $idJugador = is_array($jugador) && count($jugador) > 0 ? (int) $jugador[0][0] : 0;
+                    }
+                    if ($insertarJugador < 1 || $idJugador < 1) {
                         $error = "No se pudieron crear todos los jugadores.";
                         break;
                     }
-                    $jugadores[] = (int) $jugador[0][0];
+                    $jugadores[] = (int) $idJugador;
+                    $bandosJugadores[$idJugador] = $bando;
                 }
 
                 if ($error === "") {
                     for ($fase = 1; $fase <= $numeroFases; $fase++) {
                         for ($ronda = 1; $ronda <= $numeroRondas; $ronda++) {
-                            insertarTest($conexion, "INSERT INTO mb_fases (idLiga, numFase, numRonda, claveCifrada, fecIni, fecFin) VALUES (?, ?, ?, 'test', ?, ?)", "iiiss", array($idLiga, $fase, $ronda, $fechaInicio, $fechaFin));
+                            $insertarFase = $conexion->ejecutarConsulta("INSERT INTO mb_fases (idLiga, numFase, numRonda, claveCifrada, fecIni, fecFin) VALUES (" . (int) $idLiga . ", " . (int) $fase . ", " . (int) $ronda . ", '" . $claveFaseTest . "', '" . $fechaInicio . "', '" . $fechaFin . "')", 1);
+                            $errorInsercionFase = method_exists($conexion, 'obtenerUltimoError') ? $conexion->obtenerUltimoError() : '';
+                            if ($insertarFase < 1) {
+                                $error = "No se pudo crear la fase " . $fase . ", ronda " . $ronda . ($errorInsercionFase !== '' ? ": " . $errorInsercionFase : ".");
+                                break 2;
+                            }
                             $orden = $jugadores;
                             $desplazamiento = (($fase - 1) * $numeroRondas + $ronda - 1) % $numeroJugadores;
                             if ($desplazamiento > 0) {
@@ -105,7 +120,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     $fechaResultado = fechaTest(-($numeroFases * $numeroRondas) + (($fase - 1) * $numeroRondas + $ronda));
                                 }
                                 $pintura = $pintura1 !== null && $pintura2 !== null ? (int) round(($pintura1 + $pintura2) / 2) : null;
-                                $insertarEnfrentamiento = insertarTest($conexion, "INSERT INTO mb_enfrentamientos (idLiga, numFase, numRonda, idJugador1, idJugador2, bandoJugador1, bandoJugador2, resultadoJugador1, resultadoJugador2, valPintura, valPinturaJug1, valPinturaJug2, valDeportividadJug1, valDeportividadJug2, fechaBatalla, indValidado, audAlta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", "iiiii" . "ss" . "iiiiiii" . "sis", array($idLiga, $fase, $ronda, $jugador1, $jugador2, (string) (($partido % 2) + 1), (string) (((($partido + 1) % 2) + 1)), $resultado1, $resultado2, $pintura, $pintura1, $pintura2, $deportividad1, $deportividad2, $fechaResultado, $validado, $ahora));
+                                if (!isset($bandosJugadores[$jugador1], $bandosJugadores[$jugador2])) {
+                                    $error = "No se pudieron determinar los bandos de todos los jugadores.";
+                                    break 3;
+                                }
+                                $valoresEnfrentamiento = array("?", "?", "?", "?", "?", "?", "?");
+                                $tiposEnfrentamiento = "iiiiiss";
+                                $parametrosEnfrentamiento = array($idLiga, $fase, $ronda, $jugador1, $jugador2, $bandosJugadores[$jugador1], $bandosJugadores[$jugador2]);
+                                $camposOpcionales = array($resultado1, $resultado2, $pintura, $pintura1, $pintura2, $deportividad1, $deportividad2);
+                                foreach ($camposOpcionales as $campoOpcional) {
+                                    if ($campoOpcional === null) {
+                                        $valoresEnfrentamiento[] = "NULL";
+                                    } else {
+                                        $valoresEnfrentamiento[] = "?";
+                                        $tiposEnfrentamiento .= "i";
+                                        $parametrosEnfrentamiento[] = $campoOpcional;
+                                    }
+                                }
+                                $valoresEnfrentamiento[] = $fechaResultado === null ? "NULL" : "?";
+                                if ($fechaResultado !== null) {
+                                    $tiposEnfrentamiento .= "s";
+                                    $parametrosEnfrentamiento[] = $fechaResultado;
+                                }
+                                $valoresEnfrentamiento[] = $validado === null ? "NULL" : "?";
+                                if ($validado !== null) {
+                                    $tiposEnfrentamiento .= "i";
+                                    $parametrosEnfrentamiento[] = $validado;
+                                }
+                                $valoresEnfrentamiento[] = "?";
+                                $tiposEnfrentamiento .= "s";
+                                $parametrosEnfrentamiento[] = $ahora;
+                                $insertarEnfrentamiento = insertarTest($conexion, "INSERT INTO mb_enfrentamientos (idLiga, numFase, numRonda, idJugador1, idJugador2, bandoJugador1, bandoJugador2, resultadoJugador1, resultadoJugador2, valPintura, valPinturaJug1, valPinturaJug2, valDeportividadJug1, valDeportividadJug2, fechaBatalla, indValidado, audAlta) VALUES (" . implode(", ", $valoresEnfrentamiento) . ")", $tiposEnfrentamiento, $parametrosEnfrentamiento);
                                 if ($insertarEnfrentamiento < 1) {
                                     $error = "No se pudieron crear todos los enfrentamientos.";
                                     break 3;

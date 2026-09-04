@@ -29,6 +29,8 @@ class conexBD {
 	private $usuario;
 	private $contrasena;
 	private $db;
+	private $ultimoError = '';
+	private $ultimoInsertId = 0;
 
 	public function __construct( ) {
 		global $dbCredentials;
@@ -38,10 +40,17 @@ class conexBD {
 		$this->db = $dbCredentials['db'];
 	} 
 
+	public function __destruct(){
+		$this->cerrarConexion();
+	}
+
 
     public function abrirConexion (){  
 
     	try {
+		if ($this->conexion instanceof mysqli) {
+			return;
+		}
 		// conexion+
     
 		$this->conexion = new mysqli($this->servidor,$this->usuario,$this->contrasena, $this->db);
@@ -77,6 +86,8 @@ class conexBD {
 
     public function ejecutarConsulta ( $query, $dml = null ){
     	try {
+			$this->ultimoError = '';
+			$this->ultimoInsertId = 0;
 
     		$this->abrirConexion();
 
@@ -102,13 +113,13 @@ class conexBD {
 		
 			}else{ // devolvemos num de filas afectadas por DML
 				$affectedRows = $this->conexion->affected_rows;
-				$this->cerrarConexion();
+				$this->ultimoInsertId = (int) $this->conexion->insert_id;
 				return $affectedRows;
 			}
-			$this->cerrarConexion();
 			return $rows;
 
 		}catch(Throwable $e){
+			$this->ultimoError = $e->getMessage();
 			$oLog = Log::getInstance();
 			$this->cerrarConexion();
 			$oLog->trazaLog ($e, "db.class.php");	
@@ -119,6 +130,8 @@ class conexBD {
 
 	public function ejecutarConsultaPreparada($query, $tipos = '', $parametros = array(), $dml = null){
 		try {
+			$this->ultimoError = '';
+			$this->ultimoInsertId = 0;
 			$this->abrirConexion();
 			$sentencia = $this->conexion->prepare($query);
 			if ($sentencia === false) {
@@ -136,8 +149,8 @@ class conexBD {
 			}
 			if ($dml !== null) {
 				$afectadas = $sentencia->affected_rows;
+				$this->ultimoInsertId = (int) $sentencia->insert_id;
 				$sentencia->close();
-				$this->cerrarConexion();
 				return $afectadas;
 			}
 			$filas = array();
@@ -163,14 +176,22 @@ class conexBD {
 				}
 			}
 			$sentencia->close();
-			$this->cerrarConexion();
 			return $filas;
 		} catch (Throwable $e) {
+			$this->ultimoError = $e->getMessage();
 			$oLog = Log::getInstance();
 			$this->cerrarConexion();
 			$oLog->trazaLog($e, "db.class.php");
 			return null;
 		}
+	}
+
+	public function obtenerUltimoError(){
+		return $this->ultimoError;
+	}
+
+	public function obtenerUltimoInsertId(){
+		return $this->ultimoInsertId;
 	}
 
 

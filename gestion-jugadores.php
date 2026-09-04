@@ -69,13 +69,13 @@
       }
     }
 
-    if ($fIdLiga != null){
+    if (filter_var($fIdLiga, FILTER_VALIDATE_INT) !== false && (int) $fIdLiga > 0){
 
 	    // options para los select de los formularios
 	    // SELECT DE FACCIONES
-	    $oLiga = $oControllerLiga->recuperarDatosLiga($fIdLiga);
+      $oLiga = $oControllerLiga->recuperarDatosLiga((int) $fIdLiga);
 	    $selectFacciones = "";
-	    $arrFacciones = $oControllerLiga->recuperarSelectFacciones($oLiga->idJuego);
+      $arrFacciones = $oLiga !== null ? $oControllerLiga->recuperarSelectFacciones($oLiga->idJuego) : array();
 
       if (is_array($arrFacciones) && count($arrFacciones) >= 1 ){
 	      foreach ($arrFacciones as $fila){

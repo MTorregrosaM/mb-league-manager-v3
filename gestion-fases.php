@@ -33,6 +33,7 @@
 		$mensajeAltaMod = "";
 		$comprobarMod = false;
 		$mensajeMod = "";
+		$mensajeCalendario = "";
 
 
 		// variables POST
@@ -68,6 +69,13 @@
 		/********************************/
 		/* 1. BUSCADOR */
 		/********************************/
+		if ($accionForm == 5) {
+			$comprobarCalendario = $oControllerFase->generarCalendarioFases($fIdLiga);
+			$mensajeCalendario = "<div id=\"" . (($comprobarCalendario == 1) ? "mensaje-ok" : "mensaje-error") . "\">" .
+				(($comprobarCalendario == 1) ? "El calendario de fases se ha generado correctamente." : "No se ha podido generar el calendario de fases.") . "</div>";
+			$accionForm = 1;
+		}
+
 		if ($accionForm != 2 && $accionForm != 4) {
 
 			/********************************/
@@ -225,6 +233,10 @@
 	      $("#btnFormAltaFase").submit();
 	    });
 
+	    $("#btnCalendarioFases").click( function() {
+	      $("#btnFormCalendarioFases").submit();
+	    });
+
 	 	/* calendario */
 	 	$.datepicker.regional['es'] = {
 	        closeText: 'Cerrar',
@@ -279,6 +291,7 @@
 
 
 	<?php /* MENSAJE ELIMINADO */ printf ($mensajeBorrado);   ?>
+			<?php printf ($mensajeCalendario); ?>
 
 
 
@@ -358,6 +371,12 @@
 	          <input type="hidden" name="accionForm" id="accionForm" value="2"/>
 	       	  <input type="hidden" id="fIdLiga" name="fIdLiga" value="<?php printf($fIdLiga); ?>"/>
 	          <a href="#" class="button" id="btnAltaCliente"> <img src="assets/img/new.svg" alt="Nuevo"/> Alta de nueva fase</a>
+	        </form>
+	        <form name="btnFormCalendarioFases" id="btnFormCalendarioFases" method="POST" action="" style="display: inline-block;">
+	          <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken(), ENT_QUOTES, 'UTF-8'); ?>" />
+	          <input type="hidden" name="accionForm" value="5"/>
+	          <input type="hidden" name="fIdLiga" value="<?php echo htmlspecialchars($fIdLiga, ENT_QUOTES, 'UTF-8'); ?>"/>
+	          <a href="#" class="button" id="btnCalendarioFases"><img src="assets/img/calendar.svg" alt="Calendario"/> Generar calendario de fases</a>
 	        </form>
 	      </div>
 

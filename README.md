@@ -23,6 +23,14 @@ Current application capabilities include:
 - A role-protected help page available from the `?` button in the menu.
 - Reusable PHP components for displaying league data on external pages.
 
+## Screenshots
+
+<p>
+	<a href="docs/screenshots/double-list.png"><img src="docs/screenshots/double-list.png" alt="League overview" width="280"></a>
+	<a href="docs/screenshots/leagues.png"><img src="docs/screenshots/leagues.png" alt="League administration" width="280"></a>
+	<a href="docs/screenshots/matches.png"><img src="docs/screenshots/matches.png" alt="Match results" width="280"></a>
+</p>
+
 ## Main workflows
 
 ### League administration

@@ -319,6 +319,75 @@ class controllerFase {
     }
 
 
+    /* Genera el calendario de fases conservando los datos de las fases existentes. */
+    public function generarCalendarioFases( $fIdLiga ){
+        try {
+            if (filter_var($fIdLiga, FILTER_VALIDATE_INT) === false || (int) $fIdLiga < 1) {
+                return 2;
+            }
+
+            $idLiga = (int) $fIdLiga;
+            $queryLiga = "SELECT numFases, numRondas, DATE_FORMAT(fecIni, '%Y-%m-%d'), DATE_FORMAT(fecFin, '%Y-%m-%d')
+                          FROM mb_ligas WHERE idLiga = " . $idLiga;
+            $resultadoLiga = $this->oConexBD->ejecutarConsulta($queryLiga);
+
+            if ($resultadoLiga == null || empty($resultadoLiga[0][0]) || empty($resultadoLiga[0][1]) ||
+                empty($resultadoLiga[0][2]) || empty($resultadoLiga[0][3])) {
+                return 6;
+            }
+
+            $numFases = (int) $resultadoLiga[0][0];
+            $numRondas = (int) $resultadoLiga[0][1];
+            $fechaLigaInicio = new DateTimeImmutable($resultadoLiga[0][2]);
+            $fechaLigaFin = new DateTimeImmutable($resultadoLiga[0][3]);
+            $numDias = (int) $fechaLigaInicio->diff($fechaLigaFin)->format('%a') + 1;
+
+            if ($numFases < 1 || $numRondas < 1 || $fechaLigaInicio > $fechaLigaFin || $numFases > $numDias) {
+                return 2;
+            }
+
+            $queryFases = "SELECT numFase FROM mb_fases WHERE idLiga = " . $idLiga . " GROUP BY numFase";
+            $resultadoFases = $this->oConexBD->ejecutarConsulta($queryFases);
+            $fasesExistentes = array();
+            if (is_array($resultadoFases)) {
+                foreach ($resultadoFases as $fila) {
+                    $fasesExistentes[(int) $fila[0]] = true;
+                }
+            }
+
+            for ($numFase = 1; $numFase <= $numFases; $numFase++) {
+                $diaInicio = (int) round(($numDias * ($numFase - 1)) / $numFases);
+                $diaFin = (int) round(($numDias * $numFase) / $numFases) - 1;
+                $fechaInicio = $fechaLigaInicio->modify('+' . $diaInicio . ' days')->format('Y-m-d');
+                $fechaFin = $fechaLigaInicio->modify('+' . $diaFin . ' days')->format('Y-m-d');
+
+                if (isset($fasesExistentes[$numFase])) {
+                    $queryActualizar = "UPDATE mb_fases SET fecIni = '" . $fechaInicio . "', fecFin = '" . $fechaFin . "'
+                                        WHERE idLiga = " . $idLiga . " AND numFase = " . $numFase;
+                    if ($this->oConexBD->ejecutarConsulta($queryActualizar, 1) === null) {
+                        return 2;
+                    }
+                    continue;
+                }
+
+                for ($numRonda = 1; $numRonda <= $numRondas; $numRonda++) {
+                    $queryInsertar = "INSERT INTO mb_fases (idLiga, numFase, numRonda, fecIni, fecFin, claveCifrada)
+                                      VALUES (" . $idLiga . ", " . $numFase . ", " . $numRonda . ", '" . $fechaInicio . "', '" . $fechaFin . "', '')";
+                    if ($this->oConexBD->ejecutarConsulta($queryInsertar, 1) === null) {
+                        return 2;
+                    }
+                }
+            }
+
+            return 1;
+        } catch (Exception $e) {
+            $oLog = Log::getInstance();
+            $oLog->trazaLog ($e, "generarCalendarioFases - fase.controller.php");
+            return null;
+        }
+    }
+
+
 
 
 

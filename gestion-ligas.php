@@ -74,7 +74,10 @@
     /* DEBE EJECUTARSE ANTES QUE EL BUSCADOR, PARA MOSTRAR LUEGO EL GRID ACTUALIZADO
     /********************************/
     if ($accionForm == 3) {
-        $comprobarBorrado = $oControllerLiga->borrarLiga($fIdLigaBorrar);
+      $idLigaBorrar = filter_var($fIdLigaBorrar, FILTER_VALIDATE_INT);
+      $comprobarBorrado = $idLigaBorrar !== false && $idLigaBorrar > 0
+        ? $oControllerLiga->borrarLiga($idLigaBorrar)
+        : false;
         $mensajeBorrado = sprintf(
             '<div id="%s">%s</div>',
             $comprobarBorrado ? "mensaje-ok" : "mensaje-error",
@@ -216,9 +219,10 @@
         $txtAltaModBoton = "Modificar datos de liga";
         $txtAltaModH3 = "Modificar liga";
 
-        if (!empty($fIdLigaEditar)) {
+        $idLigaEditar = filter_var($fIdLiga, FILTER_VALIDATE_INT);
+        if ($idLigaEditar !== false && $idLigaEditar > 0) {
             $comprobarAltaMod = $oControllerLiga->modificarDatosLiga(
-                $fIdLiga, $fNombre, $fNumFases, $fNumRondas, $fFecIni,
+          $idLigaEditar, $fNombre, $fNumFases, $fNumRondas, $fFecIni,
                 $fFecFin, $fIndActivo, $fIdJuego
             );
 
@@ -459,6 +463,7 @@
 
       <?php
         /* GRID DE CONTENIDO */
+        $grid = str_replace('Ver fases de la liga', 'Gestionar fases', $grid);
         printf ($grid);
 
         /* PAGINADOR */

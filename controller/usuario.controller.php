@@ -69,11 +69,12 @@ class controllerUsuario {
     public function loginUsuario( $fNick, $fPass ){
     try {
      $resultadoBD = $this->oConexBD->ejecutarConsultaPreparada(
-       "SELECT idUsuario, pass FROM mb_usuarios WHERE nick = ?", "s", array((string) $fNick)
+       "SELECT idUsuario, pass FROM mb_usuarios WHERE LOWER(TRIM(nick)) = LOWER(TRIM(?))", "s", array((string) $fNick)
      );
 
       if ($resultadoBD != null){
       foreach ($resultadoBD as $fila) {
+    Log::getInstance()->trazaLog(null, 'LOGIN consulta; usuario encontrado; id=' . (int) $fila[0] . '; hash=' . (strlen((string) $fila[1]) === 32 ? 'md5' : 'password_hash') . '; longitud=' . strlen((string) $fila[1]));
     $hashValido = password_verify((string) $fPass, (string) $fila[1]);
     $hashLegacy = strlen((string) $fila[1]) === 32 && hash_equals((string) $fila[1], md5((string) $fPass));
     if ($hashValido || $hashLegacy) {
@@ -86,9 +87,13 @@ class controllerUsuario {
       return $fila[0];
     }
       }
-      }else{
-      return 0;
       }
+      if ($resultadoBD === null) {
+        Log::getInstance()->trazaLog(null, 'LOGIN consulta fallida; resultadoBD=null');
+        return -1;
+      }
+      Log::getInstance()->trazaLog(null, 'LOGIN credenciales no validas; usuario=' . (string) $fNick);
+      return 0;
 
     }catch(Exception $e){
       $oLog = Log::getInstance();

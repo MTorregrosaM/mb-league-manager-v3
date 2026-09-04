@@ -28,7 +28,9 @@
 		if(isset($_POST["validator"]) && $_POST["validator"] == "s"  ) {
 			$tokenValido = isset($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token'], (string) $_POST['csrf_token']);
 			$bloqueado = !empty($_SESSION['login_bloqueado_hasta']) && time() < $_SESSION['login_bloqueado_hasta'];
+			Log::getInstance()->trazaLog(null, 'LOGIN intento; usuario=' . (string) $user . '; csrf=' . ($tokenValido ? 'valido' : 'invalido') . '; bloqueado=' . ($bloqueado ? 'si' : 'no'));
 			$idUsuario = (!$tokenValido || $bloqueado) ? 0 : $oControllerUsuario->loginUsuario ($user, $pass);
+			Log::getInstance()->trazaLog(null, 'LOGIN resultado; usuario=' . (string) $user . '; codigo=' . (string) $idUsuario);
 		
 			if( $idUsuario > 0 ){
 				unset($_SESSION['login_intentos'], $_SESSION['login_bloqueado_hasta']);
@@ -40,18 +42,25 @@
 				$_SESSION["rol"]=$oUsuarioLogin->rol;
 				header("Location: index.php");			
 			}else{
-				$_SESSION['login_intentos'] = (int) ($_SESSION['login_intentos'] ?? 0) + 1;
-				if ($_SESSION['login_intentos'] >= 5) {
-					$_SESSION['login_bloqueado_hasta'] = time() + 900;
+				if (!$bloqueado && $tokenValido) {
+					$_SESSION['login_intentos'] = (int) ($_SESSION['login_intentos'] ?? 0) + 1;
+					if ($_SESSION['login_intentos'] >= 5) {
+						$_SESSION['login_bloqueado_hasta'] = time() + 180;
+					}
 				}
 				$_SESSION["autorizado"]=0;
 				$_SESSION["usuario"] = 0;
 				$_SESSION["rol"] = "";
-				$msjError = "<div id=\"box-error\" class=\"alert alert-danger\" role=\"alert\">Usuario incorrecto</div>";
+				$msjError = $bloqueado
+					? "<div id=\"box-error\" class=\"alert alert-warning\" role=\"alert\">Demasiados intentos. Espera 3 minutos antes de volver a intentarlo.</div>"
+					: ($idUsuario === -1
+					? "<div id=\"box-error\" class=\"alert alert-danger\" role=\"alert\">No se puede comprobar el usuario en este momento.</div>"
+					: "<div id=\"box-error\" class=\"alert alert-danger\" role=\"alert\">Usuario incorrecto</div>");
 			}
 		}
 
 	}catch(Exception $e){
+		Log::getInstance()->trazaLog($e, 'LOGIN error inesperado');
 		return null;	 
 	}
 

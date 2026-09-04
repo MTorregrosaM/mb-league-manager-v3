@@ -31,6 +31,8 @@
         $mensajeMod = "";
 
         $fIdLiga = (isset( $_POST["fIdLiga"]))? $_POST["fIdLiga"] : (isset($_SESSION["fIdLiga"])? $_SESSION["fIdLiga"] : "");
+        $idLigaValido = filter_var($fIdLiga, FILTER_VALIDATE_INT);
+        $idLigaValido = $idLigaValido !== false && $idLigaValido > 0 ? $idLigaValido : null;
         $accionForm = (isset( $_POST["accionForm"]))? $_POST["accionForm"] : "";
         $fNumFase = (isset( $_POST["fNumFase"]))? $_POST["fNumFase"] : 0;
         $fNumRonda = (isset( $_POST["fNumRonda"]))? $_POST["fNumRonda"] : 0;
@@ -55,13 +57,13 @@
             }
         }
 
-        if ($fIdLiga != null){
+        if ($idLigaValido !== null){
 
             
             // options para los select de los formularios
             // FASES
             $selectFases = "";
-            $arrFases =  $oControllerLiga->recuperarSelectFases( $fIdLiga );
+            $arrFases =  $oControllerLiga->recuperarSelectFases( $idLigaValido );
             $selectFasesSelected = ($fNumFase != null ) ? $fNumFase : 0;
 
             if ($arrFases != null && count($arrFases) >= 1 ){
@@ -72,7 +74,7 @@
 
             // options para los select de los formularios
             // RONDAS
-            $arrRondas =  $oControllerLiga->recuperarSelectRondas( $fIdLiga );
+            $arrRondas =  $oControllerLiga->recuperarSelectRondas( $idLigaValido );
             $selectRondasSelected = ($fNumRonda != null ) ? $fNumRonda : 0;
             $selectRondas = "";
 
@@ -86,7 +88,7 @@
  
             // pintamos jugadores para el pool del evento
 			$arrJugadores = null;
-            $arrJugadores = $oControllerJugador->recuperarListadoJugadores($fIdLiga, null, null, null, 0, 1000, true, $fNumFase, $fNumRonda);
+            $arrJugadores = $oControllerJugador->recuperarListadoJugadores($idLigaValido, null, null, null, 0, 1000, true, $fNumFase, $fNumRonda);
 			$numJugadores = 0;
  	
             if (!empty($arrJugadores) )  {// != null ){
@@ -108,7 +110,7 @@
 
             // primero sacamos un array con los cruces
 			 $arrResultados  = null;
-            $arrResultados = $oControllerResultado->recuperarListadoResultados($fIdLiga, $fNumFase, $fNumRonda);
+            $arrResultados = $oControllerResultado->recuperarListadoResultados($idLigaValido, $fNumFase, $fNumRonda);
 
             if ($arrResultados != null && count($arrResultados) >= 1 ){
                 foreach ($arrResultados as $fila){
@@ -142,7 +144,7 @@
     <?php require_once("menu.php"); ?>
     <h2 class="h2"><span>Gesti&oacute;n de Resultados</span></h2>
     
-    <?php if ($fIdLiga == null) { ?>
+    <?php if ($idLigaValido === null) { ?>
             <p><b>No se ha seleccionado ninguna liga:</b></p>
             <div class="center"><form id="selectLiga" name="selectLiga" method="POST"><label for="fIdLiga" class="span-index">Liga  </label> <select name="fIdLiga" id="fIdLiga" class="select-index" ><?php printf($selectLigas); ?> </select></form></div>
 
@@ -166,7 +168,7 @@
             </div>
         <?php } ?>
 
-        <?php if($accionForm > 0 && $fIdLiga != null){ ?>
+        <?php if($accionForm > 0 && $idLigaValido !== null){ ?>
             
             <!-- TABLA DRAG & DROP -->
             <div id="div-resultados">

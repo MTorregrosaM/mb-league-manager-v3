@@ -206,6 +206,9 @@ class controllerLiga {
 
       // comprobamos los campos que han cambiado
       $this->oLiga = $this->recuperarDatosLiga ( $fIdLiga );
+      if ($this->oLiga === null) {
+        return 2;
+      }
       if ($fNombre != $this->oLiga->nombre && $this->existeLigaConNombre($fNombre, $fIdLiga)) {
         return 4;
       }
@@ -427,6 +430,9 @@ class controllerLiga {
 
       $fIdLiga = (int) $fIdLiga;
       $this->oLiga = $this->recuperarDatosLiga ( $fIdLiga );
+      if ($this->oLiga === null) {
+        return false;
+      }
 
         $queryDB = "DELETE FROM mb_enfren_misiones_sec
             WHERE idEnfrentamiento IN (SELECT idEnfrentamiento FROM mb_enfrentamientos WHERE idLiga = ".$fIdLiga.")";

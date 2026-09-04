@@ -280,7 +280,7 @@
   #btn-alta form { margin: 0; }
   #btn-alta .button { display: inline-flex; align-items: center; justify-content: center; float: none; }
   #contenedor-principal .button img { display: inline-block; float: none; width: 20px; height: 20px; margin-right: 8px; vertical-align: middle;}
-  #btn-alta .button img { margin-right: 0; }
+  #btn-alta .button img { margin-right: 10; }
   .table-3 td, .table-3 th { width: 46.2%;  padding: 5px; }
   .table-5 td, .table-5 th { width: 22.5%;  padding: 5px; }
   .table-6 td, .table-6 th { padding: 5px; }

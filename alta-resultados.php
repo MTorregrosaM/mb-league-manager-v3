@@ -42,6 +42,8 @@
 
     $accionForm = (isset( $_POST["accionForm"]))? $_POST["accionForm"] : "";
     $fIdLiga = (isset( $_POST["fIdLiga"]))? $_POST["fIdLiga"] : 0;
+    $idLigaValido = filter_var($fIdLiga, FILTER_VALIDATE_INT);
+    $idLigaValido = $idLigaValido !== false && $idLigaValido > 0 ? $idLigaValido : null;
     $fNumFase = (isset( $_POST["fNumFase"]))? $_POST["fNumFase"] : 0;
     $fNumRonda = (isset( $_POST["fNumRonda"]))? $_POST["fNumRonda"] : 1;
     $fIdJugador1 = (isset( $_POST["fIdJugador1"]))? $_POST["fIdJugador1"] : 0;
@@ -75,14 +77,15 @@
       4          | BOLT ACTION
     /**********************************************************************************************/
   
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $fIdLiga != 0) {
-      exigirLigaActivaPublica($fIdLiga);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $idLigaValido !== null) {
+      exigirLigaActivaPublica($idLigaValido);
     }
 
-    if ($fIdLiga != 0) {
-      $oLiga = $oControllerLiga->recuperarDatosLiga($fIdLiga);
+    if ($idLigaValido !== null) {
+      $oLiga = $oControllerLiga->recuperarDatosLiga($idLigaValido);
       
       // FLAMES OF WAR
+      if ($oLiga !== null) {
       $idJuego = $oLiga->idJuego;
       if($oLiga->idJuego <= 2 ){
         $maxResultado = 8;
@@ -121,6 +124,7 @@
         }
 
       }
+      }
     }
   
     /**********************************************************************************************/
@@ -146,7 +150,9 @@
     
     // options para los select de los formularios
     // JUGADORES
-    $arrJugadores =  $oControllerJugador->recuperarSelectJugadores( $fIdLiga,  $fNumFase, null, true ) ;
+    $arrJugadores = $idLigaValido !== null
+      ? $oControllerJugador->recuperarSelectJugadores($idLigaValido, $fNumFase, null, true)
+      : array();
 
     $selectJugadoresSelected = ($fIdJugador1 != null ) ? $fIdJugador1 : 0;
     $selectJugadores = "";
@@ -162,7 +168,9 @@
     // options para los select de los formularios
     // FASES
     $selectFases = "";
-    $arrFases =  $oControllerLiga->recuperarSelectFases( $fIdLiga, true );
+    $arrFases = $idLigaValido !== null
+      ? $oControllerLiga->recuperarSelectFases($idLigaValido, true)
+      : array();
     $selectFasesSelected = ($fNumFase != null ) ? $fNumFase : 0;
 
 
@@ -175,7 +183,7 @@
     // options para los select de los formularios
     // SECTORES
     $selectSectores = "";
-    if ($fIdLiga != 0 ) {
+    if ($idLigaValido !== null && $oLiga !== null) {
       if ($oLiga->idJuego == 1){ // FOW V3
         $selectSectores = "<option value='1'>Sector 1 (Arnhem)</option>
                   <option value='2'>Sector 2 (Gotenstellung)</option>
@@ -190,7 +198,9 @@
   
     // options para los select de los formularios
     // RONDAS
-    $arrRondas =  $oControllerLiga->recuperarSelectRondas( $fIdLiga, $fNumFase );
+    $arrRondas = $idLigaValido !== null
+      ? $oControllerLiga->recuperarSelectRondas($idLigaValido, $fNumFase)
+      : array();
     $selectRondasSelected = ($fNumRonda != null ) ? $fNumRonda : 1;
     $selectRondas = "";
     $selectRondas = "<select id=\"fNumRonda\" name=\"fNumRonda\" disabled>";    
@@ -228,9 +238,11 @@
     $auxClaveCorrecta = false;
 	
     if ($accionForm == 5 || $accionForm == 1){
-      $oFase = $oControllerFase->recuperarDatosFase($fIdLiga, $fNumFase);
+      $oFase = $idLigaValido !== null
+        ? $oControllerFase->recuperarDatosFase($idLigaValido, $fNumFase)
+        : null;
        
-      if ($fClaveCifrada == $oFase->claveCifrada){
+      if ($oFase !== null && $fClaveCifrada == $oFase->claveCifrada){
         $auxClaveCorrecta = true;
 
       
