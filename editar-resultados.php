@@ -810,20 +810,7 @@
           <?php } ?>  
         </div>
 
-      <?PHP 
-      // FLAMES OF WAR
-      if($oLiga->idJuego <= 2 ){ ?>
-
-        <p class="p-sectores" >
-          <label for="fVictoriaSector">Asignar a sector:</label>  
-          <span id="fVictoriaSectorSpan">
-            <select name="fVictoriaSector" id="fVictoriaSector" data-validation="required">
-              <?php printf($selectVictoriaSector); ?>
-            </select>
-          </span> 
-        </p>
-
-      <?php } ?>
+      <input type="hidden" name="fVictoriaSector" id="fVictoriaSector" value="<?php printf($fVictoriaSector); ?>" />
       
       <div class="box-resultados">
         <p class="contenedor-estrellas">
@@ -862,29 +849,14 @@
         </select>       
       </p>  
 </div>
-      <?PHP 
-      // FLAMES OF WAR
-      if($oLiga->idJuego <= 2 ){ ?>
-          <p class="p-misiones-titulo"><br/>
-          Misiones secundarias <strong><?php echo $oJugador1->nick; ?></strong>:</p>
-          <p class="p-misiones">
-            <span id="fIdMisionSecJug11"><select name="fIdMisionSecJug11" id="fIdMisionSecJug11" data-validation="required " style="width: 100px !important" ><option value="0"></option><?php printf($selectMisionSecJug11); ?></select></span> 
-            <span id="fIdMisionSecJug12"><select name="fIdMisionSecJug12" id="fIdMisionSecJug12" data-validation="required " style="width: 100px !important"><option value="0"></option><?php printf($selectMisionSecJug12); ?></select></span>  
-            <span id="fIdMisionSecJug13"><select name="fIdMisionSecJug13" id="fIdMisionSecJug13" data-validation="required " style="width: 100px !important"><option value="0"></option><?php printf($selectMisionSecJug13); ?></select></span>  
-            <span id="fIdMisionSecJug14"><select name="fIdMisionSecJug14" id="fIdMisionSecJug14" data-validation="required " style="width: 100px !important"><option value="0"></option><?php printf($selectMisionSecJug14); ?></select></span> 
-          </p>
-
-
-          <p class="p-misiones-titulo"><br/>
-          Misiones secundarias <strong><?php echo $oJugador2->nick; ?></strong>:</p>
-          <p class="p-misiones">
-            <span id="fIdMisionSecJug21"><select name="fIdMisionSecJug21" id="fIdMisionSecJug21" data-validation="required " style="width: 100px !important" ><option value="0"></option><?php printf($selectMisionSecJug21); ?></select></span> 
-            <span id="fIdMisionSecJug22"><select name="fIdMisionSecJug22" id="fIdMisionSecJug22" data-validation="required " style="width: 100px !important"><option value="0"></option><?php printf($selectMisionSecJug22); ?></select></span>  
-            <span id="fIdMisionSecJug23"><select name="fIdMisionSecJug23" id="fIdMisionSecJug23" data-validation="required " style="width: 100px !important"><option value="0"></option><?php printf($selectMisionSecJug23); ?></select></span>  
-            <span id="fIdMisionSecJug24"><select name="fIdMisionSecJug24" id="fIdMisionSecJug24" data-validation="required " style="width: 100px !important"><option value="0"></option><?php printf($selectMisionSecJug24); ?></select></span> 
-          </p>
-
-      <?php } ?>
+      <input type="hidden" name="fIdMisionSecJug11" id="fIdMisionSecJug11" value="<?php printf($fIdMisionSecJug11); ?>" />
+      <input type="hidden" name="fIdMisionSecJug12" id="fIdMisionSecJug12" value="<?php printf($fIdMisionSecJug12); ?>" />
+      <input type="hidden" name="fIdMisionSecJug13" id="fIdMisionSecJug13" value="<?php printf($fIdMisionSecJug13); ?>" />
+      <input type="hidden" name="fIdMisionSecJug14" id="fIdMisionSecJug14" value="<?php printf($fIdMisionSecJug14); ?>" />
+      <input type="hidden" name="fIdMisionSecJug21" id="fIdMisionSecJug21" value="<?php printf($fIdMisionSecJug21); ?>" />
+      <input type="hidden" name="fIdMisionSecJug22" id="fIdMisionSecJug22" value="<?php printf($fIdMisionSecJug22); ?>" />
+      <input type="hidden" name="fIdMisionSecJug23" id="fIdMisionSecJug23" value="<?php printf($fIdMisionSecJug23); ?>" />
+      <input type="hidden" name="fIdMisionSecJug24" id="fIdMisionSecJug24" value="<?php printf($fIdMisionSecJug24); ?>" />
 
       <p><input type="submit" value="<?php printf($txtAltaModBoton);?>" id="formButton" class="submit-button"/></p>
     </form>

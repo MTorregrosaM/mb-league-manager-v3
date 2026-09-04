@@ -19,7 +19,7 @@ class Log {
 
 
 	public function __construct( ) {
-        $this->ficheroLog = getenv('MB_LOG_FILE') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'mb-league-manager.log';
+    $this->ficheroLog = getenv('MB_LOG_FILE') ?: dirname(__DIR__) . DIRECTORY_SEPARATOR . 'log.log';
     }
 
     // método que escribe en el log el error 

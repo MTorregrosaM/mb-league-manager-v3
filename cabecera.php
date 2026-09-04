@@ -65,7 +65,7 @@
     <script>window.responsiveNav = function () { return null; };</script>
 
     <!-- css  -->
-    <link rel="stylesheet" href="assets/css/estilos.css?v=20260913" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="assets/css/estilos.css?v=20260914" type="text/css" media="screen, projection"/>
     <link rel="stylesheet" type="text/css" href="assets/js/css/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="assets/js/css/jquery.raty.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/style-drag.css" />
@@ -76,8 +76,7 @@
     <link rel='stylesheet'  type="text/css" href="assets/js/css/fullcalendar.css" />
     <link rel='stylesheet'  type="text/css" href="assets/js/css/jquery.qtip.css" />
         
-    <link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-32x32.png" sizes="32x32" />
-    <link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-256x256.png" sizes="192x192" />
+    <link rel="icon" href="assets/img/favicon.ico" type="image/x-icon" />
 
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

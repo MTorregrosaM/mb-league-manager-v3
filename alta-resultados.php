@@ -88,7 +88,7 @@
         $maxResultado = 8;
         $minResultado = 0;
       
-        $fResultadoJugador1 = (isset( $_POST["fResultadoJugador1"]))? $_POST["fResultadoJugador1"] : $minResultado; 
+        $fResultadoJugador1 = (isset( $_POST["fResultadoJugador1"]))? $_POST["fResultadoJugador1"] : ($fResultadoRadio == 1 ? 3 : $minResultado);
         $fResultadoJugador2 = (isset( $_POST["fResultadoJugador2"]))? $_POST["fResultadoJugador2"] : $maxResultado;         
 
       // GUILD BALL  
@@ -96,7 +96,7 @@
         $maxResultado = 12;
         $minResultado = 0;
       
-        $fResultadoJugador1 = (isset( $_POST["fResultadoJugador1"]))? $_POST["fResultadoJugador1"] : $minResultado; 
+        $fResultadoJugador1 = (isset( $_POST["fResultadoJugador1"]))? $_POST["fResultadoJugador1"] : ($fResultadoRadio == 1 ? 3 : $minResultado);
         $fResultadoJugador2 = (isset( $_POST["fResultadoJugador2"]))? $_POST["fResultadoJugador2"] : $minResultado;     
 
       // RESTO DE JUEGOS
@@ -423,19 +423,22 @@
        
             <!-- RESULTADOS - DESLIZADOR. FLAMES OF WAR, GUILD BALL  -->
             <?php if ($oLiga->idJuego <= 2 || $oLiga->idJuego == 5) {?>
-              <div class="resultados-izq">                          
+                <div class="resultados-izq">
                   <div class="resultados-radio">
                     <label>
-                      <input type="radio" name="fResultadoRadio" value="3" <?php if ($fResultadoRadio == 3){ printf("checked"); } ?>/>
-                      <img src="assets/img/icono-victoria.png" alt="Victoria">
+                      <input id="fb3" type="radio" name="fResultadoRadio" value="0"  <?php if ($fResultadoRadio == 0){ printf("checked"); } ?>/>
+                      <img src="assets/img/lose.svg" alt="Derrota">
+                      <span>Derrota</span>
                     </label>
                     <label>
                       <input type="radio" name="fResultadoRadio" value="1" <?php if ($fResultadoRadio == 1){ printf("checked"); } ?>/>
-                      <img src="assets/img/icono-empate.png" alt="Empate">
-                    </label>                    
+                      <img src="assets/img/draw.svg" alt="Empate">
+                      <span>Empate</span>
+                    </label>
                     <label>
-                      <input id="fb3" type="radio" name="fResultadoRadio" value="0"  <?php if ($fResultadoRadio == 0){ printf("checked"); } ?>/>
-                      <img src="assets/img/icono-derrota.png" alt="Derrota">
+                      <input type="radio" name="fResultadoRadio" value="3" <?php if ($fResultadoRadio == 3){ printf("checked"); } ?>/>
+                      <img src="assets/img/win.svg" alt="Victoria">
+                      <span>Victoria</span>
                     </label>
                   </div>
                   <input class="input-resultado" type="text" id="fResultadoJugador1" name="fResultadoJugador1" value="<?php printf($fResultadoJugador1); ?>">
@@ -561,12 +564,13 @@
                     return estado === 3 ? 5 : (estado === 0 ? 4 : 3);
                   }
 
-                  function actualizarResultadoFow() {
+                  function actualizarResultadoFow(puntosSeleccionados) {
                     var estado = parseInt($("input[name=fResultadoRadio]:checked").val(), 10);
                     var maximo = maximoPuntosFowPorResultado(estado);
-                    var puntos = Math.max(1, Math.min(parseInt($("#fResultadoJugador1").val(), 10) || 1, maximo));
-                    if (estado === 3) { puntos = 5; }
-                    if (estado === 0) { puntos = 4; }
+                    var puntosIniciales = puntosSeleccionados === undefined
+                      ? parseInt($("#fResultadoJugador1").val(), 10) || 1
+                      : puntosSeleccionados;
+                    var puntos = Math.max(1, Math.min(parseInt(puntosIniciales, 10) || 1, maximo));
                     $("#slider-resultado-1").slider("option", "max", maximo);
                     $("#slider-resultado-1").slider("option", "value", puntos);
                     $("#fResultadoJugador1").val(puntos);
@@ -579,8 +583,7 @@
                     max: maximoPuntosFowPorResultado(<?php echo $fResultadoRadio; ?>),
                     value: <?php printf($fResultadoJugador1);?>,
                     slide: function( event, ui ) {
-                      $("#fResultadoJugador1" ).val( ui.value );
-                      actualizarResultadoFow();
+                      actualizarResultadoFow(ui.value);
 
                       if(  ui.value >= 3){
                         $("#fVictoriaSector option[value=0]").remove();
@@ -592,9 +595,38 @@
                     }
                   });
 
+                  function actualizarSliderDesdeToque(event) {
+                    var eventoOriginal = event.originalEvent;
+                    var punto = eventoOriginal.changedTouches && eventoOriginal.changedTouches.length
+                      ? eventoOriginal.changedTouches[0].pageX
+                      : event.pageX;
+                    var $slider = $(this);
+                    var posicion = $slider.offset();
+                    var porcentaje = Math.max(0, Math.min(1, (punto - posicion.left) / $slider.outerWidth()));
+                    var minimo = $slider.slider("option", "min");
+                    var maximo = $slider.slider("option", "max");
+                    var valor = Math.round(minimo + porcentaje * (maximo - minimo));
+
+                    actualizarResultadoFow(valor);
+                    if (valor >= 3) {
+                      $("#fVictoriaSector option[value=0]").remove();
+                      $("#p-sectores").show();
+                    } else {
+                      $("#p-sectores").hide();
+                    }
+                    if (eventoOriginal.changedTouches) {
+                      event.preventDefault();
+                    }
+                  }
+
+                  $("#slider-resultado-1").on("touchend", actualizarSliderDesdeToque);
+
                   $( "#fResultadoJugador1" ).val( $( "#slider-resultado-1" ).slider( "value" ) );
 
-                  $("input[name=fResultadoRadio]").on("change", actualizarResultadoFow);
+                  $("input[name=fResultadoRadio]").on("change", function() {
+                    var estado = parseInt($(this).val(), 10);
+                    actualizarResultadoFow(maximoPuntosFowPorResultado(estado));
+                  });
                   actualizarResultadoFow();
 
       <?php } ?>

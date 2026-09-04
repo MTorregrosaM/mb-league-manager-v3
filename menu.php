@@ -49,6 +49,9 @@
 				<?php } ?>
 				<li class="nav-item"><a class="nav-link<?php printf(claseMenuActivo($paginaActual, $seccionesMenu['alta-resultados.php']) ? ' active' : ''); ?>" href="alta-resultados.php">Registrar resultado</a></li>
 			</ul>
+				<?php if ($estaLogado && in_array($rolUsuario, array('ADMIN', 'USER'), true)) { ?>
+					<a class="btn btn-outline-light btn-sm me-2" href="ayuda.php" title="Ayuda" aria-label="Ayuda">?</a>
+				<?php } ?>
 			<a class="btn btn-outline-light btn-sm" href="<?php echo $estaLogado ? 'logout.php' : 'login.php'; ?>"><?php echo $estaLogado ? 'Salir' : 'Admin'; ?></a>
 		</div>
 	</div>

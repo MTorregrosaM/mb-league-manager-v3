@@ -1,120 +1,100 @@
-# League Manager
+# MB League Manager
 
-League Manager is a PHP application for managing tabletop wargaming leagues and campaigns. It stores leagues, games, factions, players, army lists, rounds, matches and results in MySQL.
+MB League Manager is a PHP application for managing tabletop wargaming leagues. It covers the complete competition workflow: leagues, games, factions, phases, rounds, players, army lists, match pairings and results.
 
-## What the application does
+## Current status
 
-- Manage games and their factions.
-- Create and configure leagues, phases and rounds.
-- Register players and assign them to leagues and factions.
-- Upload or link army lists for each player and phase.
-- Generate match pairings and display round information.
-- Enter, validate and edit match results.
-- Record painting scores, sportsmanship scores and secondary missions.
-- Generate random factions for matches using the double-list workflow.
-- Manage users, roles and league permissions.
-- Display league progress, rankings, player lists and match data.
-- Provide embeddable league data for external websites.
+The project is a working server-rendered application with a legacy MVC-style structure and a shared responsive interface. The main authenticated workflows are available and use the common navigation, dark theme and responsive layouts.
 
-## Screenshots
+Current application capabilities include:
 
-The following thumbnails show the main authenticated sections of the application. Open any image to view the full-size screenshot.
+- League creation, configuration and activation.
+- Game and faction management.
+- Phase and round management, including default calendar generation.
+- Player registration and league assignment.
+- Army list management by player and phase.
+- Match pairing and double-list workflows.
+- Public result entry by players using the phase secret key.
+- Result editing, duplicate-submission protection and pending-result handling.
+- Administrator validation of results after checking both submissions.
+- Painting, sportsmanship, secondary mission and sector data for supported games.
+- League progress, rankings, player details and match history.
+- User accounts, roles and league permissions.
+- A role-protected help page available from the `?` button in the menu.
+- Reusable PHP components for displaying league data on external pages.
 
-<table>
-	<tr>
-		<td><a href="docs/screenshots/leagues.png"><img src="docs/screenshots/leagues.png" width="240" alt="League management screen"></a></td>
-		<td><a href="docs/screenshots/matches.png"><img src="docs/screenshots/matches.png" width="240" alt="Match management screen"></a></td>
-		<td><a href="docs/screenshots/double-list.png"><img src="docs/screenshots/double-list.png" width="240" alt="Double-list workflow screen"></a></td>
-	</tr>
-</table>
+## Main workflows
 
-## Implementation
+### League administration
 
-The application is a server-rendered PHP MVC-style application with a legacy codebase. Its main layers are:
+An administrator creates a league by selecting the game, number of phases, number of rounds and active dates. The application generates the corresponding phase and round calendar by default. The administrator can then review the generated structure, assign users and manage the league content.
 
-- `model/`: data objects used by the application.
-- `controller/`: database operations and application rules for users, leagues, phases, players, games, factions and matches.
-- `config/`: database access, logging and application configuration.
-- `ajax/`: asynchronous endpoints used by dynamic forms and selectors.
-- `inc/`: embeddable PHP components for external pages.
-- Root PHP files: authenticated screens and workflows exposed to users.
-- `assets/css/`: shared styles.
-- `assets/js/`: jQuery, jQuery UI, calendars, validation and other frontend libraries.
-- `assets/img/`: application and league image assets.
+### Players and lists
 
-The database layer uses `mysqli`. Existing application table and column names are retained for compatibility with the controllers and external integrations.
+Players are created under a league and can be associated with their army lists for each phase. Players must belong to the selected league before they can be used in a pairing or result.
 
-## Requirements
+### Match results
 
-- PHP 8.4 or a compatible PHP version with the `mysqli` extension.
-- MySQL 5.5 or later.
-- A web server capable of running PHP. PHP's built-in development server is sufficient for local testing.
-- A browser with JavaScript enabled for AJAX forms, responsive navigation and calendars.
+The result-entry workflow requires the league, phase, round, player identity, opponent, battle date and score. Depending on the game, it can also record painting, sportsmanship, secondary missions and sector information.
 
-## Local setup
+For supported Flames of War formats, the selected result determines the valid score range. An empate requires matching scores. The form also checks required fields and the phase secret key before saving.
 
-1. Create the local database credentials file:
+After a player submits a result, the other player can submit the same match. If both submissions disagree, the result is reported for review instead of being treated as confirmed. A submission token prevents the same form from being sent repeatedly.
 
-	```text
-	Copy config/db.credentials-template.php to config/db.credentials.php
-	```
+### Result validation
 
-2. Set the MySQL server, username, password and database name in `config/db.credentials.php`.
+Results can remain pending until they have been reviewed. An administrator uses **Resultados** to find pending entries, checks the players, phase, round, date and score, edits incorrect data when necessary, and validates the result only after the information is consistent.
 
-3. Create the schema and load dummy data:
+## Roles and access
 
-	```text
-	mysql -u YOUR_USER -p < sql/schema.sql
-	mysql -u YOUR_USER -p mb_league < sql/seed.sql
-	```
+- `USER`: works with the leagues assigned to the account, manages the available player and result workflows, and can access the help page.
+- `ADMIN`: manages users, leagues, games, factions and permissions, can access every league, and validates or corrects results.
 
-	The scripts can also be run from another MySQL client. `schema.sql` creates the `mb_league` database and all application tables. `seed.sql` inserts English dummy data for local development.
+League access is checked for requests that contain a league, player or related entity. Unauthenticated requests and unauthorized league requests are rejected.
 
-4. Start the local PHP server from the project directory:
+## Application structure
 
-	```text
-	php -S 127.0.0.1:8000 -t .
-	```
+- Root PHP files: authenticated screens and competition workflows.
+- `model/`: domain classes for leagues, games, factions, phases, players, matches and users.
+- `controller/`: database operations and application rules.
+- `config/`: authentication, security, database access, logging and configuration.
+- `ajax/`: asynchronous endpoints used by selectors, rounds, pairings and result validation.
+- `inc/`: reusable views for rankings, progress, rounds and external league displays.
+- `assets/css/`: shared responsive styles and the application theme.
+- `assets/js/`: jQuery, jQuery UI, calendars, form validation and supporting frontend libraries.
+- `assets/img/`: existing application, league and interface assets.
+- `sql/`: database schema and seed scripts.
 
-5. Open `http://127.0.0.1:8000/` in a browser.
+## Main pages
 
-The dummy dataset includes an administrator account with the credentials `admin` / `admin`. Change or remove dummy accounts before using the application outside a local environment.
+- `index.php`: competition overview, progress and rankings.
+- `gestion-ligas.php`: league management.
+- `gestion-fases.php`: phases and rounds.
+- `gestion-jugadores.php`: player management.
+- `gestion-listas.php`: army lists.
+- `gestion-resultados.php`: match and pairing management.
+- `alta-resultados.php`: player result entry.
+- `editar-resultados.php`: result review and administration.
+- `detalle-jugador.php`: player history and lists.
+- `cruce-doble-lista.php`: double-list pairing workflow.
+- `ayuda.php`: authenticated user guide.
 
-## Database scripts
+## Security and known technical debt
 
-- `sql/schema.sql` is the DDL script. It creates the database, tables, indexes and foreign keys.
-- `sql/seed.sql` is the DML script. It inserts games, factions, users, leagues, phases, permissions, players, lists, missions and matches.
-
-The SQL scripts are intended for a clean local database. Review them before applying them to an existing or production database.
+- Authentication, session expiration, CSRF tokens and league-level authorization are implemented in `config/auth.php`.
+- Database access uses `mysqli` and prepared statements in the shared database class.
+- Database credentials must remain outside version control.
+- The legacy application still contains MD5-based password handling. This should be migrated to `password_hash()` and `password_verify()` before treating the authentication system as modernized.
+- Existing controllers and database identifiers are retained for compatibility with the current schema and external integrations.
 
 ## External integrations
 
-The files in `inc/` are designed to be included by other PHP pages to display league results and data. They provide reusable views for rounds, player lists, league progress and rankings.
+The PHP files in `inc/` can be included by other pages to render league rounds, player lists, progress information and rankings. `pintar_tablas.php` provides another reusable reporting entry point. Integrations must provide the variables expected by the selected component and use the same database access configuration.
 
-An external PHP page can include a component with `include` or `require`, providing the variables required by that component, such as `$idLiga`. The component must be able to resolve the project path and must have access to `config/db.credentials.php` in the target environment.
+## Database scripts
 
-`pintar_tablas.php` is another embeddable reporting entry point for rendering league tables.
+- `sql/schema.sql` defines the application database structure.
+- `sql/seed.sql` contains sample records for the supported workflows.
+- `sql/seed_pro.sql` contains the project data set intended for the production-style deployment.
 
-## Logging
-
-The `Log` singleton in `config/log.class.php` centralizes application error logging. Controllers use it when an exception or database error is caught. Log entries include:
-
-- The `ERROR` marker.
-- The date and time.
-- The controller or operation that reported the error.
-- The exception message, when available.
-- The request URI.
-
-The default log file is `log.log` in the project root. It is generated locally and excluded from Git. Before each new log entry, records older than 30 days are removed automatically. Lines that do not match the application log format are preserved. Ensure that the PHP process has permission to create and write to this file.
-
-## Security notes
-
-- Never commit `config/db.credentials.php`.
-- Use a dedicated MySQL user with only the permissions required by the application.
-- Replace all dummy credentials before deployment.
-- The legacy application stores user passwords using MD5; production deployments should migrate to a modern password hashing strategy such as `password_hash()` and `password_verify()`.
-- Review file upload, session, mail and database settings before exposing the application publicly.
-
-## Repository exclusions
-
-`.gitignore` excludes local database credentials, the `.mysql-test-data/` directory created by the MySQL test environment, and the generated `log.log` file. The SQL schema, seed data and application source remain versionable.
+Review database scripts before applying them to an existing database, especially when preserving league, player or result data.

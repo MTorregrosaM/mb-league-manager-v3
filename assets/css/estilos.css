@@ -410,20 +410,22 @@
 
   #altaResultado #slider-resultado-1,
   #altaResultado #slider-resultado-2,
-  #modEnfrentamiento #slider-resultado-1,
-  #modEnfrentamiento #slider-resultado-2 {
+  #modResultado #slider-resultado-1,
+  #modResultado #slider-resultado-2 {
     width: 100% !important;
     height: 8px;
     margin: 1.25rem 0 .35rem;
     border: 0;
     border-radius: 99px;
     background: var(--app-accent) !important;
+    cursor: pointer;
+    touch-action: none;
   }
 
   #altaResultado .ui-slider .ui-slider-range,
-  #modEnfrentamiento .ui-slider .ui-slider-range { background: #3a414a; }
+  #modResultado .ui-slider .ui-slider-range { background: #3a414a; }
   #altaResultado .ui-slider .ui-slider-handle,
-  #modEnfrentamiento .ui-slider .ui-slider-handle {
+  #modResultado .ui-slider .ui-slider-handle {
     top: 50%;
     width: 22px;
     height: 22px;
@@ -436,8 +438,8 @@
 
   #altaResultado .ui-slider .ui-slider-handle:hover,
   #altaResultado .ui-slider .ui-slider-handle:focus,
-  #modEnfrentamiento .ui-slider .ui-slider-handle:hover,
-  #modEnfrentamiento .ui-slider .ui-slider-handle:focus {
+  #modResultado .ui-slider .ui-slider-handle:hover,
+  #modResultado .ui-slider .ui-slider-handle:focus {
     background: var(--app-accent);
   }
 
@@ -453,20 +455,27 @@
   #altaResultado .resultados-radio label {
     width: auto !important;
     padding: .5rem;
-    border: 1px solid transparent;
     border-radius: .5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    text-align: center;
   }
 
   #altaResultado .resultados-radio label > input + img {
     width: 58px;
     height: 58px;
     object-fit: contain;
-    border: 2px solid transparent;
     border-radius: .4rem;
+    background: transparent;
+    filter: brightness(0) invert(1);
+    transition: filter .2s ease;
   }
 
+  #altaResultado .resultados-radio label > input + img:hover,
   #altaResultado .resultados-radio label > input:checked + img {
-    border-color: var(--app-accent);
+    filter: brightness(0) saturate(100%) invert(75%) sepia(84%) saturate(836%) hue-rotate(91deg) brightness(94%) contrast(91%);
   }
 
   #altaResultado .p-misiones {
@@ -483,9 +492,9 @@
     display: none !important;
   }
 
-  #modEnfrentamiento .p-sectores,
-  #modEnfrentamiento .p-misiones,
-  #modEnfrentamiento .p-misiones-titulo {
+  #modResultado .p-sectores,
+  #modResultado .p-misiones,
+  #modResultado .p-misiones-titulo {
     display: none !important;
   }
 
@@ -859,13 +868,11 @@
     }
     .resultados-radio label > input + img{ /* IMAGE STYLES */
       cursor:pointer;
-      border:2px solid transparent;
     }
     .resultados-radio label img:hover { /* IMAGE STYLES */
-      background: #888;
+      background: transparent;
     }
     .resultados-radio label > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
-      border:2px solid #000; background: #2DE68A;
     }
 
   :root {
@@ -1008,6 +1015,30 @@
   .rankings-filter label { margin: 0; color: var(--app-muted); }
   .rankings-filter select { min-width: 260px; }
   .rankings-content { display: grid; gap: 1rem; }
+  .pagina-ayuda .ranking-card {
+    margin: 0;
+    display: flow-root;
+  }
+  #contenedor-principal .pagina-ayuda .ranking-card h3 {
+    float: none !important;
+    display: block !important;
+    width: 100% !important;
+    clear: both !important;
+  }
+  #contenedor-principal .pagina-ayuda .ranking-card p,
+  #contenedor-principal .pagina-ayuda .ranking-card ol,
+  #contenedor-principal .pagina-ayuda .ranking-card ul {
+    clear: both !important;
+  }
+  .pagina-ayuda .ranking-card li {
+    color: #d9e0e7;
+    line-height: 1.55;
+  }
+  .pagina-ayuda .ranking-card p:last-child,
+  .pagina-ayuda .ranking-card ol:last-child,
+  .pagina-ayuda .ranking-card ul:last-child { margin-bottom: 0; }
+  .pagina-ayuda .ranking-card ol,
+  .pagina-ayuda .ranking-card ul { margin-top: 0; padding-left: 1.4rem; }
   .ranking-card {
     box-sizing: border-box;
     width: 100%;
@@ -1109,9 +1140,9 @@
     text-align: left !important;
   }
   .index-main-ranking table {
-    display: inline-table;
-    width: max-content;
-    max-width: 100%;
+    display: table;
+    width: 100%;
+    max-width: none;
     table-layout: auto;
     border: 1px solid var(--app-border);
     border-radius: .6rem;
@@ -1138,13 +1169,13 @@
   }
   .index-ranking-grid > .div-ranking-izq,
   .index-ranking-grid > .div-ranking-dch {
-    width: auto;
+    width: 100%;
     margin: 0;
   }
   .index-ranking-grid table {
-    display: inline-table;
-    width: max-content;
-    max-width: 100%;
+    display: table;
+    width: 100%;
+    max-width: none;
     table-layout: auto;
     border: 1px solid var(--app-border);
     border-radius: .6rem;
@@ -1896,6 +1927,16 @@
   }
 
   @media (max-width: 767.98px) {
+    .ui-dialog {
+      position: fixed !important;
+      left: 50% !important;
+      top: 50% !important;
+      width: calc(100vw - 2rem) !important;
+      max-width: 420px;
+      margin: 0 !important;
+      transform: translate(-50%, -50%);
+      box-sizing: border-box;
+    }
     #contenedor-principal { width: calc(100% - 1rem); margin-top: .5rem; }
     .index-ranking-grid { grid-template-columns: 1fr; gap: .5rem; }
     .index-main-ranking,
@@ -2122,7 +2163,9 @@
       overflow-wrap: anywhere;
       padding: .55rem .4rem;
     }
-    .ranking-card h3 { font-size: 1rem; }
+    .ranking-card h3 { font-size: 1rem;         display: block;
+        width: 100%;
+        text-align: left;}
     #validadorClave form {
       display: grid;
       grid-template-columns: 1fr;
@@ -2521,7 +2564,7 @@
     #contenedor-principal .index-main-ranking table,
     #contenedor-principal .index-ranking-grid table {
       display: table !important;
-      width: max-content !important;
+      width: 100% !important;
       min-width: 0 !important;
       max-width: 100% !important;
       table-layout: auto !important;

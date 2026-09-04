@@ -85,8 +85,7 @@
 	<link rel='stylesheet'  type="text/css" href="assets/js/css/jquery.qtip.css" />
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 		
-	<link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-32x32.png" sizes="32x32" />
-	<link rel="icon" href="http://modelbrush.com/wp-content/uploads/2014/12/favicon1-548ef461_site_icon-256x256.png" sizes="192x192" />
+	<link rel="icon" href="assets/img/favicon.ico" type="image/x-icon" />
 
 </head>
 

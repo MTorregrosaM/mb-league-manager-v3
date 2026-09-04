@@ -16,7 +16,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
-    if (!empty($_SESSION['ultima_actividad']) && time() - $_SESSION['ultima_actividad'] > 1800) {
+    if (!empty($_SESSION['ultima_actividad']) && time() - $_SESSION['ultima_actividad'] > 3600) {
         $_SESSION = array();
         session_destroy();
         http_response_code(403);
